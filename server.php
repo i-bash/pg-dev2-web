@@ -9,7 +9,7 @@
     $params=$_POST??[];
     $pg=new PG();
     try{
-			$pg->connect($action=='getRoles'?'postgres':($_SESSION['role']??'postgres'));
+			$pg->connect(in_array($action,['getRoles','setRole'])?'postgres':($_SESSION['role']??'postgres'));
 
 			switch($action){
 			case 'getRoles':
