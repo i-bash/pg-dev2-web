@@ -25,4 +25,6 @@
 
 #main>div:nth-child(2){
 	background-color:#eee;
+	padding-top:10px;
+	padding-bottom:5px;
 }

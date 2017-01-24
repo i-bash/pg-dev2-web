@@ -7,31 +7,42 @@
     
     $params=$_POST??[];
     $pg=new PG();
-    $pg->connect();
-    
-    switch($_GET['action']){
-		case 'getRoles':
-			$data = array_map(
-				function($r){return $r->rolname;},
-				$pg->query("select rolname from pg_roles order by 1")
-			);
-		break;
-		case 'setRole':
-			$_SESSION['role']=$params['role'];
-		break;
-		case 'getAuthors':
-			$data = $pg->query("select * from authors_v");
-		break;
-		case 'getBooks':
-			$data=$pg->query("select * from books");
-		break;
-		default:
+    try{
+			$pg->connect();
 			
+			switch($_GET['action']){
+			case 'getRoles':
+				$data = array_map(
+					function($r){return $r->rolname;},
+					$pg->query("select rolname from pg_roles order by 1")
+				);
+			break;
+			case 'setRole':
+				$_SESSION['role']=$params['role'];
+			break;
+			case 'getAuthors':
+				$data = $pg->query("select * from authors_v");
+			break;
+			case 'getBooks':
+				$data=$pg->query("select * from books");
+			break;
+			default:
+				
+			}
+		}
+		catch(PDOException $e){
+			if(strstr($e->getMessage(), 'SQLSTATE[')) {
+				preg_match('/SQLSTATE\[(\w+)\]\:\s(.*)/', $e->getMessage(), $matches);
+				$err=new stdClass();
+				$err->code = $matches[1];
+				$err->message = $matches[2];
+			}
 		}
 		header('content-type:application/json');
 		echo json_encode([
 			'data'=>$data??null,
-			'sql'=>$pg->sql
+			'sql'=>$pg->sql,
+			'err'=>$err??null
 		]);
 /*
     echo $pg->execFunction('currency.rate',['rub','usd','2017-01-01']);

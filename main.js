@@ -13,16 +13,19 @@ $(()=>{
 				if(res.sql!=null){
 					$('#sql').html(res.sql).fadeIn('slow');
 				}
-				if(callback!==undefined){
-					callback(res.data);
+				if(res.err===null){
+					if(callback!==undefined){
+						callback(res.data);
+					}
+					$('#success').fadeIn('slow');
 				}
-				$('#success').fadeIn('slow');
+				else{
+					$('#error').html(res.err.message).fadeIn('slow');
+				}
 				$('#loader').fadeOut();
 			},
 			error:(e)=>{
 				console.error(e);
-				$('#error').html(e.getText()).fadeIn('slow');
-				$('#loader').fadeOut();
 			}
 		});
 	}
