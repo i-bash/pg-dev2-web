@@ -5,8 +5,7 @@ class PG{
 	
 	/** create database connection
 	 */
-	function connect(){
-		$role = $_SESSION['role']??'postgres';
+	function connect($role=null){
 		$this->connection = new PDO(DSN,$role,$role); //assume password is the same as role name
 		$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	}

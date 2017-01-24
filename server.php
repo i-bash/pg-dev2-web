@@ -5,12 +5,13 @@
     require 'config.php';
     require 'db.php';
     
+    $action=$_GET['action'];
     $params=$_POST??[];
     $pg=new PG();
     try{
-			$pg->connect();
-			
-			switch($_GET['action']){
+			$pg->connect($action=='getRoles'?'postgres':($_SESSION['role']??'postgres'));
+
+			switch($action){
 			case 'getRoles':
 				$data = array_map(
 					function($r){return $r->rolname;},
@@ -27,7 +28,7 @@
 				$data=$pg->query("select * from books");
 			break;
 			default:
-				
+
 			}
 		}
 		catch(PDOException $e){
