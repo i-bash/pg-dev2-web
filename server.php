@@ -32,7 +32,7 @@
 		}
 		catch(PDOException $e){
 			if(strstr($e->getMessage(), 'SQLSTATE[')) {
-				preg_match('/SQLSTATE\[(\w+)\]\:\s(.*)/', $e->getMessage(), $matches);
+				preg_match('/SQLSTATE\[(\w+)\](.*)/', $e->getMessage(), $matches);
 				$err=new stdClass();
 				$err->code = $matches[1];
 				$err->message = $matches[2];
