@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="lib/bootstrap-3.3.7-dist/css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="main.css"/>
+		<script src="lib/jquery-3.1.1.min.js"></script>
+		<script src="lib/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+		<script src="main.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<h2>DEV1 web application</h2>
+			<div id="main" class="row">
+				<div class="col-md-9">
+					<h4>Application</h4>
+					<div class="btn-toolbar" role="toolbar">
+						<div class="btn-group" role="group">
+							<button type="button" class="btn btn-default" data-page="shop">Shop</button>
+						</div>
+						<div class="btn-group pull-right" role="group">
+							<button type="button" class="btn btn-default" data-page="authors">Authors</button>
+							<button type="button" class="btn btn-default" data-page="books">Books</button>
+							<button type="button" class="btn btn-default" data-page="catalog">Catalog</button>
+						</div>
+					</div>
+					<div id="page"></div>
+					<script id="page-js"></script>
+				</div>
+				<div class="col-md-3">
+					<h4>Database</h4>
+					<div id="db2" class="row form-group">
+						<div class="col-md-8">
+							<select id="role" class="form-control"></select>
+						</div>
+						<div class="col-md-4">
+							<div id="loader" class="pull-right"></div>
+						</div>
+					</div>
+					<div><p id="error" class="alert alert-danger"></p></div>
+					<div><p id="success" class="alert alert-success">OK</p></div>
+					<div><p id="sql" class="alert alert-info"></p></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,21 @@
+<h3>Shop</h3>
+<div id="books" class="list-group"></div>
+<script>
+	lib.server(
+		'getBooks',
+		[],
+		data=>{
+			let list=$('#books');
+			list.empty();
+			data.forEach(
+				r=>{
+					$('<a/>',{class:'list-group-item clearfix'})
+						.append($('<span/>').html(r.title))
+						.append($('<button/>',{'data-id':r.book_id,class:'btn btn-xs btn-info pull-right'}).html('Order'))
+						.appendTo(list)
+					;
+				}
+			);
+		}
+	);
+</script>

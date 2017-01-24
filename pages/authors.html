@@ -1,0 +1,20 @@
+<h3>Authors</h3>
+<div id="authors" class="list-group"></div>
+<script>
+	lib.server(
+		'getAuthors',
+		[],
+		data=>{
+			let list=$('#authors');
+			list.empty();
+			data.forEach(
+				r=>{
+					$('<a/>',{class:'list-group-item clearfix'})
+						.append($('<span/>').html(r.display_name))
+						.appendTo(list)
+					;
+				}
+			);
+		}
+	);
+</script>
