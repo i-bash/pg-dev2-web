@@ -24,6 +24,9 @@
 			case 'getAuthors':
 				$data = $pg->query("select * from authors_v");
 			break;
+			case 'addAuthor':
+				$data = $pg->execFunction("addd_author",[$_POST['last_name'],$_POST['first_name'],$_POST['surname']]);
+			break;
 			case 'getBooks':
 				$data=$pg->query("select * from books");
 			break;

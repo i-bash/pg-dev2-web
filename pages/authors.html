@@ -1,20 +1,62 @@
 <h3>Authors</h3>
+
+
+    <button class="btn btn-link" data-toggle="collapse" data-target="#collapse1">Add author</button>
+    <div id="collapse1" class="panel-collapse collapse">
+      <div class="panel-body">
+				<form id="add" method="post" action="addAuthor">
+					<div class="form-group">
+						<label class="control-label" for='last_name'>Last name</label>
+						<input class="form-control" id="last_name" name="last_name"/>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for='first_name'>First name</label>
+						<input class="form-control" id="first_name" name="first_name"/>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for='surname'>Surname</label>
+						<input class="form-control" id="surname" name="surname"/>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-success disabled" disabled>Submit</button>
+					</div>
+				</form>
+      </div>
+    </div>
+
 <div id="authors" class="list-group"></div>
 <script>
-	lib.server(
-		'getAuthors',
-		[],
-		data=>{
-			let list=$('#authors');
-			list.empty();
-			data.forEach(
-				r=>{
-					$('<a/>',{class:'list-group-item clearfix'})
-						.append($('<span/>').html(r.display_name))
-						.appendTo(list)
-					;
-				}
-			);
+	var chkSubmit=()=>{
+		let disabled=$('#last_name').val()==''||$('#first_name').val()=='';
+		$('form#add button').toggleClass('disabled',disabled).prop('disabled',disabled);
+	};
+	var populateAuthors=()=>{
+		lib.server(
+			'getAuthors',
+			[],
+			data=>{
+				let list=$('#authors');
+				list.empty();
+				data.forEach(
+					r=>{
+						$('<a/>',{class:'list-group-item clearfix'})
+							.append($('<span/>').html(r.display_name))
+							.appendTo(list)
+						;
+					}
+				);
+			}
+		);
+	};
+	$('#first_name,#last_name').on('input change',chkSubmit);
+	lib.ajaxForm(
+		$('#add'),
+		()=>{
+			$('#collapse1').removeClass('in');
+			$('#add input').val('');
+			chkSubmit();
+			populateAuthors();
 		}
 	);
+	populateAuthors();
 </script>

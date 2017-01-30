@@ -25,6 +25,7 @@ $(()=>{
 				$('#loader').fadeOut();
 			},
 			error:(e)=>{
+				alert('Unexpected server error');
 				console.error(e);
 			}
 		});
@@ -34,7 +35,7 @@ $(()=>{
 		$.ajax('pages/'+page+'.html')
 			.then(
 				html=>{
-					$('#page').html(html);
+					$('#page').hide().html(html).fadeIn();
 					//return $.ajax('pages/'+page+'.js');
 				},
 				()=>{$('#page').html('Page "'+page+'" not found');}
@@ -49,6 +50,23 @@ $(()=>{
 */
 		;
 		
+	}
+	
+	//turn form into ajax
+	lib.ajaxForm=(form,callback)=>{
+		form.submit(
+			e=>{
+				e.preventDefault();
+				console.log(form);
+				lib.server(
+					$(form).attr('action'),
+					$(form).serialize(),
+					callback===undefined
+						?()=>{console.info('ajax form ok');}
+						:callback
+				);
+			}
+		);
 	}
 
 	//fill in roles
