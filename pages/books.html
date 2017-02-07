@@ -1,1 +1,63 @@
-books
+<h3>Books</h3>
+
+
+<button class="btn btn-link" data-toggle="collapse" data-target="#collapse1">Add book</button>
+<div id="collapse1" class="panel-collapse collapse">
+	<div class="panel-body">
+		<form id="add" method="post" action="addBook">
+			<!--div class="form-group">
+				<label class="control-label" for='last_name'>Last name</label>
+				<input class="form-control" id="last_name" name="last_name"/>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for='first_name'>First name</label>
+				<input class="form-control" id="first_name" name="first_name"/>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for='surname'>Surname</label>
+				<input class="form-control" id="surname" name="surname"/>
+			</div-->
+			<div class="form-group">
+				<button type="submit" class="btn btn-success disabled" disabled>Submit</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div id="books" class="list-group"></div>
+<script>
+	var chkSubmit=()=>{
+		let disabled=$('#last_name').val()==''||$('#first_name').val()=='';
+		$('form#add button').toggleClass('disabled',disabled).prop('disabled',disabled);
+	};
+	var populateBooks=()=>{
+		lib.server(
+			'getBooks',
+			[],
+			data=>{
+				let list=$('#books');
+				list.empty();
+				data.forEach(
+					r=>{
+						$('<a/>',{class:'list-group-item clearfix'})
+							.append($('<span/>').html(r.display_name))
+							.appendTo(list)
+						;
+					}
+				);
+			}
+		);
+	};
+	$('#first_name,#last_name').on('input change',chkSubmit);
+	lib.ajaxForm(
+		$('#add'),
+		()=>{
+			$('#collapse1').removeClass('in');
+			$('#add input').val('');
+			chkSubmit();
+			populateBooks();
+		}
+	);
+	lib.clearSql();
+	populateBooks();
+</script>

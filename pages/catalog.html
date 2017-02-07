@@ -1,0 +1,26 @@
+<h3>Catalog</h3>
+
+<div id="catalog" class="list-group"></div>
+<script>
+	var populateCatalog=()=>{
+		lib.server(
+			'getCatalog',
+			[],
+			data=>{
+				let list=$('#catalog');
+				list.empty();
+				data.forEach(
+					r=>{
+						$('<a/>',{class:'list-group-item clearfix'})
+							.append($('<span/>').html(r.display_name))
+							.appendTo(list)
+						;
+					}
+				);
+			}
+		);
+	};
+
+	lib.clearSql();
+	populateCatalog();
+</script>

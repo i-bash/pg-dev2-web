@@ -2,27 +2,38 @@ var lib={}
 
 $(()=>{
 	
+	lib.clearSql=()=>{
+		$('#sql').empty();
+	};
+	
 	lib.server=(action,params,callback)=>{
-		$('#loader').fadeIn('fast');
 		$('#error,#success,#sql').hide();
+		$('#loader').show();
 		$.ajax({
 			method:'post',
 			url:'server.php?action='+action,
 			data:params,
 			success:(res)=>{
 				if(res.sql!=null){
-					$('#sql').html(res.sql).fadeIn('slow');
+					let html=$('#sql').html();
+					$('#sql').html(
+						res.sql.trimLeft().replace(/\n/g,'<br/>')//.replace(/\s/g,'&nbsp;')
+						+(html?'<br/>---<br/>':'')
+						+html
+					).slideDown('slow');
 				}
 				if(res.err===null){
 					if(callback!==undefined){
 						callback(res.data);
 					}
-					$('#success').fadeIn('slow');
+					//$('#success').slideDown('slow');
 				}
 				else{
-					$('#error').html(res.err.message).fadeIn('slow');
+					$('#error').html(
+						res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')
+					).slideDown('slow');
 				}
-				$('#loader').fadeOut();
+				$('#loader').fadeOut('slow');
 			},
 			error:(e)=>{
 				alert('Unexpected server error');
@@ -57,7 +68,7 @@ $(()=>{
 		form.submit(
 			e=>{
 				e.preventDefault();
-				console.log(form);
+				lib.clearSql();
 				lib.server(
 					$(form).attr('action'),
 					$(form).serialize(),
@@ -69,18 +80,6 @@ $(()=>{
 		);
 	}
 
-	//fill in roles
-	lib.server(
-		'getRoles',
-		{},
-		data=>{
-			let select=$('#role');
-			data.forEach(r=>{
-				$('<option/>').val(r).html(r).appendTo(select);
-			});
-		}
-	);
-
 	//select role
 	$('#role').change((e)=>{
 		lib.server('setRole',{'role':$(e.target).val()});
@@ -90,6 +89,18 @@ $(()=>{
 	$('.btn[data-page]').click(
 		e=>{
 			lib.displayPage($(e.target).data('page'));
+		}
+	);
+	//fill in roles
+	lib.server(
+		'getRoles',
+		{},
+		data=>{
+			let select=$('#role');
+			data.forEach(r=>{
+				$('<option/>').val(r).html(r).appendTo(select);
+			});
+			$('#role').trigger('change');
 		}
 	);
 });
