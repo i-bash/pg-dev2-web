@@ -26,14 +26,30 @@
 				$data = $pg->query("select * from authors_v",[],'view','authors_v');
 			break;
 			case 'addAuthor':
-				$data = $pg->execFunction("add_author",[$_POST['last_name'],$_POST['first_name'],$_POST['surname']]);
+				$data = $pg->execFunction("add_author",$_POST);
 			break;
 			case 'getBooks':
 				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
 			break;
-			case 'getCatalog':
-				$data = $pg->query("select * from catalog_v",[],'view','test_missing_view');
+			case 'addBook':
+				$data = $pg->execFunction("add_book",$_POST);
 			break;
+			case 'addAuthorship':
+				$data = $pg->execFunction("add_authorship",$_POST);
+			break;
+			case 'getCatalog':
+				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
+			break;
+			case 'orderBook':
+				$data = $pg->query("update catalog_v set onhand_qty = onhand_qty + :qty where book_id = :id",$_POST);
+			break;
+			case 'findBooks':
+				$_POST['in_stock']=array_key_exists('in_stock',$_POST);
+				$data = $pg->execFunction("get_catalog",$_POST);
+			break;
+			case 'buyBook':
+				$data=$pg->query("update catalog_v set onhand_qty = onhand_qty-1 where book_id=:id",$_POST,'view','catalog_v');
+				break;
 			default:
 				throw new RuntimeException('Internal error. Unknown server action: '.$action);
 			}
