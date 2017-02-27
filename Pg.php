@@ -25,9 +25,6 @@ class Pg{
 		}
 		$this->sql=$sql;
 		$stmt=$this->connection->prepare($this->sql);
-		//foreach($params as $i=>$parValue){
-		//	$stmt->bindValue($i+1,$parValue);
-		//}
 		$pars=array_combine(
 			array_map(
 				function($v){return ':'.$v;},
@@ -42,22 +39,38 @@ class Pg{
 	}
 	/** execute stored function
 	 * @param name
-	 * @param params - 0-based array of values for function parameters
+	 * @param params - associative array of values for function parameters
 	 * @return function value
 	 */
 	public function execFunction($name, $params){
 		if(!$this->objectExists('function',$name)){
 			throw new PgObjectMissingException('function',$name);
 		};
-		$this->sql='select '.$name.'('.implode(',',array_fill(0,count($params),'?')).') result';
+		$this->sql=
+			'select '.$name.' ('.
+				PHP_EOL.chr(9).
+				implode(','.PHP_EOL.chr(9),array_map(function($parName){return $parName.'=>:'.$parName;},array_keys($params))).
+			PHP_EOL.') result'
+		;
 		$stmt=$this->connection->prepare($this->sql);
-		foreach($params as $i=>$parValue){
-			$stmt->bindValue($i+1,$parValue);
+		$types=[
+			'boolean'=>PDO::PARAM_BOOL,
+			'integer'=>PDO::PARAM_INT,
+			'string'=>PDO::PARAM_STR
+		];
+		foreach($params as $parName=>$parValue){
+			$type=gettype($parValue);
+			if(array_key_exists($type,$types)){
+				$stmt->bindValue(':'.$parName,$parValue,$types[$type]);
+			}
+			else{
+				throw new Exception('Unknown type of parameter value: '.$type);
+			}
 		}
 		$stmt->execute();
 		$res=$stmt->fetchAll(PDO::FETCH_ASSOC);
 		$stmt->closeCursor();
-		return $res[0]['result'];
+		return $res;
 	}
 	/**
 	 * @param kind - table, view, function
@@ -67,28 +80,17 @@ class Pg{
 		switch($kind){
 			case 'function':
 				$res=$this->query(
-					"
-						select oid
-						from pg_catalog.pg_proc
-						where proname=:name
-							and pg_catalog.pg_function_is_visible(oid)
-					",
+					"select pg_catalog.pg_function_is_visible(:name::regproc)",
 					['name'=>$name]
 				);
-				return count($res)>0;
+				return $res[0];
 			case 'table':
 			case 'view':
 				$res=$this->query(
-					"
-						select oid
-						from pg_catalog.pg_class
-						where relname=:name
-							and relkind=:kind
-							and pg_catalog.pg_table_is_visible(oid)
-					",
-					['name'=>$name,'kind'=>substr($kind,0,1)]
+					"select pg_catalog.pg_table_is_visible(:name::regclass) ok",
+					['name'=>$name]
 				);
-				return count($res)>0;
+				return $res[0]->ok;
 			default:
 				throw new RuntimeException('Internal error. Unknown kind of database object: '.$kind);
 		}
