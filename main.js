@@ -17,7 +17,7 @@ $(()=>{
 				if(res.sql!=null){
 					let html=$('#sql').html();
 					$('#sql').html(
-						res.sql.trimLeft().replace(/\n/g,'<br/>')//.replace(/\s/g,'&nbsp;')
+						res.sql.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;')
 						+(html?'<br/>---<br/>':'')
 						+html
 					).slideDown('slow');
