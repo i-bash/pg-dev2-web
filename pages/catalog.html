@@ -1,25 +1,54 @@
 <h3>Catalog</h3>
 
-<div id="catalog" class="list-group"></div>
+<table id="catalog" class="table table">
+	<tr>
+		<th class="col-md-1">#</th>
+		<th class="col-md-6">Name</th>
+		<th class="col-md-1 text-right">Qty</th>
+		<th class="col-md-4">Order</th>
+	</tr>
+</table>
 <script>
 	var populateCatalog=()=>{
 		lib.server(
 			'getCatalog',
 			[],
 			data=>{
-				let list=$('#catalog');
-				list.empty();
+				let table=$('#catalog>tbody');
+				$(table).find('tr:gt(0)').remove();
 				data.forEach(
 					r=>{
-						$('<a/>',{class:'list-group-item clearfix'})
-							.append($('<span/>').html(r.display_name))
-							.appendTo(list)
+						let row=$('<tr/>')
+							.append($('<td/>',{class:'col-md-1'}).html(r.book_id))
+							.append($('<td/>',{class:'col-md-6'}).html(r.display_name))
 						;
+						if(r.onhand_qty!==undefined){
+							row
+								.append($('<td/>',{class:'text-right col-md-1'}).html(r.onhand_qty))
+								.append(
+									$('<td/>',{class:'col-md-4'})
+									.append(
+										$('<form/>',{class:'form-inline row order',action:'orderBook',method:'post'})
+										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',class:'form-control col-md-2'}))
+										.append($('<input/>',{name:'id',type:'hidden',value:r.book_id}))
+										.append($('<button/>',{type:'submit',class:'btn btn-success'}).html('Order'))
+									)
+								)
+							;
+						}
+						row.appendTo(table);
 					}
 				);
 			}
 		);
 	};
+	lib.ajaxForm(
+		'.order',
+		()=>{
+			lib.alert('You have ordered the book(s)');
+			populateCatalog();
+		}
+	);
 
 	lib.clearSql();
 	populateCatalog();

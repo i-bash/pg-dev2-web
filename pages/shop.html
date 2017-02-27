@@ -1,22 +1,59 @@
 <h3>Shop</h3>
+<form id="search" class="form-inline" action="findBooks">
+	<div class="form-group">
+		<label class="sr-only" for="author_name">Author name</label>
+		<input id="author_name" class="form-control" name="author_name" value="%" placeholder="Author name"/>
+	</div>
+	<div class="form-group">
+		<label class="sr-only" for="book_title">Book title</label>
+		<input id="book_title" class="form-control" name="book_title" value="%" placeholder="Book title"/>
+	</div>
+	<div class="form-group checkbox">
+		<input id="in_stock" type="checkbox" value="y" class="form-control" name="in_stock"/>
+		<label for="in_stock">In stock only</label>
+	</div>
+	<button type="submit" class="btn btn-primary">Search</button>
+</form>
+<div id="count"></div>
+<div id="headers" style="display:none;" class="table">
+	<span class="col-md-1">Id</span>
+	<span class="col-md-8">Title</span>
+	<span class="col-md-1">QOH</span>
+	<span class="col-md-2"></span>
+</div>
 <div id="books" class="list-group"></div>
 <script>
-	lib.clearSql();
-	lib.server(
-		'getBooks',
-		[],
+	lib.ajaxForm(
+		'#search',
 		data=>{
+			lib.alert((data.length==0?'No':data.length)+' books found');
+			$('#headers').toggle(data.length>0);
 			let list=$('#books');
 			list.empty();
 			data.forEach(
 				r=>{
+					let v=JSON.parse('['+r.result.substring(1,r.result.length-1)+']');
 					$('<a/>',{class:'list-group-item clearfix'})
-						.append($('<span/>').html(r.title))
-						.append($('<button/>',{'data-id':r.book_id,class:'btn btn-xs btn-info pull-right'}).html('Order'))
+						.append(
+							$('<form/>',{class:'form-inline row buy',action:'buyBook',method:'post'})
+							.append($('<span/>',{class:'col-md-1 text-right'}).html(v[0]))
+							.append($('<span/>',{class:'col-md-8'}).html(v[1]))
+							.append($('<span/>',{class:'col-md-1 text-right'}).html(v[2]))
+							.append($('<input/>',{type:'hidden',name:'id',value:v[0]}))
+							.append($('<button/>',{type:'submit',class:'btn btn-xs btn-success pull-right'+(Number(v[2])==0?' disabled':'')}).html('Buy'))
+						)
 						.appendTo(list)
 					;
 				}
 			);
+		}
+	);
+	lib.ajaxForm(
+		'.buy',
+		data=>{
+			lib.alert('You have bought the book','success');
+			debugger;
+			$('#search').triggerHandler('submit');
 		}
 	);
 </script>

@@ -64,11 +64,20 @@ $(()=>{
 	}
 	
 	//turn form into ajax
-	lib.ajaxForm=(form,callback)=>{
-		form.submit(
-			e=>{
+	lib.ajaxForm=(selector,callback,extraPars=[])=>{
+		$(document).off('submit',selector);
+		$(document).on(
+			'submit',
+			selector,
+			function(e){
+console.info('running handler');
 				e.preventDefault();
-				lib.clearSql();
+				let form=this;
+				//if(!(pars.clearSql==false)){
+					//console.log(pars);
+					console.log('clearing sql: ');
+					lib.clearSql();
+				//}
 				lib.server(
 					$(form).attr('action'),
 					$(form).serialize(),
@@ -80,6 +89,11 @@ $(()=>{
 		);
 	}
 
+	//display alert
+	lib.alert=(message,style='info')=>{
+		$('<div/>',{class:'alert alert-'+style+' fade'}).html(message).appendTo('#alert').addClass('in').delay(2000).slideUp('slow',function(){$(this).remove();});
+	}
+	
 	//select role
 	$('#role').change((e)=>{
 		lib.server('setRole',{'role':$(e.target).val()});

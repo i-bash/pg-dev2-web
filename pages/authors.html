@@ -49,8 +49,7 @@
 		);
 	};
 	$('#first_name,#last_name').on('input change',chkSubmit);
-	lib.ajaxForm(
-		$('#add'),
+	lib.ajaxForm('#add',
 		()=>{
 			$('#collapse1').removeClass('in');
 			$('#add input').val('');
