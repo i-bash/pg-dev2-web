@@ -9,8 +9,14 @@
 				<label class="control-label" for='title'>Title</label>
 				<input class="form-control" id="title" name="title"/>
 			</div>
-			<div id="authors"></div>
-			<button id="addAuthor" type="button">Add author</button>
+			<div class="row form-group">
+				<div class="col-md-1">
+					<button id="addAuthor" type="button" class="btn btn-default" title="Add author">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button>
+				</div>
+				<div id="authors" class="col-md-6"></div>
+			</div>
 			<div class="form-group">
 				<button type="submit" class="btn btn-success disabled" disabled>Add book</button>
 			</div>
@@ -20,79 +26,88 @@
 
 <div id="books" class="list-group"></div>
 <script>
-	var authors=[];
-	var chkSubmit=()=>{
-		let disabled=$('#title').val()==''||$('.author').length==0;
-		$('form#add button[type="submit"]').toggleClass('disabled',disabled).prop('disabled',disabled);
-	};
-	var populateBooks=()=>{
-		lib.server(
-			'getBooks',
-			[],
-			data=>{
-				let list=$('#books');
-				list.empty();
-				data.forEach(
-					r=>{
-						$('<a/>',{class:'list-group-item clearfix'})
-							.append($('<span/>').html(r.display_name))
-							.appendTo(list)
-						;
-					}
-				);
-			}
-		);
-	};
-	var getAuthors=()=>{
-		lib.server(
-			'getAuthors',
-			[],
-			data=>{authors=data;}
-		);
-	}
-	var populateAuthor=(selector)=>{
-		authors.forEach(
-			r=>{
-				$('<option/>',{value:r.author_id}).html(r.display_name).appendTo($(selector));
-			}
-		);
-	}
-	$('#title,.author').on('input change',chkSubmit);
-	lib.ajaxForm(
-		'#add',
-		(data)=>{
-			let id=data[0].result;
-			$('.author').each(
-				(index,node)=>{
-					lib.server('addAuthorship',{book_id:id,author_id:$(node).val(),seq_num:index+1});
+	$(()=>{
+		//functions
+		let authors=[];
+		let chkSubmit=()=>{
+			let disabled=$('#title').val()==''||$('.author').length==0;
+			$('form#add button[type="submit"]').toggleClass('disabled',disabled).prop('disabled',disabled);
+		};
+		let populateBooks=()=>{
+			lib.server(
+				'getBooks',
+				[],
+				data=>{
+					let list=$('#books');
+					list.empty();
+					data.forEach(
+						r=>{
+							$('<a/>',{class:'list-group-item clearfix'})
+								.append($('<span/>').html(r.display_name))
+								.appendTo(list)
+							;
+						}
+					);
 				}
 			);
-			$('#collapse1').removeClass('in');
-			$('#add input').val('');
-			populateBooks();
+		};
+		let getAuthors=()=>{
+			lib.server(
+				'getAuthors',
+				[],
+				data=>{authors=data;}
+			);
 		}
-	);
-	$('#addAuthor').click(
-		()=>{
-			let select=$('<select/>',{class:'author'});
-			populateAuthor(select);
-			$('<div/>')
-			.append(select)
-			.append($('<button/>',{type:'button',class:'delAuthor'}).html('x'))
-			.appendTo('#authors')
-			;
-			chkSubmit();
+		let populateAuthor=(selector)=>{
+			authors.forEach(
+				r=>{
+					$('<option/>',{value:r.author_id}).html(r.display_name).appendTo($(selector));
+				}
+			);
 		}
-	);
-	$('#authors').on(
-		'click',
-		'.delAuthor',
-		(e)=>{
-			$(event.target).parent().remove();
-			chkSubmit();
-		}
-	);
-	lib.clearSql();
-	getAuthors();
-	populateBooks();
+		//form(s)
+		lib.ajaxForm(
+			'#add',
+			(data)=>{
+				let id=data[0].result;
+				$('.author').each(
+					(index,node)=>{
+						lib.server('addAuthorship',{book_id:id,author_id:$(node).val(),seq_num:index+1});
+					}
+				);
+				$('#collapse1').removeClass('in');
+				$('#add input').val('');
+				populateBooks();
+			}
+		);
+		//handlers
+		$('#title,.author').on('input change',chkSubmit);
+		$('#addAuthor').click(
+			()=>{
+				let select=$('<select/>',{class:'author form-control'});
+				populateAuthor(select);
+				$('<div/>',{class:'form-inline'})
+				.append(select)
+				.append(
+					$('<button/>',{type:'button',class:'btn btn-default delAuthor',title:'Remove author'})
+					.append($('<span/>',{class:'glyphicon glyphicon-minus'}))
+				)
+				.appendTo('#authors')
+				;
+				chkSubmit();
+			}
+		);
+		$('#authors').on(
+			'click',
+			'.delAuthor',
+			(e)=>{
+				$(e.target).parent().remove();
+				chkSubmit();
+			}
+		);
+		//init
+		lib.clearSql();
+		getAuthors();
+		populateBooks();
+	});
 </script>

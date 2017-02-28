@@ -41,3 +41,8 @@
 .hidden{
 	display:none;
 }
+
+/* pages */
+#page.books #authors .author{
+	max-width:250px;
+}
