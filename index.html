@@ -25,7 +25,6 @@
 					</div>
 					<div id="page"></div>
 					<div id="alert"></div>
-					<!--script id="page-js"></script-->
 				</div>
 				<div class="col-md-4">
 					<h4>Database</h4>
@@ -43,5 +42,41 @@
 				</div>
 			</div>
 		</div>
+		<script>
+			$(
+				()=>{
+					//select role
+					$('#role').change((e)=>{
+						lib.server(
+							'setRole',
+							{'role':$(e.target).val()},
+							()=>{
+								lib.displayPage($('.btn[data-page].btn-primary').data('page'));
+							}
+						);
+					});
+					//display page
+					$('.btn[data-page]').click(
+						e=>{
+							$('.btn[data-page]').not(e.target).removeClass('btn-primary').addClass('btn-info');
+							$(e.target).removeClass('btn-info').addClass('btn-primary');
+							lib.displayPage($(e.target).data('page'));
+						}
+					);
+					//fill in roles
+					lib.server(
+						'getRoles',
+						{},
+						data=>{
+							let select=$('#role');
+							data.forEach(r=>{
+								$('<option/>').val(r).html(r).appendTo(select);
+							});
+							$('#role').trigger('change');
+						}
+					);
+				}
+			);
+		</script>
 	</body>
 </html>

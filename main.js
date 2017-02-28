@@ -70,7 +70,6 @@ $(()=>{
 			'submit',
 			selector,
 			function(e){
-console.info('running handler');
 				e.preventDefault();
 				let form=this;
 				//if(!(pars.clearSql==false)){
@@ -93,29 +92,5 @@ console.info('running handler');
 	lib.alert=(message,style='info')=>{
 		$('<div/>',{class:'alert alert-'+style+' fade'}).html(message).appendTo('#alert').addClass('in').delay(2000).slideUp('slow',function(){$(this).remove();});
 	}
-	
-	//select role
-	$('#role').change((e)=>{
-		lib.server('setRole',{'role':$(e.target).val()});
-	});
-
-	//display page
-	$('.btn[data-page]').click(
-		e=>{
-			lib.displayPage($(e.target).data('page'));
-		}
-	);
-	//fill in roles
-	lib.server(
-		'getRoles',
-		{},
-		data=>{
-			let select=$('#role');
-			data.forEach(r=>{
-				$('<option/>').val(r).html(r).appendTo(select);
-			});
-			$('#role').trigger('change');
-		}
-	);
 });
 
