@@ -46,7 +46,7 @@ $(()=>{
 		$.ajax('pages/'+page+'.html')
 			.then(
 				html=>{
-					$('#page').hide().html(html).fadeIn();
+					$('#page').hide().html(html).fadeIn().removeClass().addClass(page);
 					//return $.ajax('pages/'+page+'.js');
 				},
 				()=>{$('#page').html('Page "'+page+'" not found');}
