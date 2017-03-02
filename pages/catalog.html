@@ -9,6 +9,7 @@
 	</tr>
 </table>
 <script>
+	//functions
 	var populateCatalog=()=>{
 		lib.server(
 			'getCatalog',
@@ -31,7 +32,7 @@
 										$('<form/>',{class:'form-inline row order',action:'orderBook',method:'post'})
 										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',class:'form-control col-md-2'}))
 										.append($('<input/>',{name:'id',type:'hidden',value:r.book_id}))
-										.append($('<button/>',{type:'submit',class:'btn btn-success'}).html('Order'))
+										.append($('<button/>',{type:'submit',class:'btn btn-success disabled'}).html('Order'))
 									)
 								)
 							;
@@ -42,6 +43,15 @@
 			}
 		);
 	};
+	var isIntegerString=s=>{
+		let integer=Number.parseInt(s);
+		return integer.toString()!==s||integer<=0;
+	}
+	var chkSubmit=event=>{
+		let disabled=isIntegerString($(event.currentTarget).val());
+		$(event.currentTarget).siblings('button').toggleClass('disabled',disabled).prop('disabled',disabled);
+	}
+	//forms
 	lib.ajaxForm(
 		'.order',
 		()=>{
@@ -49,7 +59,13 @@
 			populateCatalog();
 		}
 	);
-
+	//events
+	$('#catalog').on(
+		'input change',
+		'input[name="qty"]',
+		chkSubmit
+	);
+	//init
 	lib.clearSql();
 	populateCatalog();
 </script>
