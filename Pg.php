@@ -1,6 +1,6 @@
 <?php
 class Pg{
-	public $sql;
+	public $sql=[];
 	private $connection=null;
 	
 	/** create database connection
@@ -23,8 +23,8 @@ class Pg{
 				throw new PgObjectMissingException($checkKind,$checkName);
 			}
 		}
-		$this->sql=$sql;
-		$stmt=$this->connection->prepare($this->sql);
+		$this->sql[]=$sql;
+		$stmt=$this->connection->prepare($sql);
 		$pars=array_combine(
 			array_map(
 				function($v){return ':'.$v;},
@@ -46,13 +46,14 @@ class Pg{
 		if(!$this->objectExists('function',$name)){
 			throw new PgObjectMissingException('function',$name);
 		};
-		$this->sql=
+		$sql=
 			'select '.$name.' ('.
 				PHP_EOL.chr(9).
 				implode(','.PHP_EOL.chr(9),array_map(function($parName){return $parName.'=>:'.$parName;},array_keys($params))).
 			PHP_EOL.') result'
 		;
-		$stmt=$this->connection->prepare($this->sql);
+		$this->sql[]=$sql;
+		$stmt=$this->connection->prepare($sql);
 		$types=[
 			'boolean'=>PDO::PARAM_BOOL,
 			'integer'=>PDO::PARAM_INT,
@@ -64,7 +65,7 @@ class Pg{
 				$stmt->bindValue(':'.$parName,$parValue,$types[$type]);
 			}
 			else{
-				throw new Exception('Unknown type of parameter value: '.$type);
+				throw new Exception('Unknown value type for parameter '.$parName.': '.$type);
 			}
 		}
 		$stmt->execute();
