@@ -52,8 +52,8 @@
 		'.buy',
 		data=>{
 			lib.alert('You have bought the book','success');
-			debugger;
-			$('#search').triggerHandler('submit');
+			$('#search').trigger('submit');
 		}
 	);
+	lib.clearSql();
 </script>
