@@ -14,11 +14,18 @@ $(()=>{
 			url:'server.php?action='+action,
 			data:params,
 			success:(res)=>{
+				let separator='<br/>---<br/>';
 				if(res.sql!=null){
 					let html=$('#sql').html();
 					$('#sql').html(
-						res.sql.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;')
-						+(html?'<br/>---<br/>':'')
+						res.sql.map(
+							s=>{
+								return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
+							}
+						)
+						.reverse()
+						.join(separator)
+						+(html?separator:'')
 						+html
 					).slideDown('slow');
 				}
