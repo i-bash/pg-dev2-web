@@ -69,12 +69,14 @@
 		lib.ajaxForm(
 			'#add',
 			(data)=>{
+/*
 				let id=data[0].result;
 				$('.author').each(
 					(index,node)=>{
 						lib.server('addAuthorship',{book_id:id,author_id:$(node).val(),seq_num:index+1});
 					}
 				);
+*/
 				$('#collapse1').removeClass('in');
 				$('#add input').val('');
 				populateBooks();
@@ -84,7 +86,7 @@
 		$('#title,.author').on('input change',chkSubmit);
 		$('#addAuthor').click(
 			()=>{
-				let select=$('<select/>',{class:'author form-control'});
+				let select=$('<select/>',{class:'author form-control',name:'authors[]'});
 				populateAuthor(select);
 				$('<div/>',{class:'form-inline'})
 				.append(select)
