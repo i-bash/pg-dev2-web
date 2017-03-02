@@ -3,11 +3,11 @@ var lib={}
 $(()=>{
 	
 	lib.clearSql=()=>{
-		$('#sql').empty();
+		$('#sql').empty().hide();
 	};
 	
 	lib.server=(action,params,callback)=>{
-		$('#error,#success,#sql').hide();
+		$('#error,#success').hide();
 		$('#loader').show();
 		$.ajax({
 			method:'post',
@@ -15,19 +15,28 @@ $(()=>{
 			data:params,
 			success:(res)=>{
 				let separator='<br/>---<br/>';
-				if(res.sql!=null){
+				if(res.sql.length){
 					let html=$('#sql').html();
-					$('#sql').html(
-						res.sql.map(
-							s=>{
-								return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
+					$('#sql')
+						.fadeOut(
+							'slow',
+							()=>{
+								$('#sql')
+								.html(
+									res.sql.map(
+										s=>{
+											return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
+										}
+									)
+									.reverse()
+									.join(separator)
+									+(html&&res.sql?separator:'')
+									+html
+								)
+								.fadeIn('slow')
 							}
 						)
-						.reverse()
-						.join(separator)
-						+(html?separator:'')
-						+html
-					).slideDown('slow');
+					;
 				}
 				if(res.err===null){
 					if(callback!==undefined){
@@ -79,11 +88,6 @@ $(()=>{
 			function(e){
 				e.preventDefault();
 				let form=this;
-				//if(!(pars.clearSql==false)){
-					//console.log(pars);
-					console.log('clearing sql: ');
-					lib.clearSql();
-				//}
 				lib.server(
 					$(form).attr('action'),
 					$(form).serialize(),
