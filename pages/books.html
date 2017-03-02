@@ -1,6 +1,5 @@
 <h3>Books</h3>
 
-
 <button class="btn btn-link" data-toggle="collapse" data-target="#collapse1">Add book</button>
 <div id="collapse1" class="panel-collapse collapse">
 	<div class="panel-body">
@@ -69,14 +68,6 @@
 		lib.ajaxForm(
 			'#add',
 			(data)=>{
-/*
-				let id=data[0].result;
-				$('.author').each(
-					(index,node)=>{
-						lib.server('addAuthorship',{book_id:id,author_id:$(node).val(),seq_num:index+1});
-					}
-				);
-*/
 				$('#collapse1').removeClass('in');
 				$('#add input').val('');
 				populateBooks();
@@ -103,7 +94,7 @@
 			'click',
 			'.delAuthor',
 			(e)=>{
-				$(e.target).parent().remove();
+				$(e.currentTarget).parent().remove();
 				chkSubmit();
 			}
 		);
