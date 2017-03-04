@@ -1,16 +1,14 @@
 <h3>Магазин</h3>
 <form id="search" class="form-inline panel" action="findBooks">
-	<div class="form-group">
-		<label class="sr-only" for="author_name">Имя автора</label>
-		<input id="author_name" class="form-control" name="author_name" value="%" placeholder="Имя автора"/>
+	<div class="form-group clearfix">
+		<input id="author_name" class="form-control" name="author_name" placeholder="Имя автора"/>
 	</div>
-	<div class="form-group">
-		<label class="sr-only" for="book_title">Название книги</label>
-		<input id="book_title" class="form-control" name="book_title" value="%" placeholder="Название книги"/>
+	<div class="form-group clearfix">
+		<input id="book_title" class="form-control" name="book_title" placeholder="Название книги"/>
 	</div>
-	<div class="form-group checkbox">
+	<div class="form-group checkbox clearfix">
 		<input id="in_stock" type="checkbox" value="y" class="form-control" name="in_stock"/>
-		<label for="in_stock">Есть на складе</label>
+		<label for="in_stock" class="control-label">Есть на складе</label>
 	</div>
 	<button type="submit" class="btn btn-primary">Поиск</button>
 </form>
