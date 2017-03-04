@@ -33,7 +33,7 @@
 			$('form#add button[type="submit"]').toggleClass('disabled',disabled).prop('disabled',disabled);
 		};
 		let populateBooks=()=>{
-			lib.server(
+			return lib.server(
 				'getBooks',
 				[],
 				data=>{
@@ -51,7 +51,7 @@
 			);
 		};
 		let getAuthors=()=>{
-			lib.server(
+			return lib.server(
 				'getAuthors',
 				[],
 				data=>{authors=data;}
@@ -101,7 +101,6 @@
 		);
 		//init
 		lib.clearSql();
-		getAuthors();
-		populateBooks();
+		getAuthors().then(populateBooks);
 	});
 </script>
