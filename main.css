@@ -46,3 +46,7 @@
 #page.books #authors .author{
 	max-width:250px;
 }
+#page.catalog input[name="qty"]{
+	width:70px;
+	margin-right:10px;
+}

@@ -1,13 +1,13 @@
 <h3>Catalog</h3>
 
-<table id="catalog" class="table table">
-	<tr>
-		<th class="col-md-1">#</th>
-		<th class="col-md-6">Name</th>
-		<th class="col-md-1 text-right">Qty</th>
-		<th class="col-md-4">Order</th>
-	</tr>
-</table>
+<div id="catalog" class="list-group">
+	<div class="list-group-item clearfix">
+		<span class="col-sm-1">#</span>
+		<span class="col-sm-7">Name</span>
+		<span class="col-sm-1 text-right">Qty</span>
+		<span class="col-sm-3">Order</span>
+	</div>
+</div>
 <script>
 	//functions
 	var populateCatalog=()=>{
@@ -15,27 +15,30 @@
 			'getCatalog',
 			[],
 			data=>{
-				let table=$('#catalog>tbody');
-				$(table).find('tr:gt(0)').remove();
+				let table=$('#catalog');
+				$(table).children('div:gt(0)').remove();
 				data.forEach(
 					r=>{
-						let row=$('<tr/>')
-							.append($('<td/>',{class:'col-md-1'}).html(r.book_id))
-							.append($('<td/>',{class:'col-md-6'}).html(r.display_name))
+						let row=$('<div/>',{class:'list-group-item clearfix'})
+							.append($('<span/>',{class:'col-sm-1'}).html(r.book_id))
+							.append($('<span/>',{class:'col-sm-7'}).html(r.display_name))
 						;
 						if(r.onhand_qty!==undefined){
 							row
-								.append($('<td/>',{class:'text-right col-md-1'}).html(r.onhand_qty))
+								.append($('<span/>',{class:'text-right col-sm-1'}).html(r.onhand_qty))
 								.append(
-									$('<td/>',{class:'col-md-4'})
+									$('<span/>',{class:'col-sm-3'})
 									.append(
-										$('<form/>',{class:'form-inline row order',action:'orderBook',method:'post'})
-										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',class:'form-control col-md-2'}))
+										$('<form/>',{class:'form-inline order',action:'orderBook',method:'post'})
+										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',placeholder:'Qty',class:'form-control txt-right'}))
 										.append($('<input/>',{name:'id',type:'hidden',value:r.book_id}))
 										.append($('<button/>',{type:'submit',class:'btn btn-success disabled'}).html('Order'))
 									)
 								)
 							;
+						}
+						else{
+							row.append($('<span/>',{class:'col-sm-5'}));
 						}
 						row.appendTo(table);
 					}
