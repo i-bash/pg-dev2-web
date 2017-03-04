@@ -2,10 +2,10 @@
 
 <div id="catalog" class="list-group">
 	<div class="list-group-item clearfix">
-		<span class="col-sm-1">#</span>
-		<span class="col-sm-7">Name</span>
-		<span class="col-sm-1 text-right">Qty</span>
-		<span class="col-sm-3">Order</span>
+		<span class="col-sm-1"><strong>#</strong></span>
+		<span class="col-sm-6"><strong>Название</strong></span>
+		<span class="col-sm-1 text-right"><strong>В наличии</strong></span>
+		<span class="col-sm-4"><strong>Заказ</strong></span>
 	</div>
 </div>
 <script>
@@ -21,18 +21,18 @@
 					r=>{
 						let row=$('<div/>',{class:'list-group-item clearfix'})
 							.append($('<span/>',{class:'col-sm-1'}).html(r.book_id))
-							.append($('<span/>',{class:'col-sm-7'}).html(r.display_name))
+							.append($('<span/>',{class:'col-sm-6'}).html(r.display_name))
 						;
 						if(r.onhand_qty!==undefined){
 							row
 								.append($('<span/>',{class:'text-right col-sm-1'}).html(r.onhand_qty))
 								.append(
-									$('<span/>',{class:'col-sm-3'})
+									$('<span/>',{class:'col-sm-4'})
 									.append(
 										$('<form/>',{class:'form-inline order',action:'orderBook',method:'post'})
-										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',placeholder:'Qty',class:'form-control txt-right'}))
+										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',placeholder:'К-во',class:'form-control txt-right'}))
 										.append($('<input/>',{name:'id',type:'hidden',value:r.book_id}))
-										.append($('<button/>',{type:'submit',class:'btn btn-success disabled'}).html('Order'))
+										.append($('<button/>',{type:'submit',class:'btn btn-success disabled'}).html('Заказать'))
 									)
 								)
 							;
@@ -58,7 +58,7 @@
 	lib.ajaxForm(
 		'.order',
 		()=>{
-			lib.alert('You have ordered the book(s)');
+			lib.alert('Книги заказаны');
 			populateCatalog();
 		}
 	);
