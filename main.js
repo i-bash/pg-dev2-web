@@ -3,6 +3,9 @@ var lib={
 	/**flag
 	 */
 	requestIsRunning:false,
+	/**contents of sql panel
+	 */
+	sql:'',
 
 	/**server action
 	 * @param action - name of server action
@@ -22,25 +25,21 @@ var lib={
 				success:res=>{
 					let separator='<br/>---<br/>';
 					if(res.sql.length){
-						let html=$('#sql').html();
+						lib.sql=
+							res.sql.map(
+								s=>{
+									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
+								}
+							)
+							.reverse()
+							.join(separator)
+							+(lib.sql&&res.sql?separator:'')
+							+lib.sql
+						;
 						$('#sql')
 							.fadeOut(
 								'slow',
-								()=>{
-									$('#sql')
-									.html(
-										res.sql.map(
-											s=>{
-												return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
-											}
-										)
-										.reverse()
-										.join(separator)
-										+(html&&res.sql?separator:'')
-										+html
-									)
-									.fadeIn('slow')
-								}
+								()=>{$('#sql').html(lib.sql).fadeIn('slow');}
 							)
 						;
 					}
@@ -107,7 +106,8 @@ var lib={
 
 	//clear contents of sql panel
 	clearSql: ()=>{
-		$('#sql').empty().hide();
+		lib.sql='';
+		$('#sql').fadeOut('slow',()=>{$('#sql').empty().hide();});
 	}
 
 };
