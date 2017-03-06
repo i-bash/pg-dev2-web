@@ -88,6 +88,7 @@ var lib={
 			function(e){
 				e.preventDefault();
 				let form=this;
+				lib.clearSql();
 				lib.server(
 					$(form).attr('action'),
 					$(form).serialize(),

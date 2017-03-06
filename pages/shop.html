@@ -50,7 +50,7 @@
 		'.buy',
 		data=>{
 			lib.alert('Вы купили книгу','success');
-			$('#search').trigger('submit');
+			lib.server('findBooks',$('#search').serialize());
 		}
 	);
 	lib.clearSql();
