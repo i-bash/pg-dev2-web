@@ -72,7 +72,7 @@
 						data=>{
 							let select=$('#role');
 							data.forEach(r=>{
-								$('<option/>').val(r).html(r).appendTo(select);
+								$('<option/>').val(r).html(r).prop('selected',r=='postgres').appendTo(select);
 							});
 							$('#role').trigger('change');
 						}
