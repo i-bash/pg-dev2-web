@@ -17,13 +17,15 @@ class Pg{
 	 * @param $checkName - name of relation to check for existence
 	 * @return function value
 	 */
-	public function query($sql,$params=[],$checkKind=null,$checkName=null){
+	public function query($sql,$params=[],$checkKind=null,$checkName=null,$displaySql=true){
 		if($checkKind && $checkName){
 			if(!$this->objectExists($checkKind,$checkName)){
 				throw new PgObjectMissingException($checkKind,$checkName);
 			}
 		}
-		$this->sql[]=$sql;
+		if($displaySql){
+			$this->sql[]=$sql;
+		}
 		$stmt=$this->connection->prepare($sql);
 		$pars=array_combine(
 			array_map(
@@ -42,7 +44,7 @@ class Pg{
 	 * @param params - associative array of values for function parameters
 	 * @return function value
 	 */
-	public function execFunction($name, $params){
+	public function execFunction($name, $params, $displaySql=true){
 		if(!$this->objectExists('function',$name)){
 			throw new PgObjectMissingException('function',$name);
 		};
@@ -52,7 +54,9 @@ class Pg{
 				implode(','.PHP_EOL.chr(9),array_map(function($parName){return $parName.'=>:'.$parName;},array_keys($params))).
 			PHP_EOL.') result'
 		;
-		$this->sql[]=$sql;
+		if($displaySql){
+			$this->sql[]=$sql;
+		}
 		$stmt=$this->connection->prepare($sql);
 		$types=[
 			'boolean'=>PDO::PARAM_BOOL,
@@ -82,14 +86,20 @@ class Pg{
 			case 'function':
 				$res=$this->query(
 					"select pg_catalog.pg_function_is_visible(:name::regproc)",
-					['name'=>$name]
+					['name'=>$name],
+					null,
+					null,
+					false
 				);
 				return $res[0];
 			case 'table':
 			case 'view':
 				$res=$this->query(
 					"select pg_catalog.pg_table_is_visible(:name::regclass) ok",
-					['name'=>$name]
+					['name'=>$name],
+					null,
+					null,
+					false
 				);
 				return $res[0]->ok;
 			default:

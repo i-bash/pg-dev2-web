@@ -16,7 +16,7 @@
 			case 'getRoles':
 				$data = array_map(
 					function($r){return $r->rolname;},
-					$pg->query("select rolname from pg_roles order by 1")
+					$pg->query("select rolname from pg_roles order by 1",[],null,null,false)
 				);
 			break;
 			case 'setRole':
