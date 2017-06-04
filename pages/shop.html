@@ -21,36 +21,36 @@
 	</div>
 </div>
 <script>
-	lib.ajaxForm(
-		'#search',
-		data=>{
-			lib.alert(data.length==0?'Книги не найдены':'Найдено книг: '+data.length);
-			$('#headers').toggle(data.length>0);
-			let list=$('#books');
-			list.children('form').remove();
-			data.forEach(
-				r=>{
-					let v=JSON.parse('['+r.result.substring(1,r.result.length-1)+']');
-						$('<form/>',{class:'form buy list-group-item clearfix',action:'buyBook',method:'post'})
-						.append($('<span/>',{class:'col-md-1 text-right'}).html(v[0]))
-						.append($('<span/>',{class:'col-md-8'}).html(v[1]))
-						.append($('<span/>',{class:'col-md-1 text-right'}).html(v[2]))
-						.append(
-							$('<span/>',{class:'col-md-2 text-nowrap'})
-							.append($('<input/>',{type:'hidden',name:'id',value:v[0]}))
-							.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'+(Number(v[2])==0?' disabled':'')}).html('Купить'))
-						)
-						.appendTo(list)
-					;
-				}
-			);
-		}
-	);
+	//display books
+	let findBooks=data=>{
+		lib.alert(data.length==0?'Книги не найдены':'Найдено книг: '+data.length);
+		$('#headers').toggle(data.length>0);
+		let list=$('#books');
+		list.children('form').remove();
+		data.forEach(
+			r=>{
+				let v=JSON.parse('['+r.result.substring(1,r.result.length-1)+']');
+					$('<form/>',{class:'form buy list-group-item clearfix',action:'buyBook',method:'post'})
+					.append($('<span/>',{class:'col-md-1 text-right'}).html(v[0]))
+					.append($('<span/>',{class:'col-md-8'}).html(v[1]))
+					.append($('<span/>',{class:'col-md-1 text-right'}).html(v[2]))
+					.append(
+						$('<span/>',{class:'col-md-2 text-nowrap'})
+						.append($('<input/>',{type:'hidden',name:'id',value:v[0]}))
+						.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'+(Number(v[2])==0?' disabled':'')}).html('Купить'))
+					)
+					.appendTo(list)
+				;
+			}
+		);
+	}
+
+	lib.ajaxForm('#search',findBooks);
 	lib.ajaxForm(
 		'.buy',
 		data=>{
 			lib.alert('Вы купили книгу','success');
-			lib.server('findBooks',$('#search').serialize());
+			lib.server('findBooks',$('#search').serialize(),findBooks);
 		}
 	);
 	lib.clearSql();
