@@ -43,6 +43,18 @@ var lib={
 							)
 						;
 					}
+					if(res.notice){
+						let notice=
+							res.notice.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
+						;
+						$('#notice')
+							.fadeOut(
+								'slow',
+								()=>{$('#notice').html(notice).fadeIn('slow');}
+							)
+						;
+					}
+
 					lib.requestIsRunning=false;
 					if(res.err===null){
 						if(callback!==undefined){

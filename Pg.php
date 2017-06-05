@@ -5,105 +5,138 @@ class Pg{
 	
 	/** create database connection
 	 */
-	public function connect($role=null){
-		$this->connection = new PDO(DSN,$role,$role); //assume password is the same as role name
-		$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	public function connect($role='postgres'){
+		$connectParams=DATA_SOURCE;
+		$connectParams['user']=$role;
+		$connectParams['password']=$role; //assume password to be the same as user name
+		$connectString=implode(
+			' ',
+			array_map(
+				function($key,$value){
+					return $key.'=\''.addslashes($value).'\'';
+				},
+				array_keys($connectParams),
+				$connectParams
+			)
+		);
+		$this->connection = pg_connect($connectString);
+	}
+	/** close database connection
+	 */
+	public function close(){
+		if($this->connection){
+			pg_close($this->connection);
+		}
 	}
 	
 	/** SQL select
 	 * @param sql
-	 * @param params - associative array of values for parameters
-	 * @param $checkKind - type of relation to check for existence (table, view, function)
-	 * @param $checkName - name of relation to check for existence
+	 * @param params - integer-indexed array of values for parameters
 	 * @return function value
 	 */
-	public function query($sql,$params=[],$checkKind=null,$checkName=null,$displaySql=true){
-		if($checkKind && $checkName){
-			if(!$this->objectExists($checkKind,$checkName)){
-				throw new PgObjectMissingException($checkKind,$checkName);
-			}
-		}
+	public function query($sql,$params=[],$displaySql=true){
 		if($displaySql){
 			$this->sql[]=$sql;
 		}
-		$stmt=$this->connection->prepare($sql);
-		$pars=array_combine(
+		pg_send_query_params(
+			$this->connection,
+			$sql,
 			array_map(
-				function($v){return ':'.$v;},
-				array_keys($params)
-			),
-			array_values($params)
+				function($v){
+					switch(gettype($v)){
+						case 'boolean':
+							return $v?'true':'false';
+						default:
+							return $v;
+					}
+				},
+				$params
+			)
 		);
-		$stmt->execute($pars);
-		$res=$stmt->fetchAll(PDO::FETCH_ASSOC);
-		$stmt->closeCursor();
-		return array_map(function($r){return (object)$r;},$res);
+		$result=pg_get_result($this->connection);
+		if($notice=pg_last_notice($this->connection)){
+			$this->notice=$notice;
+		}
+		if(pg_result_error($result)===''){
+			$rows=pg_fetch_all($result);
+			if($rows===false){
+				$res=[];
+			}
+			else{
+				$res=array_map(function($r){return (object)$r;},(array)$rows);
+			}
+			pg_free_result($result);
+			return $res;
+		}
+		else{
+			$error=(object)[];
+			foreach(
+				[
+					'severity'=>PGSQL_DIAG_SEVERITY,
+					'code'=>PGSQL_DIAG_SQLSTATE,
+					'message'=>PGSQL_DIAG_MESSAGE_PRIMARY,
+					'detail'=>PGSQL_DIAG_MESSAGE_DETAIL, 
+					'hint'=>PGSQL_DIAG_MESSAGE_HINT,
+					'position'=>PGSQL_DIAG_STATEMENT_POSITION
+				]
+				as $fld=>$num
+			){
+				$error->{$fld}=pg_result_error_field($result,$num);
+			}
+			pg_free_result($result);
+			throw new PgException($error);
+		}
 	}
 	/** execute stored function
 	 * @param name
 	 * @param params - associative array of values for function parameters
 	 * @return function value
 	 */
-	public function execFunction($name, $params=[], $displaySql=true){
-		if(!$this->objectExists('function',$name)){
-			throw new PgObjectMissingException('function',$name);
-		};
+	public function execFunction($name, $params=[]){
+		$this->checkFunctionExistence($name);
 		$sql=
-			'select '.$name.' ('.
-				PHP_EOL.chr(9).
-				implode(','.PHP_EOL.chr(9),array_map(function($parName){return $parName.'=>:'.$parName;},array_keys($params))).
-			PHP_EOL.') result'
+			'select '.$name.'('.
+				(
+					count($params)?
+						PHP_EOL.chr(9).
+						implode(','.PHP_EOL.chr(9),array_map(function($parName,$parNum){return $parName.'=>$'.($parNum+1);},array_keys($params),array_keys(array_keys($params)))).
+						PHP_EOL
+					:''
+				).
+			') result'
 		;
-		if($displaySql){
-			$this->sql[]=$sql;
-		}
-		$stmt=$this->connection->prepare($sql);
-		$types=[
-			'boolean'=>PDO::PARAM_BOOL,
-			'integer'=>PDO::PARAM_INT,
-			'string'=>PDO::PARAM_STR
-		];
-		foreach($params as $parName=>$parValue){
-			$type=gettype($parValue);
-			if(array_key_exists($type,$types)){
-				$stmt->bindValue(':'.$parName,$parValue,$types[$type]);
-			}
-			else{
-				throw new Exception('Unknown value type for parameter '.$parName.': '.$type);
-			}
-		}
-		$stmt->execute();
-		$res=$stmt->fetchAll(PDO::FETCH_ASSOC);
-		$stmt->closeCursor();
-		return $res;
+		return $this->query($sql,array_values($params),true);
 	}
 	/**
-	 * @param kind - table, view, function
 	 * @param name - relation name
 	 */
-	private function objectExists($kind,$name){
-		switch($kind){
-			case 'function':
-				$res=$this->query(
-					"select pg_catalog.pg_function_is_visible(:name::regproc)",
-					['name'=>$name],
-					null,
-					null,
-					false
-				);
-				return $res[0];
-			case 'table':
-			case 'view':
-				$res=$this->query(
-					"select pg_catalog.pg_table_is_visible(:name::regclass) ok",
-					['name'=>$name],
-					null,
-					null,
-					false
-				);
-				return $res[0]->ok;
-			default:
-				throw new RuntimeException('Internal error. Unknown kind of database object: '.$kind);
+	public function checkRelationExistence($name){
+		try{
+			$res=$this->query(
+				"select pg_catalog.pg_table_is_visible($1::regclass) ok",
+				[$name],
+				false
+			);
+			return $res[0]->ok=='t';
+		}
+		catch(PgException $e){
+			throw new PgObjectMissingException('relation',$name);
+		}
+	}
+	/**
+	 * @param name - function name
+	 */
+	public function checkFunctionExistence($name){
+		try{
+			$res=$this->query(
+				"select pg_catalog.pg_function_is_visible($1::regproc) ok",
+				[$name],
+				false
+			);
+			return $res[0]->ok=='t';
+		}
+		catch(PgException $e){
+			throw new PgObjectMissingException($kind,$name);
 		}
 	}
 }

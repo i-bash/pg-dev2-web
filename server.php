@@ -4,6 +4,7 @@
     session_start();
     require 'config.php';
     require 'Pg.php';
+    require 'PgException.php';
     require 'PgObjectMissingException.php';
     
     $action=$_GET['action'];
@@ -44,9 +45,11 @@
 				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
 			break;
 			case 'orderBook':
-				$data = $pg->query("update catalog_v set onhand_qty = onhand_qty + :qty where book_id = :id",$_POST);
+				$data = $pg->query("update catalog_v set onhand_qty = onhand_qty + $1 where book_id = $2",[$_POST['qty'],$_POST['id']]);
 			break;
 			case 'findBooks':
+				$_POST['author_name']=trim($_POST['author_name'])===''?null:$_POST['author_name'];
+				$_POST['book_title']=trim($_POST['book_title'])===''?null:$_POST['book_title'];
 				$_POST['in_stock']=array_key_exists('in_stock',$_POST);
 				$data = $pg->execFunction("get_catalog",$_POST);
 			break;
@@ -64,25 +67,16 @@
 			$err=new stdClass();
 			$err->code = $e->getCode();
 			$err->message = $e->getMessage();
-			if($e instanceof PDOException){
-				if($e->errorInfo){
-					$err->code=$e->errorInfo[1];
-					$err->message=$e->errorInfo[2];
-				}
-				elseif(strstr($e->getMessage(), 'SQLSTATE[')){
-					preg_match('/^SQLSTATE\[\w+\]\s*\[(\d+)\]\s*(.*)$/ms', $e->getMessage(), $matches);
-					$err->code = $matches[1];
-					$err->message = $matches[2];
-				}
-			}
-			elseif($e instanceof PgObjectMissingException){
-			}
+		}
+		finally{
+			$pg->close();
 		}
 		
 		header('content-type:application/json');
 		echo json_encode([
 			'data'=>$data??null,
 			'sql'=>$pg->sql,
-			'err'=>$err??null
+			'err'=>$err??null,
+			'notice'=>$pg->notice??null
 		]);
 ?>

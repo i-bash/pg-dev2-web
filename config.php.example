@@ -1,2 +1,2 @@
 <?php
-const DSN = 'pgsql:host=server3;port=5432;dbname=bookstore;';
+const DATA_SOURCE = ['host'=>'server3','dbname'=>'bookstore'];

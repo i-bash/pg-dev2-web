@@ -19,7 +19,7 @@
     100% { transform: rotate(360deg); }
 }
 
-#error,#success,#sql{
+#error,#notice,#success,#sql{
 	display:none;
 }
 
