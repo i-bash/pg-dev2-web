@@ -44,7 +44,7 @@ class Pg{
 	 * @param params - associative array of values for function parameters
 	 * @return function value
 	 */
-	public function execFunction($name, $params, $displaySql=true){
+	public function execFunction($name, $params=[], $displaySql=true){
 		if(!$this->objectExists('function',$name)){
 			throw new PgObjectMissingException('function',$name);
 		};

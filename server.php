@@ -51,7 +51,10 @@
 				$data = $pg->execFunction("get_catalog",$_POST);
 			break;
 			case 'buyBook':
-				$data=$pg->query("update catalog_v set onhand_qty = onhand_qty-1 where book_id=:id",$_POST,'view','catalog_v');
+				$data=$pg->execFunction("buy_book",$_POST);
+				break;
+			case 'test':
+				$data = $pg->execFunction("test");
 				break;
 			default:
 				throw new RuntimeException('Internal error. Unknown server action: '.$action);
