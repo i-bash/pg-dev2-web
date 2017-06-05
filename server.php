@@ -32,22 +32,13 @@
 				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
 			break;
 			case 'addBook':
-				$pg->query("begin");
-				try{
-					$res = $pg->execFunction("add_book",['title'=>$_POST['title']]);
-					foreach($_POST['authors'] as $i=>$a){
-						$pg->execFunction("add_authorship",["book_id"=>$res[0]['result'],"author_id"=>$a,"seq_num"=>$i+1]);
-					}
-					$pg->query("commit");
-					$data="ok";
-				}
-				catch(Exception $e){
-					$pg->query("rollback");
-					throw $e;
-				}
-			break;
-			case 'addAuthorship':
-				$data = $pg->execFunction("add_authorship",$_POST);
+				$pg->execFunction(
+					"add_book",
+					[
+						'title'=>$_POST['title'],
+						'authors'=>'{'.implode(',',$_POST['authors']).'}'
+					]
+				);
 			break;
 			case 'getCatalog':
 				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
