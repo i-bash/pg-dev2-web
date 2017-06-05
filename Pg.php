@@ -136,7 +136,7 @@ class Pg{
 			return $res[0]->ok=='t';
 		}
 		catch(PgException $e){
-			throw new PgObjectMissingException($kind,$name);
+			throw new PgObjectMissingException('function',$name);
 		}
 	}
 }
