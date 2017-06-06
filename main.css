@@ -36,7 +36,7 @@ html{
 }
 
 #main>div:nth-child(2){
-	background-color:#eee;
+	background-color:#f8f8f8;
 	padding-top:10px;
 	padding-bottom:5px;
 }
@@ -57,4 +57,9 @@ html{
 #page.catalog input[name="qty"]{
 	width:70px;
 	margin-right:10px;
+}
+
+.alert{
+	padding:5px;
+	margin-bottom:10px;
 }

@@ -33,7 +33,7 @@
 				$data = $pg->query("select * from catalog_v",[]);
 			break;
 			case 'addBook':
-				$pg->execFunction(
+				$data = $pg->execFunction(
 					"add_book",
 					[
 						'title'=>$_POST['title'],
@@ -77,6 +77,7 @@
 			'data'=>$data??null,
 			'sql'=>$pg->sql,
 			'err'=>$err??null,
-			'notice'=>$pg->notice??null
+			'notice'=>$pg->notice??null,
+			'info'=>$info??null
 		]);
 ?>

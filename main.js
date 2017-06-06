@@ -19,71 +19,51 @@ var lib={
 	 */
 	server: (action,params,callback)=>{
 		if(!lib.requestIsRunning){
-			$('#loader').show();
 			lib.requestIsRunning=true;
-			return $.ajax({
-				method:'post',
-				url:'server.php?action='+action,
-				data:params,
-				success:res=>{
-					if(res.sql.length){
-						lib.sql=lib.addContents(
-							lib.sql,
-							res.sql.map(
+			$('#loader').show();
+			let actionPane=$('#action');
+			return actionPane.promise().then(
+				()=>$.ajax({
+					method:'post',
+					url:'server.php?action='+action,
+					data:params,
+					success:res=>{
+						if(res.sql.length){
+							let sqlText=res.sql.map(
 								s=>{
-									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;');
+									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,'&nbsp;');
 								}
-							)
-							.reverse()
-							.join(lib.separator)
-						);
-						$('#sql')
-							.fadeOut(
-								'slow',
-								()=>{$('#sql').html(lib.sql).fadeIn('slow');}
-							)
-						;
-					}
-					if(res.notice){
-						$('#notice')
-							.fadeOut(
-								'slow',
-								()=>{
-									$('#notice').html(
-										lib.addContents(
-											$('#notice').html(),
-											res.notice.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;')
-										)
-									).fadeIn('slow');
-								}
-							)
-						;
-					}
-
-					lib.requestIsRunning=false;
-					if(res.err===null){
-						if(callback!==undefined){
-							callback(res.data);
+							).reverse().join(lib.separator);
+							$('<div/>',{class:'alert alert-info'}).html(sqlText).appendTo(actionPane);
 						}
+						if(res.notice){
+							$('<p/>',{class:'alert alert-warning'}).html(res.notice).appendTo(actionPane);
+						}
+						if(res.info){
+							$('<p/>',{class:'alert alert-success'}).html(res.info).appendTo(actionPane);
+						}
+						lib.requestIsRunning=false;
+						if(res.err===null){
+							if(callback!==undefined){
+								callback(res.data);
+							}
+						}
+						else{
+							$('<p/>',{class:'alert alert-danger'}).html(res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')).appendTo(actionPane);
+						}
+					},
+					error:e=>{
+						lib.requestIsRunning=false;
+						alert('Unexpected server error');
+						console.error(e);
+					},
+					complete:()=>{
+						$('#loader').fadeOut('slow');
+						$(actionPane).children().last().css('margin-bottom','25px');
+						actionPane.slideDown('slow');
 					}
-					else{
-						$('#error').html(
-							lib.addContents(
-								$('#error').html(),
-								res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')
-							)
-						).slideDown('slow');
-					}
-				},
-				error:e=>{
-					lib.requestIsRunning=false;
-					alert('Unexpected server error');
-					console.error(e);
-				},
-				complete:()=>{
-					$('#loader').fadeOut('slow');
-				}
-			});
+				})
+			);
 		}
 	},
 
@@ -133,8 +113,6 @@ var lib={
 
 	//clear contents of sql, success, error, notice panels
 	clearPanes: ()=>{
-		lib.sql='';
-		$('#error,#success,#notice').hide().empty();
-		$('#sql').fadeOut('slow',()=>{$('#sql').empty().hide();});
+		$('#action').fadeOut('slow',()=>{$('#action').empty();});
 	}
 };
