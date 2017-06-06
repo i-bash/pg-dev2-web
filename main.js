@@ -81,6 +81,7 @@ var lib={
 
 	//display app page
 	displayPage: page=>{
+		$('#error,#success').hide();
 		$.ajax('pages/'+page+'.html')
 			.then(
 				html=>{
