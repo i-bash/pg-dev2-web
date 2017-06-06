@@ -30,7 +30,7 @@
 										$('<form/>',{class:'form-inline order',action:'orderBook',method:'post'})
 										.append($('<input/>',{name:'qty',type:'number',min:'1',step:'1',placeholder:'К-во',class:'form-control txt-right'}))
 										.append($('<input/>',{name:'id',type:'hidden',value:r.book_id}))
-										.append($('<button/>',{type:'submit',class:'btn btn-success disabled'}).html('Заказать'))
+										.append($('<button/>',{type:'submit',class:'btn btn-success'}).html('Заказать').prop('disabled',true))
 									)
 								)
 							;
@@ -50,7 +50,7 @@
 	}
 	var chkSubmit=event=>{
 		let disabled=isIntegerString($(event.currentTarget).val());
-		$(event.currentTarget).siblings('button').toggleClass('disabled',disabled).prop('disabled',disabled);
+		$(event.currentTarget).siblings('button').prop('disabled',disabled);
 	}
 	//forms
 	lib.ajaxForm(
