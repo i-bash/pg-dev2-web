@@ -14,9 +14,8 @@
 </form>
 <div id="books" class="list-group">
 	<div id="headers" style="display:none;" class="list-group-item clearfix">
-		<span class="col-md-1"><strong>№</strong></span>
 		<span class="col-md-8"><strong>Название</strong></span>
-		<span class="col-md-1 text-nowrap"><strong>Наличие</strong></span>
+		<span class="col-md-2 text-right"><strong>Наличие</strong></span>
 		<span class="col-md-2"></span>
 	</div>
 </div>
@@ -32,9 +31,8 @@
 				r=>{
 					let v=JSON.parse('['+r.result.substring(1,r.result.length-1)+']');
 						$('<form/>',{class:'form buy list-group-item clearfix',action:'buyBook',method:'post'})
-						.append($('<span/>',{class:'col-md-1 text-right'}).html(v[0]))
 						.append($('<span/>',{class:'col-md-8'}).html(v[1]))
-						.append($('<span/>',{class:'col-md-1 text-right'}).html(v[2]))
+						.append($('<span/>',{class:'col-md-2 text-right'}).html(v[2]))
 						.append(
 							$('<span/>',{class:'col-md-2 text-nowrap'})
 							.append($('<input/>',{type:'hidden',name:'book_id',value:v[0]}))
