@@ -93,7 +93,7 @@ class Pg{
 	 * @return function value
 	 */
 	public function execFunction($name, $params=[]){
-		$this->checkFunctionExistence($name);
+		//$this->checkFunctionExistence($name);
 		$sql=
 			'select '.$name.'('.
 				(

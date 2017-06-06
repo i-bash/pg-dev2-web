@@ -1,6 +1,6 @@
 <h3>Книги</h3>
 
-<button class="btn btn-link" data-toggle="collapse" data-target="#collapse1">Добавить книгу</button>
+<button id="addBook" disabled class="btn btn-link" data-toggle="collapse" data-target="#collapse1">Добавить книгу</button>
 <div id="collapse1" class="panel-collapse collapse">
 	<div class="panel-body">
 		<form id="add" method="post" action="addBook">
@@ -54,7 +54,10 @@
 			return lib.server(
 				'getAuthors',
 				[],
-				data=>{authors=data;}
+				data=>{
+					$('#addBook').prop('disabled',false);
+					authors=data;
+				}
 			);
 		}
 		let populateAuthor=(selector)=>{
@@ -100,7 +103,6 @@
 			}
 		);
 		//init
-		lib.clearSql();
 		getAuthors().then(populateBooks);
 	});
 </script>
