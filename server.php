@@ -17,20 +17,20 @@
 			case 'getRoles':
 				$data = array_map(
 					function($r){return $r->usename;},
-					$pg->query("select usename from pg_user order by 1",[],null,null,false)
+					$pg->query("select usename from pg_user order by 1",[],false)
 				);
 			break;
 			case 'setRole':
 				$_SESSION['role']=$params['role'];
 			break;
 			case 'getAuthors':
-				$data = $pg->query("select * from authors_v",[],'view','authors_v');
+				$data = $pg->query("select * from authors_v",[]);
 			break;
 			case 'addAuthor':
 				$data = $pg->execFunction("add_author",$_POST);
 			break;
 			case 'getBooks':
-				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
+				$data = $pg->query("select * from catalog_v",[]);
 			break;
 			case 'addBook':
 				$pg->execFunction(
@@ -42,7 +42,7 @@
 				);
 			break;
 			case 'getCatalog':
-				$data = $pg->query("select * from catalog_v",[],'view','catalog_v');
+				$data = $pg->query("select * from catalog_v",[]);
 			break;
 			case 'orderBook':
 				$data = $pg->query("update catalog_v set onhand_qty = onhand_qty + $1 where book_id = $2",[$_POST['qty'],$_POST['id']]);
