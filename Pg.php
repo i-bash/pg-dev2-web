@@ -107,36 +107,4 @@ class Pg{
 		;
 		return $this->query($sql,array_values($params),true);
 	}
-	/**
-	 * @param name - relation name
-	 */
-	public function checkRelationExistence($name){
-		try{
-			$res=$this->query(
-				"select pg_catalog.pg_table_is_visible($1::regclass) ok",
-				[$name],
-				false
-			);
-			return $res[0]->ok=='t';
-		}
-		catch(PgException $e){
-			throw new PgObjectMissingException('relation',$name);
-		}
-	}
-	/**
-	 * @param name - function name
-	 */
-	public function checkFunctionExistence($name){
-		try{
-			$res=$this->query(
-				"select pg_catalog.pg_function_is_visible($1::regproc) ok",
-				[$name],
-				false
-			);
-			return $res[0]->ok=='t';
-		}
-		catch(PgException $e){
-			throw new PgObjectMissingException('function',$name);
-		}
-	}
 }

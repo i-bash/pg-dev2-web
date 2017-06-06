@@ -1,18 +1,19 @@
 <?php
-    error_reporting(E_ALL);
-    ini_set('display_errors',true);
-    session_start();
-    require 'config.php';
-    require 'Pg.php';
-    require 'PgException.php';
-    require 'PgObjectMissingException.php';
-    
-    $action=$_GET['action'];
-    $params=$_POST??[];
-    $pg=new Pg();
-    try{
-			$pg->connect(in_array($action,['getRoles','setRole'])?'postgres':($_SESSION['role']??'postgres'));
+		error_reporting(E_ALL);
+		ini_set('display_errors',true);
+		session_start();
+		require 'config.php';
+		require 'Pg.php';
+		require 'PgException.php';
+		require 'PgCheckObject.php';
 
+		$action=$_GET['action'];
+		$params=$_POST??[];
+		$pg=new Pg();
+		try{
+			$pg->connect(in_array($action,['getRoles','setRole'])?'postgres':($_SESSION['role']??'postgres'));
+			
+			$info=PgCheckObject::create($pg)->checkObject($action);
 			switch($action){
 			case 'getRoles':
 				$data = array_map(
@@ -41,9 +42,6 @@
 					]
 				);
 			break;
-			case 'getCatalog':
-				$data = $pg->query("select * from catalog_v",[]);
-			break;
 			case 'orderBook':
 				$data = $pg->query("update catalog_v set onhand_qty = onhand_qty + $1 where book_id = $2",[$_POST['qty'],$_POST['id']]);
 			break;
@@ -55,9 +53,6 @@
 			break;
 			case 'buyBook':
 				$data=$pg->execFunction("buy_book",$_POST);
-				break;
-			case 'test':
-				$data = $pg->execFunction("test");
 				break;
 			default:
 				throw new RuntimeException('Internal error. Unknown server action: '.$action);
