@@ -1,6 +1,18 @@
 <?php
+		//config error processing and reporting
 		error_reporting(E_ALL);
 		ini_set('display_errors',true);
+		set_error_handler(
+			function ($errlevel,$errmessage,$errfile,$errline,$errcontext=null,$trace=null){
+				if($errlevel&error_reporting()){
+					throw new ErrorException($errmessage,E_USER_ERROR,1,$errfile,$errline);
+				}
+				else{
+					return;
+				}
+			}
+		);
+		
 		session_start();
 		require 'config.php';
 		require 'Pg.php';

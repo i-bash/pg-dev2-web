@@ -19,7 +19,7 @@ class Pg{
 				$connectParams
 			)
 		);
-		$this->connection = pg_connect($connectString);
+		$this->connection=pg_connect($connectString);
 	}
 	/** close database connection
 	 */
