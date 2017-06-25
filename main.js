@@ -31,7 +31,7 @@ var lib={
 						if(res.sql.length){
 							let sqlText=res.sql.map(
 								s=>{
-									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,'&nbsp;');
+									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,' ');
 								}
 							).reverse().join(lib.separator);
 							$('<div/>',{class:'alert alert-info'}).html(sqlText).appendTo(actionPane);

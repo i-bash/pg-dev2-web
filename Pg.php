@@ -97,9 +97,8 @@ class Pg{
 	 * @return function value
 	 */
 	public function execFunction($name, $params=[]){
-		//$this->checkFunctionExistence($name);
 		$sql=
-			'select '.$name.'('.
+			'select '.$name.' ('.
 				(
 					count($params)?
 						PHP_EOL.chr(9).
