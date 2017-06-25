@@ -39,7 +39,7 @@
 				data=>{
 					let list=$('#books');
 					list.empty();
-					data.forEach(
+					data.rows.forEach(
 						r=>{
 							$('<a/>',{class:'list-group-item clearfix'})
 								.append($('<span/>').html(r.display_name))
@@ -56,7 +56,7 @@
 				[],
 				data=>{
 					$('#addBook').prop('disabled',false);
-					authors=data;
+					authors=data.rows;
 				}
 			);
 		}

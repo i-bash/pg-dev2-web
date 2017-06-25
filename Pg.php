@@ -58,15 +58,19 @@ class Pg{
 			$this->notice=$notice;
 		}
 		if(pg_result_error($result)===''){
+			$cols=array_map(
+				function($r) use($result){return pg_field_name($result,$r);},
+				pg_num_fields($result)?range(0,pg_num_fields($result)-1):[]
+			);
 			$rows=pg_fetch_all($result);
-			if($rows===false){
-				$res=[];
+			if(pg_num_rows($result)===0){
+				$rows=[];
 			}
 			else{
-				$res=array_map(function($r){return (object)$r;},(array)$rows);
+				$rows=array_map(function($r){return (object)$r;},(array)$rows);
 			}
 			pg_free_result($result);
-			return $res;
+			return (object)['columns'=>$cols,'rows'=>$rows];
 		}
 		else{
 			$error=(object)[];
@@ -105,6 +109,6 @@ class Pg{
 				).
 			') result'
 		;
-		return $this->query($sql,array_values($params),true);
+		return $this->query($sql,array_values($params),true)->rows;
 	}
 }

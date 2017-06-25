@@ -39,9 +39,11 @@ var lib={
 						if(res.notice){
 							$('<p/>',{class:'alert alert-warning'}).html(res.notice).appendTo(actionPane);
 						}
-						if(res.info){
-							$('<p/>',{class:'alert alert-success'}).html(res.info).appendTo(actionPane);
-						}
+						res.info.forEach(
+							info=>{
+								$('<p/>',{class:'alert alert-success'}).html(info).appendTo(actionPane);
+							}
+						);
 						lib.requestIsRunning=false;
 						if(res.err===null){
 							if(callback!==undefined){

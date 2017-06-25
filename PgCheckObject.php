@@ -1,6 +1,6 @@
 <?php
 class PgCheckObject{
-	private static $checks=[
+	private static $objectChecks=[
 		"getAuthors"=>[
 			'type'=>'relation',
 			'name'=>'authors_v',
@@ -9,6 +9,7 @@ class PgCheckObject{
 		"addAuthor"=>[
 			'type'=>'function',
 			'name'=>'add_author',
+			'arguments'=>['text','text','text'],
 			'message'=>'Функция для добавления автора будет создана в теме 14 "Выполнение запросов"'
 		],
 		"getBooks"=>[
@@ -19,6 +20,7 @@ class PgCheckObject{
 		"addBook"=>[
 			'type'=>'function',
 			'name'=>'add_book',
+			'arguments'=>['text','integer[]'],
 			'message'=>'Функция для добавления книги будет создана в теме 17 "Массивы"'
 		],
 		"orderBook"=>[
@@ -30,45 +32,41 @@ class PgCheckObject{
 		"findBooks"=>[
 			'type'=>'function',
 			'name'=>'get_catalog',
+			'arguments'=>['text','text','boolean'],
 			'message'=>'Функция для поиска книг будет создана в теме 11 "Составные типы и табличные функции"'
 		],
 		"buyBook"=>[
 			'type'=>'function',
 			'name'=>'buy_book',
+			'arguments'=>['integer'],
 			'message'=>'Функция для покупки книги будет создана в теме 14 "Выполнение запросов"'
+		],
+	];
+	private static $columnChecks=[
+		"getBooks"=>[
+			'column'=>'onhand_qty',
+			'message'=>'Столбец наличного количества будет добавлен в теме 11 "Составные типы и табличные функции"'
+		],
+		"findBooks"=>[
+			'column'=>'onhand_qty',
+			'message'=>'Столбец наличного количества будет добавлен в теме 11 "Составные типы и табличные функции"'
 		],
 	];
 	
 	private $pg; //db connection
+	private $objectCheck; //current object check
+	private $columnCheck; //current column check
 	
-	function __construct(Pg $pg){
+	function __construct(Pg $pg, String $action){
 		$this->pg=$pg;
+		$this->objectCheck=self::$objectChecks[$action]??null;
+		$this->columnCheck=self::$columnChecks[$action]??null;
 	}
 	
-	static function create(Pg $pg){
-		return new self($pg);
+	static function create(Pg $pg, String $action){
+		return new self($pg,$action);
 	}
 	
-	public function checkObject($action){
-		$messages=[];
-		if($check=self::$checks[$action]??false){
-			$check=(object)$check;
-			$exists=true;
-			switch($check->type){
-				case 'function':
-					$exists=$this->checkFunctionExistence($check->name);
-					break;
-				case 'trigger':
-					$exists=$this->checkTriggerExistence($check->relation,$check->tgtype);
-					break;
-				case 'relation':
-					$exists=$this->checkRelationExistence($check->name);
-					break;
-			}
-
-			return $exists?'':$check->message;
-		}
-	}
 	/**
 	 * @param name - relation name
 	 */
@@ -79,7 +77,7 @@ class PgCheckObject{
 				[$name],
 				false
 			);
-			return $res[0]->ok=='t';
+			return $res->rows[0]->ok=='t';
 		}
 		catch(PgException $e){
 			return false;
@@ -88,14 +86,14 @@ class PgCheckObject{
 	/**
 	 * @param name - function name
 	 */
-	public function checkFunctionExistence($name){
+	public function checkFunctionExistence($name, Array $parTypes=[]){
 		try{
 			$res=$this->pg->query(
-				"select pg_catalog.pg_function_is_visible($1::regproc) ok",
-				[$name],
+				"select pg_catalog.pg_function_is_visible($1::regprocedure) ok",
+				[$name."(".implode(',',$parTypes).")"],
 				false
 			);
-			return $res[0]->ok=='t';
+			return $res->rows[0]->ok=='t';
 		}
 		catch(PgException $e){
 			return false;
@@ -112,15 +110,48 @@ class PgCheckObject{
 				from pg_trigger
 				where tgrelid=$1::regclass
 				  and tgtype=$2
-				  and tgattr={}
+				  and tgattr::text=''
 				",
 				[$relation,$tgtype],
 				false
 			);
-			return count($res)==1;
+			return count($res->rows)==1;
 		}
 		catch(PgException $e){
 			return false;
 		}
+	}
+	/** check if object exists
+	 * @return message if object does not exist, '' otherwise
+	 */
+	public function checkObject(){
+		if($this->objectCheck){
+			$check=(object)$this->objectCheck;
+			$exists=true;
+			switch($check->type){
+				case 'function':
+					$exists=$this->checkFunctionExistence($check->name,$check->arguments??[]);
+					break;
+				case 'trigger':
+					$exists=$this->checkTriggerExistence($check->relation,$check->tgtype);
+					break;
+				case 'relation':
+					$exists=$this->checkRelationExistence($check->name);
+					break;
+			}
+			return $exists?'':$check->message;
+		}
+		return '';
+	}
+	/** check if column exists
+	 * @param data (object with 'columns' property)
+	 * @return message if column does not exist, empty string otherwise
+	 */
+	public function checkColumn($data){
+		return
+			$data && $this->columnCheck && !in_array($this->columnCheck['column'],$data->columns)
+			?$this->columnCheck['message']
+			:''
+		;
 	}
 }

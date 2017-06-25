@@ -16,7 +16,7 @@
 			data=>{
 				let table=$('#catalog');
 				$(table).children('div:gt(0)').remove();
-				data.forEach(
+				data.rows.forEach(
 					r=>{
 						let row=$('<div/>',{class:'list-group-item clearfix'})
 							.append($('<span/>',{class:'col-sm-6'}).html(r.display_name))

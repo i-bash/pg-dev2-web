@@ -36,7 +36,7 @@
 			data=>{
 				let list=$('#authors');
 				list.empty();
-				data.forEach(
+				data.rows.forEach(
 					r=>{
 						$('<a/>',{class:'list-group-item clearfix'})
 							.append($('<span/>').html(r.display_name))
