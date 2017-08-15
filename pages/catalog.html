@@ -89,24 +89,24 @@
 						opsPanel.append('Операций нет');
 					}
 					else{
-						let opsTable=$('<table/>',{class:'table'});
+						let opsTable=$('<table/>',{class:'table table-condensed table-hover'}).append($('<tbody/>'));
 						opsTable.append(
 							$('<tr/>')
-							.append($('<th/>',{class:'text-right col-md-1'}).text('Id операции'))
-							.append($('<th/>',{class:'text-right col-md-1'}).text('Изменение кол-ва'))
-							.append($('<th/>',{class:'col-md-3'}).text('Время'))
+							.append($('<th/>',{class:'text-right col-md-3'}).text('Тип операции'))
+							.append($('<th/>',{class:'text-right col-md-1'}).text('Кол-во'))
+							.append($('<th/>',{class:'col-md-2'}).text('Дата'))
 						);
 						data.rows.forEach(
 							r=>{
 								opsTable.append(
 									$('<tr/>')
-									.append($('<td/>',{class:'text-right'}).html(r.operation_id))
-									.append($('<td/>',{class:'text-right'}).html(r.qty_change))
-									.append($('<td/>').html(r.date_created))
+									.append($('<td/>',{class:'text-right col-md-3'}).html(r.op_type))
+									.append($('<td/>',{class:'text-right col-md-1'}).html(r.qty_change))
+									.append($('<td/>',{class:'col-md-2'}).html(r.date_created))
 								);
 							}
 						)
-						opsTable.appendTo(opsPanel);
+						opsPanel.append(opsTable);
 					}
 				}
 			);
