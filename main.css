@@ -58,6 +58,14 @@ html{
 	width:70px;
 	margin-right:10px;
 }
+/* icons for accordion button */
+#page.catalog [data-toggle="collapse"]:before {
+    font-family: "Glyphicons Halflings";
+    content: "\e114   ";
+}
+#page.catalog [data-toggle="collapse"].collapsed:before {
+    content: "\e080   ";
+}
 
 .alert{
 	padding:5px;

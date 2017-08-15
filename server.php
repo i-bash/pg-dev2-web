@@ -47,6 +47,9 @@
 			case 'getBooks':
 				$data = $pg->query("select * from catalog_v",[]);
 			break;
+			case 'getOperations':
+				$data = $pg->query("select * from operations where book_id = $1",[$params['book_id']]);
+			break;
 			case 'addBook':
 				$data = $pg->execFunction(
 					"add_book",
