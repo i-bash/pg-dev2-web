@@ -66,7 +66,7 @@
 							.append(
 								$(
 									'<div/>',
-									{id:'operations'+r.book_id,class:'panel-body panel-collapse collapse table-responsive',role:'tabpanel','aria-labelledby':'heading'+r.book_id}
+									{id:'operations'+r.book_id,class:'panel-body panel-collapse collapse table-responsive text-left',role:'tabpanel','aria-labelledby':'heading'+r.book_id}
 								)
 							)
 						;
@@ -81,6 +81,7 @@
 		let opsPanel=$(button.attr('href'));
 		opsPanel.empty();
 		if(button.attr('aria-expanded')=='false'){
+			lib.clearPanes();
 			lib.server(
 				'getOperations',
 				{book_id:button.data('id')},
@@ -89,20 +90,20 @@
 						opsPanel.append('Операций нет');
 					}
 					else{
-						let opsTable=$('<table/>',{class:'table table-condensed table-hover'}).append($('<tbody/>'));
+						let opsTable=$('<table/>',{class:'table-hover col-md-6'}).append($('<tbody/>'));
 						opsTable.append(
 							$('<tr/>')
-							.append($('<th/>',{class:'text-right col-md-3'}).text('Тип операции'))
-							.append($('<th/>',{class:'text-right col-md-1'}).text('Кол-во'))
-							.append($('<th/>',{class:'col-md-2'}).text('Дата'))
+							.append($('<th/>',{class:'col-md-5'}).text('Тип операции'))
+							.append($('<th/>',{class:'text-right col-md-3'}).text('Кол-во'))
+							.append($('<th/>',{class:'col-md-4'}).text('Дата'))
 						);
 						data.rows.forEach(
 							r=>{
 								opsTable.append(
 									$('<tr/>')
-									.append($('<td/>',{class:'text-right col-md-3'}).html(r.op_type))
-									.append($('<td/>',{class:'text-right col-md-1'}).html(r.qty_change))
-									.append($('<td/>',{class:'col-md-2'}).html(r.date_created))
+									.append($('<td/>',{class:'col-md-5'}).html(r.op_type))
+									.append($('<td/>',{class:'text-right col-md-3'}).html(r.qty_change))
+									.append($('<td/>',{class:'col-md-4'}).html(r.date_created))
 								);
 							}
 						)
