@@ -54,8 +54,8 @@ class Pg{
 			)
 		);
 		$result=pg_get_result($this->connection);
-		if($notice=pg_last_notice($this->connection)){
-			$this->notice=$notice;
+		if($notices=pg_last_notice($this->connection,PGSQL_NOTICE_ALL)){
+			$this->notices=$notices;
 		}
 		if(pg_result_error($result)===''){
 			$cols=array_map(

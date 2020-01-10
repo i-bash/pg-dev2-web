@@ -91,7 +91,7 @@
 			'data'=>$data??null,
 			'sql'=>$pg->sql,
 			'err'=>$err??null,
-			'notice'=>$pg->notice??null,
+			'notices'=>$pg->notices??null,
 			'info'=>$info
 		]);
 ?>

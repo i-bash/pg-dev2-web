@@ -36,8 +36,12 @@ var lib={
 							).reverse().join(lib.separator);
 							$('<div/>',{class:'alert alert-info'}).html(sqlText).appendTo(actionPane);
 						}
-						if(res.notice){
-							$('<p/>',{class:'alert alert-warning'}).html(res.notice).appendTo(actionPane);
+						if(res.notices){
+							res.notices.forEach(
+								notice=>{
+									$('<p/>',{class:'alert alert-warning'}).html(notice).appendTo(actionPane);
+								}
+							);
 						}
 						res.info.forEach(
 							info=>{
