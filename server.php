@@ -24,6 +24,7 @@
 		$pg=new Pg();
 		try{
 			$isSystemAction = in_array($action,['getRoles','setRole']);
+			$objectInfo=null;
 			$pg->connect($isSystemAction?'postgres':($_SESSION['role']??'postgres'));
 			
 			$check=PgCheckObject::create($pg,$action);
