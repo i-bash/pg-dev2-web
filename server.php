@@ -90,6 +90,7 @@
 		header('content-type:application/json');
 		echo json_encode([
 			'data'=>$data??null,
+			'conninfo'=>$pg->info,
 			'sql'=>$pg->sql,
 			'err'=>$err??null,
 			'notices'=>$pg->notices??null,

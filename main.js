@@ -28,6 +28,12 @@ var lib={
 					url:'server.php?action='+action,
 					data:params,
 					success:res=>{
+						$('#conninfo').empty();
+						if(res.conninfo){
+							for(let [key, value] of Object.entries(res.conninfo)){
+								$('#conninfo').append('<div class="row"><span class="col-4">'+key+'</span><span class="col-8">'+value+'</span></div>');
+							}
+						}
 						if(res.sql.length){
 							let sqlText=res.sql.map(
 								s=>{

@@ -2,6 +2,7 @@
 class Pg{
 	public $sql=[];
 	private $connection=null;
+	public $info;
 	
 	/** create database connection
 	 */
@@ -20,6 +21,13 @@ class Pg{
 			)
 		);
 		$this->connection=pg_connect($connectString);
+		$this->info=(object)[
+			'host'=>pg_host(),
+			'port'=>pg_port(),
+			'user'=>pg_version()['session_authorization'],
+			'dbname'=>pg_dbname(),
+			'pid'=>pg_get_pid($this->connection)
+		];
 	}
 	/** close database connection
 	 */
