@@ -89,7 +89,8 @@ class Pg{
 					'message'=>PGSQL_DIAG_MESSAGE_PRIMARY,
 					'detail'=>PGSQL_DIAG_MESSAGE_DETAIL, 
 					'hint'=>PGSQL_DIAG_MESSAGE_HINT,
-					'position'=>PGSQL_DIAG_STATEMENT_POSITION
+					'position'=>PGSQL_DIAG_STATEMENT_POSITION,
+					'function'=>PGSQL_DIAG_SOURCE_FUNCTION
 				]
 				as $fld=>$num
 			){
