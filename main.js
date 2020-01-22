@@ -3,6 +3,8 @@ var lib={
 	/**flag
 	 */
 	requestIsRunning:false,
+	
+	session:undefined,
 	/**contents of sql panel
 	 */
 	sql:'',
@@ -20,12 +22,12 @@ var lib={
 	server: (action,params,callback)=>{
 		if(!lib.requestIsRunning){
 			lib.requestIsRunning=true;
-			$('#loader').show();
+			$('#loader').addClass('visible').removeClass('invisible');
 			let actionPane=$('#action');
 			return actionPane.promise().then(
 				()=>$.ajax({
 					method:'post',
-					url:'server.php?action='+action,
+					url:'server.php?action='+action+($('#trace').prop('checked')?'&trace=yes':''),
 					data:params,
 					success:res=>{
 						$('#conninfo').empty();
@@ -70,9 +72,10 @@ var lib={
 						console.error(e);
 					},
 					complete:()=>{
-						$('#loader').fadeOut('slow');
+						$('#loader').addClass('invisible').removeClass('visible');
 						$(actionPane).children().last().css('margin-bottom','25px');
 						actionPane.slideDown('slow');
+						lib.chkCmd();
 					}
 				})
 			);
@@ -90,6 +93,13 @@ var lib={
 				()=>{$('#page').html('Page "'+page+'" not found');}
 			)
 		;
+	},
+
+	//enable/disable elements
+	chkCmd: ()=>{
+		$('#login').toggle(lib.session===undefined);
+		$('#logout').toggle(lib.session!==undefined);
+		$('#btn-conninfo').toggleClass('disabled',$('#conninfo').html()=='');
 	},
 
 	//turn form into ajax

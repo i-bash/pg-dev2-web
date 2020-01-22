@@ -12,33 +12,33 @@
 				}
 			}
 		);
-
 		session_start();
 		require 'config.php';
 		require 'Pg.php';
 		require 'PgException.php';
 		require 'PgCheckObject.php';
 
-		$action=$_GET['action'];
+		$action=$_GET['action']??'';
+		$trace=in_array(($_GET['trace']??''),['y','yes','t','true','1']);
 		$params=$_POST??[];
 		$pg=new Pg();
 		try{
-			$isSystemAction = in_array($action,['getRoles','setRole']);
+			$isSystemAction = false;
 			$objectInfo=null;
-			$pg->connect($isSystemAction?'postgres':($_SESSION['role']??'postgres'));
-			
+			if($isSystemAction){
+				$role='postgres';
+			}
+			elseif(in_array($action,[])){
+				$role='emp';
+			}
+			else{
+				$role='web';
+			}
+			$pg->connect($role);
+			$pg->execFunction("trace",["enable"=>$trace]);
 			$check=PgCheckObject::create($pg,$action);
 			$objectInfo=$check->checkObject();
 			switch($action){
-			case 'getRoles':
-				$data = array_map(
-					function($r){return $r->usename;},
-					$pg->query("select usename from pg_user order by 1",[],false)->rows
-				);
-			break;
-			case 'setRole':
-				$_SESSION['role']=$params['role'];
-			break;
 			case 'getAuthors':
 				$data = $pg->query("select * from authors_v",[]);
 			break;
