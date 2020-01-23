@@ -35,10 +35,15 @@
 				$role='web';
 			}
 			$pg->connect($role);
+			$pg->query("begin");
 			$pg->execFunction("trace",["enable"=>$trace]);
 			$check=PgCheckObject::create($pg,$action);
 			$objectInfo=$check->checkObject();
 			switch($action){
+			case 'test':
+				$pg->query("notify dev2,'hey'");
+				$pg->query("notify dev2,'heyyyyy'");
+			break;
 			case 'getAuthors':
 				$data = $pg->query("select * from authors_v",[]);
 			break;
@@ -85,6 +90,7 @@
 		}
 		finally{
 			$info=array_values(array_filter([$objectInfo,$columnInfo]));
+			$pg->query("end");
 			$pg->close();
 		}
 		header('content-type:application/json');
