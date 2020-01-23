@@ -42,7 +42,7 @@
 									<button type="submit" class="btn btn-primary mb-2">Сортировка</button>
 								</div>
 							</form>
-							<div class="containre border">
+							<div class="container border">
 								shop here
 <!--						
 								<div class="col-md-8">
@@ -65,7 +65,18 @@
 							</div>
 						  </div>
 						  <div id="admin" class="tab-pane fade">
-							<p>Админка будет тут</p>
+							<ul class="nav nav-pills">
+							  <li class="nav-item">
+								<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>
+							  </li>
+							  <li class="nav-item">
+								<a data-toggle="pill" class="nav-link" href="#" data-page="jobs">Фоновые задания</a>
+							  </li>
+							  <li class="nav-item">
+								<a data-toggle="pill" class="nav-link" href="#" data-page="test">Test</a>
+							  </li>
+							</ul>
+							<div id="page"></div>
 						  </div>
 						</div>
 					<!--/div-->
@@ -93,13 +104,14 @@
 		<script>
 			$(
 				()=>{
+					window.name=window.name||Date.now();
 					lib.chkCmd();
-					
+					console.info(window.name);
 					//display page
-					$('.btn[data-page]').click(
+					$('#admin a[data-page]').click(
 						e=>{
-							$('.btn[data-page]').not(e.target).removeClass('btn-primary').addClass('btn-info');
-							$(e.target).removeClass('btn-info').addClass('btn-primary');
+							//$('#admin a[data-page]').not(e.target).removeClass('btn-primary').addClass('btn-info');
+							//$(e.target).removeClass('btn-info').addClass('btn-primary');
 							lib.displayPage($(e.target).data('page'));
 						}
 					);

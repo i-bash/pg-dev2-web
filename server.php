@@ -40,9 +40,8 @@
 			$check=PgCheckObject::create($pg,$action);
 			$objectInfo=$check->checkObject();
 			switch($action){
-			case 'test':
-				$pg->query("notify dev2,'hey'");
-				$pg->query("notify dev2,'heyyyyy'");
+			case 'execute':
+				$pg->query($_POST['sql']);
 			break;
 			case 'getAuthors':
 				$data = $pg->query("select * from authors_v",[]);
