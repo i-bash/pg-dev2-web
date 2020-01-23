@@ -100,6 +100,7 @@ var lib={
 		$('#login').toggle(lib.session===undefined);
 		$('#logout').toggle(lib.session!==undefined);
 		$('#btn-conninfo').toggleClass('disabled',$('#conninfo').html()=='');
+		$('#trace').prop('disabled',$('#conninfo').html()=='');
 	},
 
 	//turn form into ajax
