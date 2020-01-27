@@ -3,6 +3,7 @@ class Pg{
 	public $sql=[];
 	private $connection=null;
 	public $info;
+	public $notices=[];
 	
 	/** create database connection
 	 */
@@ -63,7 +64,7 @@ class Pg{
 		);
 		$result=pg_get_result($this->connection);
 		if($notices=pg_last_notice($this->connection,PGSQL_NOTICE_ALL)){
-			$this->notices=$notices;
+			$this->notices=array_merge($this->notices,$notices);
 		}
 		if(pg_result_error($result)===''){
 			$cols=array_map(
