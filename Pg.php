@@ -108,7 +108,7 @@ class Pg{
 	 */
 	public function execFunction($name, $params=[]){
 		$sql=
-			'select '.$name.' ('.
+			'select * from '.$name.' ('.
 				(
 					count($params)?
 						PHP_EOL.chr(9).
@@ -116,8 +116,8 @@ class Pg{
 						PHP_EOL
 					:''
 				).
-			') result'
+			')'
 		;
-		return $this->query($sql,array_values($params),true)->rows;
+		return $this->query($sql,array_values($params),true);
 	}
 }
