@@ -89,7 +89,10 @@
 		}
 		finally{
 			$info=array_values(array_filter([$objectInfo,$columnInfo]));
-			$pg->query("end");
+			try{
+				$pg->query("end");
+			}
+			catch(Exception $e){}
 			$pg->close();
 		}
 		header('content-type:application/json');
