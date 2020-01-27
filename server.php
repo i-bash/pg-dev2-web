@@ -28,7 +28,7 @@
 			if($isSystemAction){
 				$role='postgres';
 			}
-			elseif(in_array($action,[])){
+			elseif(in_array($action,['getBooks'])){
 				$role='emp';
 			}
 			else{
@@ -50,7 +50,7 @@
 				$data = $pg->execFunction("add_author",$_POST);
 			break;
 			case 'getBooks':
-				$data = $pg->query("select * from catalog_v",[]);
+				$data = $pg->execFunction("empapi.get_catalog",$_POST);
 			break;
 			case 'getOperations':
 				$data = $pg->query("select * from operations_v where book_id = $1",[$params['book_id']]);

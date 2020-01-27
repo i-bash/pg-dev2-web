@@ -1,108 +1,68 @@
-<h3>Книги</h3>
-
-<button id="addBook" disabled class="btn btn-link" data-toggle="collapse" data-target="#collapse1">Добавить книгу</button>
-<div id="collapse1" class="panel-collapse collapse">
-	<div class="panel-body">
-		<form id="add" method="post" action="addBook">
-			<div class="form-group">
-				<label class="control-label" for="title">Название</label>
-				<input class="form-control" id="title" name="title"/>
-			</div>
-			<div class="row form-group">
-				<div class="col-md-1">
-					<button id="addAuthor" type="button" class="btn btn-default" title="Добавить автора">
-						<span class="glyphicon glyphicon-plus"></span>
-					</button>
-				</div>
-				<div id="authors" class="col-md-6"></div>
-			</div>
-			<div class="form-group">
-				<button type="submit" class="btn btn-success disabled" disabled>Добавить</button>
-			</div>
-		</form>
+<h3>Магазин</h3>
+<form id="catalog" class="form-inline panel" action="getBooks">
+	<div class="form-group clearfix">
+		<input id="search" class="form-control" name="search" placeholder="...."/>
+	</div>
+	<div class="form-group clearfix">
+		<select id="orderby" class="form-control" name="orderby">
+			<option value="format">Формат</option>
+			<option value="rating">Рейтинг</option>
+			<option value="price">Цена</option>
+		</select>
+	</div>
+	<div class="form-group clearfix">
+		<select id="direction" class="form-control" name="direction">
+			<option value="asc">asc</option>
+			<option value="desc">desc</option>
+		</select>
+	</div>
+	<button type="submit" class="btn btn-primary">Найти</button>
+</form>
+<div id="books" class="list-group">
+	<div id="headers" style="display:none;" class="list-group-item clearfix">
+		<span class="col-md-8"><strong>Название</strong></span>
+		<span class="col-md-2 text-right"><strong>Наличие</strong></span>
+		<span class="col-md-2"></span>
 	</div>
 </div>
-
-<div id="books" class="list-group"></div>
 <script>
-	$(()=>{
-		//functions
-		let authors=[];
-		let chkSubmit=()=>{
-			let disabled=$('#title').val()==''||$('.author').length==0;
-			$('form#add button[type="submit"]').toggleClass('disabled',disabled).prop('disabled',disabled);
-		};
-		let populateBooks=()=>{
-			return lib.server(
-				'getBooks',
-				[],
-				data=>{
-					let list=$('#books');
-					list.empty();
-					data.rows.forEach(
-						r=>{
-							$('<a/>',{class:'list-group-item clearfix'})
-								.append($('<span/>').html(r.display_name))
-								.appendTo(list)
-							;
-						}
-					);
-				}
-			);
-		};
-		let getAuthors=()=>{
-			return lib.server(
-				'getAuthors',
-				[],
-				data=>{
-					$('#addBook').prop('disabled',false);
-					authors=data.rows;
-				}
-			);
-		}
-		let populateAuthor=(selector)=>{
-			authors.forEach(
+	{
+		//display books
+		let getBooks=data=>{
+			lib.alert(data.rows.length==0?'Книги не найдены':'Найдено книг: '+data.rows.length);
+			$('#headers').toggle(data.rows.length>0);
+			let list=$('#books');
+			list.children('form').remove();
+			data.rows.forEach(
 				r=>{
-					$('<option/>',{value:r.author_id}).html(r.display_name).appendTo($(selector));
+					console.log(r);
+					$('<form/>',{class:'form buy list-group-item clearfix',action:'buyBook',method:'post'})
+						.append($('<span/>',{class:'col-8'}).html(r.title+' '+r.authors_list.length))
+						.append(
+							$('<span/>',{class:'col-2 text-right'})
+							.append($('<input/>',{name:'onhand_qty',value:r.onhand_qty,type:'number',min:'1',step:'1',class:'form-control txt-right'}))
+							.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'}).html('Заказать'))
+						)
+						.append(
+							$('<span/>',{class:'col-2 text-nowrap'})
+							//.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
+							//.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'}).html('Купить'))
+						)
+						.appendTo(list)
+					;
 				}
 			);
 		}
-		//form(s)
+
+		lib.ajaxForm('#catalog',getBooks);
+		/*
 		lib.ajaxForm(
-			'#add',
-			(data)=>{
-				$('#collapse1').removeClass('in');
-				$('#add input').val('');
-				$('#authors').empty();
-				populateBooks();
+			'.buy',
+			data=>{
+				lib.alert('Вы купили книгу','success');
+				lib.server('findBooks',$('#catalog').serialize(),findBooks);
 			}
 		);
-		//handlers
-		$('#title,.author').on('input change',chkSubmit);
-		$('#addAuthor').click(
-			()=>{
-				let select=$('<select/>',{class:'author form-control',name:'authors[]'});
-				populateAuthor(select);
-				$('<div/>',{class:'form-inline'})
-				.append(select)
-				.append(
-					$('<button/>',{type:'button',class:'btn btn-default delAuthor',title:'Удалить автора'})
-					.append($('<span/>',{class:'glyphicon glyphicon-minus'}))
-				)
-				.appendTo('#authors')
-				;
-				chkSubmit();
-			}
-		);
-		$('#authors').on(
-			'click',
-			'.delAuthor',
-			(e)=>{
-				$(e.currentTarget).parent().remove();
-				chkSubmit();
-			}
-		);
-		//init
-		getAuthors().then(populateBooks);
-	});
+		*/
+	}
 </script>
