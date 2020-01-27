@@ -76,14 +76,14 @@
 								<a data-toggle="pill" class="nav-link" href="#" data-page="test">Test</a>
 							  </li>
 							</ul>
-							<div id="page"></div>
+							<div id="page" class="mt-1"></div>
 						  </div>
 						</div>
 					<!--/div-->
 				</div>
-				<div class="col-3 border border-info container">
-					<div class="row">
-						<button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo" aria-expanded="false" aria-controls="conninfo">
+				<div id="techinfo" class="col-3 border border-info pt-2 pb-2" style="display:flex;flex-flow:column nowrap;">
+					<div style="flex-grow:0">
+						<button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo-pane" aria-expanded="false" aria-controls="conninfo">
 							conninfo
 						</button>
 						<span class="col form-check m-1" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
@@ -92,8 +92,10 @@
 						</span>
 						<span id="loader" class="spinner-border spinner-border-sm invisible m-1"></span>
 					</div>
-					<div id="conninfo" class="collapse border pl-2 pr-2"></div>
-					<div id="action" class="mt-2"></div>
+					<div id="conninfo-pane" class="" style="flex-grow:0">
+						<div id="conninfo" class="col-12 border pl-2 pr-2"></div>
+					</div>
+					<div id="action" class="mt-2" style="flex-grow:10;overflow-y:scroll;"></div>
 				</div>
 			</div>
 		</div>

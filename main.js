@@ -41,8 +41,8 @@ var lib={
 								s=>{
 									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,' ');
 								}
-							).reverse().join(lib.separator);
-							$('<div/>',{class:'alert alert-info'}).html(sqlText).appendTo(actionPane);
+							)./*reverse().*/join(lib.separator);
+							$('<div/>',{class:'sql alert alert-info',role:'alert'}).html(sqlText).appendTo(actionPane);
 						}
 						if(res.notices){
 							res.notices.forEach(
@@ -73,8 +73,7 @@ var lib={
 					},
 					complete:()=>{
 						$('#loader').addClass('invisible').removeClass('visible');
-						$(actionPane).children().last().css('margin-bottom','25px');
-						actionPane.slideDown('slow');
+						$(actionPane).animate({scrollTop:$(actionPane)[0].scrollHeight},1000);
 						lib.chkCmd();
 					}
 				})
@@ -136,6 +135,6 @@ var lib={
 
 	//clear contents of sql, success, error, notice panels
 	clearPanes: ()=>{
-		$('#action').fadeOut('slow',()=>{$('#action').empty();});
+		//$('#action').fadeOut('slow',()=>{$('#action').empty();});
 	}
 };
