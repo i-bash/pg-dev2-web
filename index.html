@@ -8,6 +8,7 @@
 		<title>Учебное приложение DEV2</title>
 	</head>
 	<body>
+		<!--div id="alert" class="modal"></div-->
 		<div class="container">
 			<div class="row">
 				<div class="col-9 container-fluid">
@@ -59,7 +60,6 @@
 										</div>
 									</div>
 									<div id="page"></div>
-									<div id="alert"></div>
 								</div>
 -->
 							</div>
@@ -81,7 +81,7 @@
 						</div>
 					<!--/div-->
 				</div>
-				<div id="techinfo" class="col-3 border border-info pt-2 pb-2" style="display:flex;flex-flow:column nowrap;">
+				<div id="techinfo" class="col-3 border pt-2 pb-2" style="display:flex;flex-flow:column nowrap;">
 					<div style="flex-grow:0">
 						<button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo-pane" aria-expanded="false" aria-controls="conninfo">
 							conninfo
@@ -95,7 +95,7 @@
 					<div id="conninfo-pane" class="" style="flex-grow:0">
 						<div id="conninfo" class="col-12 border pl-2 pr-2"></div>
 					</div>
-					<div id="action" class="mt-2" style="flex-grow:10;overflow-y:scroll;"></div>
+					<div id="action" class="mt-2 overflow-auto" style="flex-grow:10;"></div>
 				</div>
 			</div>
 		</div>

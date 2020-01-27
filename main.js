@@ -111,7 +111,7 @@ var lib={
 			function(e){
 				e.preventDefault();
 				let form=this;
-				lib.clearPanes();
+				//lib.clearPanes();
 				lib.server(
 					$(form).attr('action'),
 					$(form).serialize(),
@@ -125,7 +125,7 @@ var lib={
 
 	//display alert
 	alert: (message,style='info')=>{
-		$('<div/>',{class:'alert alert-'+style+' fade'}).html(message).appendTo('#alert').addClass('in').delay(2000).slideUp('slow',function(){$(this).remove();});
+		//$('<div/>',{class:'alert alert-'+style+' fade',role:'alert'}).html(message).appendTo('#alert').addClass('in').delay(2000).slideUp('slow',function(){$(this).remove();});
 	},
 
 	//append contents to pane
@@ -135,6 +135,7 @@ var lib={
 
 	//clear contents of sql, success, error, notice panels
 	clearPanes: ()=>{
-		//$('#action').fadeOut('slow',()=>{$('#action').empty();});
+		$('#action').empty();
+		$('#conninfo').empty();
 	}
 };

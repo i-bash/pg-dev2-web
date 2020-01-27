@@ -37,8 +37,8 @@
 			$pg->connect($role);
 			$pg->query("begin");
 			$pg->execFunction("trace",["enable"=>$trace]);
-			$check=PgCheckObject::create($pg,$action);
-			$objectInfo=$check->checkObject();
+			//$check=PgCheckObject::create($pg,$action);
+			//$objectInfo=$check->checkObject();
 			switch($action){
 			case 'execute':
 				$pg->query($_POST['sql']);
@@ -79,7 +79,7 @@
 			default:
 				throw new RuntimeException('Internal error. Unknown server action: '.$action);
 			}
-			$columnInfo=$isSystemAction?'':$check->checkColumn($data??null);
+			$columnInfo=null; //$isSystemAction?'':$check->checkColumn($data??null);
 		}
 		catch(Exception $e){
 			$err=new stdClass();
