@@ -28,7 +28,7 @@
 			if($isSystemAction){
 				$role='postgres';
 			}
-			elseif(in_array($action,['getBooks'])){
+			elseif(in_array($action,['getBooks','orderBook','setPrice'])){
 				$role='emp';
 			}
 			else{
@@ -43,14 +43,21 @@
 			case 'execute':
 				$pg->query($_POST['sql']);
 			break;
+			case 'getBooks':
+				$data = $pg->execFunction("empapi.get_catalog",$_POST);
+			break;
+			case 'orderBook':
+				$data = $pg->execFunction("empapi.receipt",$_POST);
+			break;
+			case 'setPrice':
+				$data = $pg->execFunction("empapi.set_retail_price",$_POST);
+			break;
+			///
 			case 'getAuthors':
 				$data = $pg->query("select * from authors_v",[]);
 			break;
 			case 'addAuthor':
 				$data = $pg->execFunction("add_author",$_POST);
-			break;
-			case 'getBooks':
-				$data = $pg->execFunction("empapi.get_catalog",$_POST);
 			break;
 			case 'getOperations':
 				$data = $pg->query("select * from operations_v where book_id = $1",[$params['book_id']]);
@@ -64,8 +71,6 @@
 					]
 				);
 			break;
-			case 'orderBook':
-				$data = $pg->query("update catalog_v set onhand_qty = onhand_qty + $1 where book_id = $2",[$_POST['qty'],$_POST['id']]);
 			break;
 			case 'findBooks':
 				$_POST['author_name']=trim($_POST['author_name'])===''?null:$_POST['author_name'];

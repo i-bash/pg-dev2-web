@@ -18,51 +18,53 @@
 	</div>
 	<button type="submit" class="btn btn-primary">Найти</button>
 </form>
-<div id="books" class="list-group">
-	<div id="headers" style="display:none;" class="list-group-item clearfix">
-		<span class="col-md-8"><strong>Название</strong></span>
-		<span class="col-md-2 text-right"><strong>Наличие</strong></span>
-		<span class="col-md-2"></span>
+<div id="books" class="container">
+	<div id="headers" style="display:none;" class="row">
+		<span class="col-6 font-weight-bold"><strong>Название</strong></span>
+		<span class="col-3 font-weight-bold text-center"><strong>Наличие</strong></span>
+		<span class="col-3 font-weight-bold text-center">Стоимость</span>
 	</div>
 </div>
 <script>
 	{
 		//display books
-		let getBooks=data=>{
-			lib.alert(data.rows.length==0?'Книги не найдены':'Найдено книг: '+data.rows.length);
-			$('#headers').toggle(data.rows.length>0);
-			let list=$('#books');
-			list.children('form').remove();
-			data.rows.forEach(
-				r=>{
-					console.log(r);
-					$('<form/>',{class:'form buy list-group-item clearfix',action:'buyBook',method:'post'})
-						.append($('<span/>',{class:'col-8'}).html(r.title+' '+r.authors_list.length))
-						.append(
-							$('<span/>',{class:'col-2 text-right'})
-							.append($('<input/>',{name:'onhand_qty',value:r.onhand_qty,type:'number',min:'1',step:'1',class:'form-control txt-right'}))
-							.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'}).html('Заказать'))
-						)
-						.append(
-							$('<span/>',{class:'col-2 text-nowrap'})
-							//.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
-							//.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'}).html('Купить'))
-						)
-						.appendTo(list)
-					;
-				}
-			);
-		}
-
-		lib.ajaxForm('#catalog',getBooks);
-		/*
 		lib.ajaxForm(
-			'.buy',
+			'#catalog',
 			data=>{
-				lib.alert('Вы купили книгу','success');
-				lib.server('findBooks',$('#catalog').serialize(),findBooks);
+				lib.alert(data.rows.length==0?'Книги не найдены':'Найдено книг: '+data.rows.length);
+				$('#headers').toggle(data.rows.length>0);
+				let list=$('#books');
+				list.children('div:not(:first-child)').remove();
+				data.rows.forEach(
+					r=>{
+						$('<div/>',{class:'row'})
+							.append($('<span/>',{class:'col-6 my-auto'}).html(r.title+' '+r.authors_list.length))
+							.append(
+								$('<form/>',{class:'form form-inline col-3 my-auto',action:'orderBook',method:'post'})
+								.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
+								.append($('<input/>',{type:'number',name:'qty',value:r.onhand_qty,min:'1',step:'1',class:'form-control text-right'}))
+								.append($('<input/>',{type:'hidden',name:'price',value:999}))
+								.append($('<button/>',{type:'submit',class:'btn btn-primary btn-sm'}).html('Заказать'))
+							)
+							.append(
+								$('<form/>',{class:'form form-inline col-3 my-auto',action:'setPrice',method:'post'})
+								.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
+								.append($('<input/>',{type:'number',name:'price',value:r.price,min:'1',class:'form-control text-right'}))
+								.append($('<button/>',{type:'submit',class:'btn btn-primary btn-sm'}).html('Установить'))
+							)
+							.appendTo(list)
+						;
+					}
+				);
 			}
 		);
-		*/
+		lib.ajaxForm(
+			'#books form[action="orderBook"]',
+			data=>{}
+		);
+		lib.ajaxForm(
+			'#books form[action="setPrice"]',
+			data=>{}
+		);
 	}
 </script>

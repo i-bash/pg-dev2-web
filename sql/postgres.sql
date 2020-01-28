@@ -13,3 +13,5 @@ grant usage on schema empapi to emp;
 grant usage on schema webapi to web;
 
 alter function empapi.get_catalog security definer;
+alter function empapi.receipt security definer;
+alter function empapi.set_retail_price security definer;
