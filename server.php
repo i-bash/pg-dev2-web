@@ -28,11 +28,11 @@
 			if($isSystemAction){
 				$role='postgres';
 			}
-			elseif(in_array($action,['getBooks','orderBook','setPrice'])){
-				$role='emp';
+			try{
+				list($role,$action)=explode('/',$action);
 			}
-			else{
-				$role='web';
+			catch(Exception $e){
+				$role='postgres';
 			}
 			$pg->connect($role);
 			$pg->query("begin");
@@ -46,13 +46,27 @@
 			case 'getBooks':
 				$data = $pg->execFunction("empapi.get_catalog",$_POST);
 			break;
+			case 'getTasks':
+				$data = $pg->execFunction("empapi.get_tasks",$_POST);
+			break;
+			case 'getPrograms':
+				$data = $pg->execFunction("empapi.get_programs",$_POST);
+			break;
 			case 'orderBook':
 				$data = $pg->execFunction("empapi.receipt",$_POST);
+			break;
+			case 'runTask':
+				$data = $pg->execFunction("empapi.run_program",$_POST);
+			break;
+			case 'taskResults':
+				$data = $pg->execFunction("empapi.task_results",$_POST);
 			break;
 			case 'setPrice':
 				$data = $pg->execFunction("empapi.set_retail_price",$_POST);
 			break;
+
 			///
+
 			case 'getAuthors':
 				$data = $pg->query("select * from authors_v",[]);
 			break;

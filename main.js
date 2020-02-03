@@ -20,8 +20,8 @@ var lib={
 	 * @return promise
 	 */
 	server: (action,params,callback)=>{
-		if(!lib.requestIsRunning){
-			lib.requestIsRunning=true;
+		//if(!lib.requestIsRunning){
+		//	lib.requestIsRunning=true;
 			$('#loader').addClass('visible').removeClass('invisible');
 			let actionPane=$('#action');
 			return actionPane.promise().then(
@@ -78,7 +78,7 @@ var lib={
 					}
 				})
 			);
-		}
+		//}
 	},
 
 	//display app page
@@ -103,7 +103,7 @@ var lib={
 	},
 
 	//turn form into ajax
-	ajaxForm: (selector,callback,extraPars=[])=>{
+	ajaxForm: (selector,callbackAfter,callbackBefore)=>{
 		$(document).off('submit',selector);
 		$(document).on(
 			'submit',
@@ -111,13 +111,14 @@ var lib={
 			function(e){
 				e.preventDefault();
 				let form=this;
+				(callbackBefore===undefined)||callbackBefore(this)||e.stopPropagation()&&e.preventDefault();
 				//lib.clearPanes();
 				lib.server(
 					$(form).attr('action'),
 					$(form).serialize(),
-					callback===undefined
+					callbackAfter===undefined
 						?()=>{console.info('ajax form ok');}
-						:callback
+						:callbackAfter
 				);
 			}
 		);
@@ -125,6 +126,7 @@ var lib={
 
 	//display alert
 	alert: (message,style='info')=>{
+		alert(message);
 		//$('<div/>',{class:'alert alert-'+style+' fade',role:'alert'}).html(message).appendTo('#alert').addClass('in').delay(2000).slideUp('slow',function(){$(this).remove();});
 	},
 
@@ -137,5 +139,12 @@ var lib={
 	clearPanes: ()=>{
 		$('#action').empty();
 		$('#conninfo').empty();
+	},
+	
+	populateSelect: selector=>{
+		return data=>{
+			let dropdown = $(selector);
+			data.rows.forEach(row=>{dropdown.append($("<option />").val(row[data.columns[0]]).text(row[data.columns[1]]));});
+		}
 	}
 };
