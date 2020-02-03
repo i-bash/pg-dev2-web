@@ -67,9 +67,9 @@ var lib={
 						}
 					},
 					error:e=>{
-						lib.requestIsRunning=false;
+//						lib.requestIsRunning=false;
 						alert('Unexpected server error');
-						console.error(e);
+						console.err(e);
 					},
 					complete:()=>{
 						$('#loader').addClass('invisible').removeClass('visible');
@@ -111,7 +111,9 @@ var lib={
 			function(e){
 				e.preventDefault();
 				let form=this;
-				(callbackBefore===undefined)||callbackBefore(this)||e.stopPropagation()&&e.preventDefault();
+				if(callbackBefore!==undefined&&!callbackBefore(this)){
+					return false;
+				};
 				//lib.clearPanes();
 				lib.server(
 					$(form).attr('action'),
