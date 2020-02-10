@@ -5,13 +5,11 @@ class Pg{
 	public $info;
 	public $notices=[];
 	
-	/** create database connection
-	 */
-	public function connect($role='postgres'){
-		$connectParams=DATA_SOURCE;
-		$connectParams['user']=$role;
-		$connectParams['password']=$role; //assume password to be the same as user name
-		$connectString=implode(
+	public static function getDefaultConnectParams(){
+		return DATA_SOURCE;
+	}
+	public static function getConnectString($connectParams){
+		return implode(
 			' ',
 			array_map(
 				function($key,$value){
@@ -21,7 +19,20 @@ class Pg{
 				$connectParams
 			)
 		);
-		$this->connection=pg_connect($connectString);
+	}
+	/** create database connection
+	 *  role is ignored if passing connection string
+	 */
+	public function connect($connectString='',$role='postgres'){
+		$this->connection=pg_connect(
+			$connectString?:
+			static::getConnectString(
+				array_merge(
+					static::getDefaultConnectParams(),
+					['user'=>$role,'password'=>$role] //assume password to be the same as user name
+				)
+			)
+		);
 		$this->info=(object)[
 			'host'=>pg_host(),
 			'port'=>pg_port(),
@@ -119,5 +130,27 @@ class Pg{
 			')'
 		;
 		return $this->query($sql,array_values($params),true);
+	}
+	public function execFunctionJson($name, $params=[]){
+		$sql=
+			'select to_json(f.*) from '.$name.' ('.
+				(
+					count($params)?
+						' '.
+						implode(', ',array_map(function($parName,$parNum){return $parName.'=>$'.($parNum+1);},array_keys($params),array_keys(array_keys($params)))).
+						' '
+					:''
+				).
+			') f'
+		;
+		$result=$this->query($sql,array_values($params),true);
+		
+		$result->rows=array_map(
+			function($r){
+				return json_decode($r->to_json);
+			},
+			$result->rows
+		);
+		return $result;
 	}
 }

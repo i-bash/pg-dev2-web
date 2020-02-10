@@ -1,55 +1,169 @@
-<h3>Магазин</h3>
-<form id="search" class="form-inline panel" action="findBooks">
-	<div class="form-group clearfix">
-		<input id="author_name" class="form-control" name="author_name" placeholder="Имя автора"/>
-	</div>
-	<div class="form-group clearfix">
-		<input id="book_title" class="form-control" name="book_title" placeholder="Название книги"/>
-	</div>
-	<div class="form-group checkbox clearfix">
-		<input id="in_stock" type="checkbox" value="y" class="form-control" name="in_stock"/>
-		<label for="in_stock" class="control-label">Есть на складе</label>
-	</div>
-	<button type="submit" class="btn btn-primary">Поиск</button>
-</form>
-<div id="books" class="list-group">
-	<div id="headers" style="display:none;" class="list-group-item clearfix">
-		<span class="col-md-8"><strong>Название</strong></span>
-		<span class="col-md-2 text-right"><strong>Наличие</strong></span>
-		<span class="col-md-2"></span>
-	</div>
-</div>
+						<form id="search" class="form-inline pt-2" action="web/findBooks">
+							<div class="container text-right clearfix">
+								<input id="search_string" class="form-control text-right mb-2" name="search" placeholder="Автор или название">
+								<button type="submit" class="btn btn-primary mb-2">Найти</button>
+								<select id="orderby" name="orderby" class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select id="direction" name="direction" class="form-control">
+									<option>asc</option>
+									<option>desc</option>
+								</select>
+							</div>
+						</form>
+						<div id="books" class="container">
+							<div id="headers" class="row">
+								<span class="col-2">Обложка</span>
+								<span class="col-4">Название, авторы</span>
+								<span class="col-1">Рейтинг</span>
+								<span class="col-2">Формат</span>
+								<span class="col-1 text-right">Цена</span>
+								<span class="col-2"></span>
+							</div>
+						</div>
+						<div id="book">
+							<div id="book-details" class="container">
+								<div class="row">
+									<div class="col-3">
+										<div>Обложка</div>
+										<div><img src="book.png" class="w-50"></div>
+									</div>
+									<div class="col-6">
+										<div class="container">
+											<div class="row">
+												<div class="col-4">Название</div>
+												<div class="col-8" id="det-name"></div>
+											</div>
+											<div class="row">
+												<div class="col-4">Авторы</div>
+												<div class="col-8" id="det-authors"></div>
+											</div>
+											<div class="row">
+												<div class="col-4">Рейтинг</div>
+												<div class="col-8" id="det-rating"></div>
+											</div>
+											<div class="row">
+												<div class="col-4">Формат</div>
+												<div class="col-8" id="det-format"></div>
+											</div>
+											<div class="row">
+												<div class="col-12" id="det-other"></div>
+											</div>
+										</div>
+									</div>
+									<div class="col-3">
+										<div><span class="pr-2">Цена</span><span id="det-price"></span></div>
+										<div><button type="button" class="btn btn-secondary btn-sm to-cart">В корзину</button></div>
+									</div>
+								</div>
+							</div>
+							<div><button id="to-list" class="btn btn-primary">К списку книг</button></div>
+						</div>
 <script>
 	{
-		//display books
-		let findBooks=data=>{
+		//functions
+		
+		//fill and initially display list of books
+		let initBooks =data=>{
 			lib.alert(data.rows.length==0?'Книги не найдены':'Найдено книг: '+data.rows.length);
-			$('#headers').toggle(data.rows.length>0);
 			let list=$('#books');
-			list.children('form').remove();
+			list.children('div:not(:first-child)').remove();
 			data.rows.forEach(
 				r=>{
-					$('<form/>',{class:'form buy list-group-item clearfix',action:'buyBook',method:'post'})
-						.append($('<span/>',{class:'col-md-8'}).html(r.display_name))
-						.append($('<span/>',{class:'col-md-2 text-right'}).html(r.onhand_qty))
+					$('<div/>',{class:'row book'})
+						.data('book',r)
 						.append(
-							$('<span/>',{class:'col-md-2 text-nowrap'})
-							.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
-							.append($('<button/>',{type:'submit',class:'btn btn-success pull-right'}).html('Купить'))
+							$('<span/>',{class:'col-2'})
+								.append(
+									$('<a/>',{href:'#'}).append($('<img/>',{src:'book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
+							)
 						)
+						.append(
+							$('<span/>',{class:'col-4'})
+							.html(
+								r.title+
+								'. '+
+								r.authors_list.map(
+									author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
+								).join(', ')
+							)
+						)
+						.append($('<span/>',{class:'col-1'}).html(r.rating))
+						.append($('<span/>',{class:'col-2'}).html(r.format))
+						.append($('<span/>',{class:'col-1 text-right'}).html(r.price))
+						.append($('<span/>',{class:'col-2'}).append(
+							$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).data('id',r.book_id).html('В корзину')
+						))
 						.appendTo(list)
 					;
 				}
 			);
-		}
-
-		lib.ajaxForm('#search',findBooks);
-		lib.ajaxForm(
-			'.buy',
-			data=>{
-				lib.alert('Вы купили книгу','success');
-				lib.server('findBooks',$('#search').serialize(),findBooks);
+			showList();
+			$('#shop').trigger('shop:login-logout');
+			$('#books').toggle(data.rows.length>0);
+		};
+		//display book details
+		let showDetails=data=>{
+			$('#det-name').html(data.title);
+			$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'));
+			$('#det-rating').html(data.rating);
+			$('#det-format').html(data.format);
+			$('#det-other').html(data.additional);
+			$('#det-price').html(data.price).siblings('button').data('id',data.book_id);
+			$('#book').toggle(true);
+			$('#books').toggle(false);
+		};
+		//display list of books
+		let showList=()=>{
+			$('#book').toggle(false);
+			$('#books').toggle(true);
+		};
+		
+		//event handlers
+		
+		$('#shop').on(
+			'shop:login-logout',
+			e=>{
+				$('#books,#book').find('button.to-cart').toggle(sessionStorage.getItem('authToken')!==null);
 			}
 		);
+		
+		$('#orderby,#direction').change(
+			()=>{
+				$('#search').submit();
+			}
+		);
+		
+		$('#books').on(
+			'show load ',
+			'img',
+			e=>{
+				alert(e);
+			}
+		);
+		$('#books').on(
+			'click',
+			'img',
+			e=>{
+				showDetails($(e.target).closest('div.row.book').data('book'));
+			}
+		);
+		$('#books,#book-details').on(
+			'click',
+			'button.to-cart',
+			e=>{
+				lib.server(
+					'web/toCart',
+					{book_id:$(e.target).data('id'),auth_token:sessionStorage.getItem('authToken')},
+					()=>{alert('added to cart');}
+				);
+			}
+		);
+		$('#to-list').click(showList);
+		
+		//init
+		lib.ajaxForm('#search',initBooks);
 	}
 </script>

@@ -1,5 +1,5 @@
 <h3>Магазин</h3>
-<form id="catalog" class="form-inline panel" action="getBooks">
+<form id="catalog" class="form-inline panel" action="emp/getBooks">
 	<div class="form-group clearfix">
 		<input id="search" class="form-control" name="search" placeholder="...."/>
 	</div>
@@ -40,14 +40,14 @@
 						$('<div/>',{class:'row'})
 							.append($('<span/>',{class:'col-6 my-auto'}).html(r.title+' '+r.authors_list.length))
 							.append(
-								$('<form/>',{class:'form form-inline col-3 my-auto',action:'orderBook',method:'post'})
+								$('<form/>',{class:'form form-inline col-3 my-auto',action:'emp/orderBook',method:'post'})
 								.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
 								.append($('<input/>',{type:'number',name:'qty',value:r.onhand_qty,min:'1',step:'1',class:'form-control text-right'}))
 								.append($('<input/>',{type:'hidden',name:'price',value:999}))
 								.append($('<button/>',{type:'submit',class:'btn btn-primary btn-sm'}).html('Заказать'))
 							)
 							.append(
-								$('<form/>',{class:'form form-inline col-3 my-auto',action:'setPrice',method:'post'})
+								$('<form/>',{class:'form form-inline col-3 my-auto',action:'emp/setPrice',method:'post'})
 								.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
 								.append($('<input/>',{type:'number',name:'price',value:r.price,min:'1',class:'form-control text-right'}))
 								.append($('<button/>',{type:'submit',class:'btn btn-primary btn-sm'}).html('Установить'))
@@ -59,11 +59,11 @@
 			}
 		);
 		lib.ajaxForm(
-			'#books form[action="orderBook"]',
+			'#books form[action="emp/orderBook"]',
 			data=>{}
 		);
 		lib.ajaxForm(
-			'#books form[action="setPrice"]',
+			'#books form[action="emp/setPrice"]',
 			data=>{}
 		);
 	}

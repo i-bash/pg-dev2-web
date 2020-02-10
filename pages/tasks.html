@@ -1,15 +1,32 @@
-<form id="run-task" class="form-inline panel" action="emp/runTask">
-	<div class="form-group clearfix">
-		<select id="programs" class="form-control" name="program_id"></select>
-	</div>
-	<div class="form-group clearfix">
-		<textarea id="params" name="params">{}</textarea>
-	</div>
-	<div class="form-group clearfix">
-		<input>
-	</div>
-	<button type="submit" class="btn btn-primary">Выполнить</button>
-</form>
+<hr>
+<div class="container">
+	<form id="run-task" class="form-inline panel row" action="emp/runTask">
+		<div class="form-group col-3">
+			<label for="programs" >Программа</label>
+			<select id="programs" class="form-control" name="program_id"></select>
+		</div>
+		<div class="form-group col-3">
+			<label for="params">Параметры</label>
+			<textarea id="params" name="params" rows="1">{}</textarea>
+		</div>
+		<div class="form-group col-3">
+			<label for="connectString">Строка соединения</label>
+			<input
+				id="connectString"
+				name="connect_string"
+				placeholder="host=localhost port=5433 dbname=bookstore2 user=emp"
+				title="Leave empty for default"
+				data-toggle="tooltip"
+				data-placement="top"
+				data-html="true"
+			>
+		</div>
+		<div class="form-group col-2">
+			<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
+		</div>
+	</form>
+</div>
+<hr>
 <div id="tasks" class="container">
 	<div id="headers" style="display:none;" class="row">
 		<span class="col-1 font-weight-bold">#</span>
@@ -91,6 +108,7 @@
 				);
 			}
 		);
+		$('[data-toggle="tooltip"]').tooltip();
 		populatePrograms();
 		populateTasks();
 	}

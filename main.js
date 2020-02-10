@@ -4,7 +4,6 @@ var lib={
 	 */
 	requestIsRunning:false,
 	
-	session:undefined,
 	/**contents of sql panel
 	 */
 	sql:'',
@@ -69,7 +68,7 @@ var lib={
 					error:e=>{
 //						lib.requestIsRunning=false;
 						alert('Unexpected server error');
-						console.err(e);
+						console.error(e);
 					},
 					complete:()=>{
 						$('#loader').addClass('invisible').removeClass('visible');
@@ -93,11 +92,13 @@ var lib={
 			)
 		;
 	},
+	clearPage: page=>{
+		lib.clearPanes();
+		$('#page').empty();
+	},
 
-	//enable/disable elements
+	//enable/disable elements in tech pane
 	chkCmd: ()=>{
-		$('#login').toggle(lib.session===undefined);
-		$('#logout').toggle(lib.session!==undefined);
 		$('#btn-conninfo').toggleClass('disabled',$('#conninfo').html()=='');
 		$('#trace').prop('disabled',$('#conninfo').html()=='');
 	},

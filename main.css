@@ -16,12 +16,25 @@ html{
 	margin:0.3rem 0;
 }
 
+#login-form,
+#register-form{
+	display:none;
+}
+
 /* pages */
 #page.books #books input[type="number"]{
 	width:5rem;
 }
 
+#page.shop #books,
+#page.shop #book{
+	display:none;
+}
 
+
+#headers>span{
+	font-weight:bold;
+}
 
 /***********************************************/
 

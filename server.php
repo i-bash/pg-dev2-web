@@ -34,15 +34,42 @@
 			catch(Exception $e){
 				$role='postgres';
 			}
-			$pg->connect($role);
+			$pg->connect($_POST['connect_string']??'',$role);
+			unset($_POST['connect_string']);
 			$pg->query("begin");
 			$pg->execFunction("trace",["enable"=>$trace]);
 			//$check=PgCheckObject::create($pg,$action);
 			//$objectInfo=$check->checkObject();
 			switch($action){
-			case 'execute':
-				$pg->query($_POST['sql']);
+			// shop
+			case 'register':
+				$data = $pg->execFunction("webapi.register_user",$_POST);
 			break;
+			case 'login':
+				$data = $pg->execFunction("webapi.login",$_POST);
+			break;
+			case 'logout':
+				$data = $pg->execFunction("webapi.logout",$_POST);
+			break;
+			case 'findBooks':
+				$data = $pg->execFunctionJson("webapi.get_catalog",$_POST);
+			break;
+			case 'getImage':
+				$data = $pg->execFunction("webapi.get_image",$_GET);
+			break;
+			case 'toCart':
+				$data = $pg->execFunction("webapi.add_to_cart",$_POST);
+			break;
+			case 'getCart':
+				$data = $pg->execFunctionJson("webapi.get_cart",$_POST);
+			break;
+			case 'fromCart':
+				$data = $pg->execFunction("webapi.remove_from_cart",$_POST);
+			break;
+			case 'checkout':
+				$data = $pg->execFunction("webapi.checkout",$_POST);
+			break;
+			// admin
 			case 'getBooks':
 				$data = $pg->execFunction("empapi.get_catalog",$_POST);
 			break;
@@ -84,13 +111,6 @@
 						'authors'=>'{'.implode(',',$_POST['authors']).'}'
 					]
 				);
-			break;
-			break;
-			case 'findBooks':
-				$_POST['author_name']=trim($_POST['author_name'])===''?null:$_POST['author_name'];
-				$_POST['book_title']=trim($_POST['book_title'])===''?null:$_POST['book_title'];
-				$_POST['in_stock']=array_key_exists('in_stock',$_POST);
-				$data = $pg->query("select * from get_catalog ($1, $2, $3)",array_values($_POST));
 			break;
 			case 'buyBook':
 				$data=$pg->execFunction("buy_book",$_POST);

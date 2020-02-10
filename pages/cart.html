@@ -1,0 +1,82 @@
+						<div id="books" class="container">
+							<div id="headers" style="display:none;" class="row">
+								<span class="col-2">Обложка</span>
+								<span class="col-6">Название, авторы</span>
+								<span class="col-1 text-right">Цена</span>
+								<span class="col-1 text-right">Кол-во</span>
+								<span class="col-2"></span>
+							</div>
+						</div>
+						<div id="totals">
+							Общая стоимость <span id="total">??</span>
+							<button id="buy" class="btn btn-primary hide">Купить</button>
+						</div>
+						<div><button id="to-shop" class="btn btn-primary">Вернуться в магазин</button></div>
+<script>
+	{
+		//display books
+		let displayCart=data=>{
+			lib.alert(data.rows.length==0?'Корзина пуста':'В корзине книг: '+data.rows.length);
+			$('#headers,#totals').toggle(data.rows.length>0);
+			let list=$('#books');
+			list.children('div:not(:first-child)').remove();
+			data.rows.forEach(
+				r=>{
+					$('<div/>',{class:'row'})
+						.append(
+							$('<span/>',{class:'col-2'})
+								.append(
+									$('<a/>',{href:'#'}).append($('<img/>',{src:'book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
+							)
+						)
+						.append(
+							$('<span/>',{class:'col-6'})
+							.html(
+								r.title+
+								'. '+
+								r.authors_list.map(
+									author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
+								).join(', ')
+							)
+						)
+						.append($('<span/>',{class:'col-1 text-right'}).html(r.old_price+':'+r.new_price))
+						.append($('<span/>',{class:'col-1 text-right'}).html(r.old_qty+':'+r.new_qty))
+						.append($('<span/>',{class:'col-2'}).append(
+							$('<button/>',{type:'button',class:'btn btn-secondary btn-sm from-cart'}).data('id',r.book_id).html('Убрать')
+						))
+						.appendTo(list)
+					;
+				}
+			);
+		}
+		$('#books').on(
+			'show load ',
+			'img',
+			e=>{
+				alert(e);
+			}
+		);
+		$('#books').on(
+			'click',
+			'img',
+			e=>{lib.displayPage('book');}
+		);
+		$('#books').on(
+			'click',
+			'button.from-cart',
+			e=>{
+				lib.server(
+					'web/fromCart',
+					{book_id:$(e.target).data('id'),auth_token:$('#auth_token').val()},
+					()=>{alert('removed from cart');}
+				);
+			}
+		);
+		//buttons
+		$('#buy').click(()=>{lib.server('web/checkout',{auth_token:$('#auth_token').val()})});
+		$('#to-shop').click(()=>{lib.displayPage('shop')});
+		
+		//init
+		lib.server('web/getCart',{auth_token:$('#auth_token').val()},displayCart);
+	}
+</script>

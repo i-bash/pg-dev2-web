@@ -14,57 +14,45 @@
 				<div class="col-9 container-fluid">
 					<h2>Учебное приложение DEV2</h2>
 					<!--div id="main" class="row"-->
-						<ul class="nav nav-tabs">
-						  <li class="nav-item active">
-							<a data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
-						  </li>
-						  <li class="nav-item">
-							<a data-toggle="tab" class="nav-link" href="#admin">Админка</a>
-						  </li>
-						</ul>
+					<ul class="nav nav-tabs">
+					  <li class="nav-item active">
+						<a id="tab-shop" data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
+					  </li>
+					  <li class="nav-item">
+						<a id="tab-admin" data-toggle="tab" class="nav-link" href="#admin">Админка</a>
+					  </li>
+					</ul>
 						
-						<div class="tab-content">
-						  <div id="shop" class="tab-pane fade in active">
-							<div id="header1" class="container text-right clearfix">
-								<span id="login">
-									<button type="button" class="btn btn-info">Вход</button>
-									<button type="button" class="btn btn-info">Регистрация</button>			
+					<div class="tab-content">
+						<div id="shop" class="tab-pane fade in active">
+							<div id="header1" class="container text-right clearfix pt-2 pb-2 border-bottom">
+								<span id="logged-out">
+									<button id="login" type="button" class="btn btn-info">Вход</button>
+									<button id="register" type="button" class="btn btn-info">Регистрация</button>			
 								</span>
-								<span id="logout">
-									<span id="username">username</span>
-									<button type="button" class="btn btn-info">Выйти</button>
+								<span id="login-form">
+									<form class="form-inline float-right" action="web/login">
+										<input id="username" name="username" required placeholder="Имя пользователя">
+										<button type="submit" class="btn btn-info">Войти</button>
+										<button type="button" class="btn btn-info revert">Вернуться</button>
+									</form>
 								</span>
-								<button type="button" class="btn btn-info">Корзина</button>
+								<span id="register-form">
+									<form class="form-inline float-right" action="web/register">
+										<input id="reg-username" name="username" required placeholder="Имя пользователя">
+										<input id="reg-email" type="email" name="email" required placeholder="Электронная почта">
+										<button type="submit" class="btn btn-info">Зарегистрироваться</button>
+										<button type="button" class="btn btn-info revert">Вернуться</button>
+									</form>
+								</span>
+								<span id="logged-in">
+									<span id="session-info"></span>
+									<button id="logout" class="btn btn-info">Выйти</button>
+									<button id="cart" type="button" class="btn btn-info">Корзина</button>
+								</span>
 							</div>
-							<form id="search" class="form-inline" action="findBooks">
-								<div class="container text-right clearfix">
-									<input id="search_string" class="form-control text-right mb-2" name="search_string" placeholder="Автор или название"/>
-									<button type="submit" class="btn btn-primary mb-2">Найти</button>
-									<button type="submit" class="btn btn-primary mb-2">Сортировка</button>
-								</div>
-							</form>
-							<div class="container border">
-								shop here
-<!--						
-								<div class="col-md-8">
-									<div class="btn-toolbar" role="toolbar">
-										<div class="btn-group" role="group">
-											<button type="button" class="btn btn-info" data-page="shop">Магазин</button>
-										</div>
-										<div class="btn-group pull-right" role="group">
-											<button type="button" class="btn btn-info" data-page="catalog">Каталог</button>
-										</div>
-										<div class="btn-group pull-right" role="group">
-											<button type="button" class="btn btn-info" data-page="authors">Авторы</button>
-											<button type="button" class="btn btn-info" data-page="books">Книги</button>
-										</div>
-									</div>
-									<div id="page"></div>
-								</div>
--->
-							</div>
-						  </div>
-						  <div id="admin" class="tab-pane fade">
+						</div>
+						<div id="admin" class="tab-pane fade">
 							<ul class="nav nav-pills">
 							  <li class="nav-item">
 								<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>
@@ -72,15 +60,12 @@
 							  <li class="nav-item">
 								<a data-toggle="pill" class="nav-link" href="#" data-page="tasks">Фоновые задания</a>
 							  </li>
-							  <li class="nav-item">
-								<a data-toggle="pill" class="nav-link" href="#" data-page="test">Test</a>
-							  </li>
 							</ul>
-							<div id="page" class="mt-1"></div>
-						  </div>
 						</div>
-					<!--/div-->
+						<div id="page" class="mt-1"></div>
+					</div>
 				</div>
+
 				<div id="techinfo" class="col-3 border pt-2 pb-2" style="display:flex;flex-flow:column nowrap;">
 					<div style="flex-grow:0">
 						<button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo-pane" aria-expanded="false" aria-controls="conninfo">
@@ -106,9 +91,21 @@
 		<script>
 			$(
 				()=>{
-					window.name=window.name||Date.now();
-					lib.chkCmd();
-					console.info(window.name);
+					//enable/disable elements
+					let chkCmd=()=>{
+						//get auth info from sessionStorage
+						let authToken=sessionStorage.getItem('authToken');
+						let userName=sessionStorage.getItem('userName');
+						console.info(authToken);
+						console.info(userName);
+						//auth header
+						$('#session-info').html(userName+' ('+authToken+')');
+						$('#logged-in').toggle(authToken!==null);
+						$('#logged-out').toggle(authToken===null);
+						$('#login-form').toggle(false);
+						$('#register-form').toggle(false);
+					};
+					
 					//display page
 					$('#admin a[data-page]').click(
 						e=>{
@@ -117,6 +114,68 @@
 							lib.displayPage($(e.target).data('page'));
 						}
 					);
+					$('#login').click(
+						e=>{
+							$('#login-form').toggle(true);
+							$('#register-form').toggle(false);
+							$('#logged-out').toggle(false);
+							$('#logged-in').toggle(false);
+							$('#username').focus();
+						}
+					);
+					$('#register').click(
+						e=>{
+							$('#login-form').toggle(false);
+							$('#register-form').toggle(true);
+							$('#logged-out').toggle(false);
+							$('#logged-in').toggle(false);
+						}
+					);
+					$('button.revert').click(chkCmd);
+					
+					//tab
+					$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+						switch(e.target.id){
+						case 'tab-shop':
+							lib.displayPage('shop');
+						break;
+						case 'tab-admin':
+							lib.clearPage();
+						break;
+						}
+					})
+
+					//login
+					lib.ajaxForm(
+						'#login-form>form',
+						data=>{
+							sessionStorage.setItem('authToken',data.rows[0].login);
+							sessionStorage.setItem('userName',$('#username').val());
+							$('#username').val('');
+							$('#shop').trigger('shop:login-logout');
+							chkCmd();
+						}
+					);
+					//logout
+					$('#logout').click(
+						e=>lib.server(
+							'web/logout',
+							{auth_token:sessionStorage.getItem('authToken')},
+							()=>{
+								sessionStorage.removeItem('authToken');
+								sessionStorage.removeItem('userName');
+								$('#shop').trigger('shop:login-logout');
+								chkCmd();
+							}
+						)
+					);
+					//register
+					lib.ajaxForm('#register-form>form',data=>alert(data));
+					//cart
+					$('#cart').click(e=>{lib.displayPage('cart');});
+
+					////start
+					chkCmd();
 				}
 			);
 		</script>
