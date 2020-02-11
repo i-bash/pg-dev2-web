@@ -34,7 +34,7 @@
 									<form class="form-inline float-right" action="web/login">
 										<input id="username" name="username" required placeholder="Имя пользователя">
 										<button type="submit" class="btn btn-info">Войти</button>
-										<button type="button" class="btn btn-info revert">Вернуться</button>
+										<button type="button" class="btn btn-info revert"><img src="img/x.svg"></button>
 									</form>
 								</span>
 								<span id="register-form">
@@ -42,7 +42,7 @@
 										<input id="reg-username" name="username" required placeholder="Имя пользователя">
 										<input id="reg-email" type="email" name="email" required placeholder="Электронная почта">
 										<button type="submit" class="btn btn-info">Зарегистрироваться</button>
-										<button type="button" class="btn btn-info revert">Вернуться</button>
+										<button type="button" class="btn btn-info revert"><img src="img/x.svg"></button>
 									</form>
 								</span>
 								<span id="logged-in">
@@ -129,6 +129,7 @@
 							$('#register-form').toggle(true);
 							$('#logged-out').toggle(false);
 							$('#logged-in').toggle(false);
+							$('#reg-username').focus();
 						}
 					);
 					$('button.revert').click(chkCmd);
@@ -170,7 +171,15 @@
 						)
 					);
 					//register
-					lib.ajaxForm('#register-form>form',data=>alert(data));
+					lib.ajaxForm(
+						'#register-form>form',
+						data=>{
+							alert('Пользователь '+$('#reg-username').val()+' зарегистрирован.');
+							$('#reg-username').val('');
+							$('#reg-email').val('');
+							chkCmd();
+						}
+					);
 					//cart
 					$('#cart').click(e=>{lib.displayPage('cart');});
 

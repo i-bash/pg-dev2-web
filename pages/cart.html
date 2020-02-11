@@ -26,7 +26,7 @@
 						.append(
 							$('<span/>',{class:'col-2'})
 								.append(
-									$('<a/>',{href:'#'}).append($('<img/>',{src:'book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
+									$('<a/>',{href:'#'}).append($('<img/>',{src:'img/book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
 							)
 						)
 						.append(
@@ -67,16 +67,16 @@
 			e=>{
 				lib.server(
 					'web/fromCart',
-					{book_id:$(e.target).data('id'),auth_token:$('#auth_token').val()},
+					{book_id:$(e.target).data('id'),auth_token:sessionStorage.getItem('authToken')},
 					()=>{alert('removed from cart');}
 				);
 			}
 		);
 		//buttons
-		$('#buy').click(()=>{lib.server('web/checkout',{auth_token:$('#auth_token').val()})});
+		$('#buy').click(()=>{lib.server('web/checkout',{auth_token:sessionStorage.getItem('authToken')})});
 		$('#to-shop').click(()=>{lib.displayPage('shop')});
 		
 		//init
-		lib.server('web/getCart',{auth_token:$('#auth_token').val()},displayCart);
+		lib.server('web/getCart',{auth_token:sessionStorage.getItem('authToken')},displayCart);
 	}
 </script>

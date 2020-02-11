@@ -14,7 +14,7 @@
 			<input
 				id="connectString"
 				name="connect_string"
-				placeholder="host=localhost port=5433 dbname=bookstore2 user=emp"
+				placeholder="host=localhost port=5432 dbname=bookstore2 user=emp"
 				title="Leave empty for default"
 				data-toggle="tooltip"
 				data-placement="top"
@@ -34,7 +34,7 @@
 		<span class="col-2 font-weight-bold text-center">Запущено</span>
 		<span class="col-2 font-weight-bold text-center">Завершено</span>
 		<span class="col-2 font-weight-bold text-center">Статус</span>
-		<span class="col-1 font-weight-bold text-center"></span>
+		<span class="col-1 font-weight-bold text-center"><button id="refresh" class="btn btn-primary text-center"><img src="img/refresh-ccw.svg"></button></span>
 	</div>
 </div>
 <script>
@@ -95,6 +95,7 @@
 				}
 			}
 		);
+		$('#refresh').click(populateTasks);
 		$('#tasks').on(
 			'click',
 			'.show-results',

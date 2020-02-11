@@ -37,7 +37,9 @@
 			$pg->connect($_POST['connect_string']??'',$role);
 			unset($_POST['connect_string']);
 			$pg->query("begin");
-			$pg->execFunction("trace",["enable"=>$trace]);
+			if($trace){
+				$pg->execFunction("trace");
+			}
 			//$check=PgCheckObject::create($pg,$action);
 			//$objectInfo=$check->checkObject();
 			switch($action){
