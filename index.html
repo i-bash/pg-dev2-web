@@ -13,7 +13,6 @@
 			<div class="row">
 				<div class="col-9 container-fluid">
 					<h2>Учебное приложение DEV2</h2>
-					<!--div id="main" class="row"-->
 					<ul class="nav nav-tabs">
 					  <li class="nav-item active">
 						<a id="tab-shop" data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
@@ -48,7 +47,7 @@
 								<span id="logged-in">
 									<span id="session-info"></span>
 									<button id="logout" class="btn btn-info">Выйти</button>
-									<button id="cart" type="button" class="btn btn-info">Корзина</button>
+									<button id="cart" type="button" class="btn btn-info">Корзина ₽<span class="cart-total"></span></button>
 								</span>
 							</div>
 						</div>
@@ -68,18 +67,18 @@
 
 				<div id="techinfo" class="col-3 border pt-2 pb-2" style="display:flex;flex-flow:column nowrap;">
 					<div style="flex-grow:0">
-						<button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo-pane" aria-expanded="false" aria-controls="conninfo">
+						<!--button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo-pane" aria-expanded="false" aria-controls="conninfo">
 							conninfo
-						</button>
-						<span class="col form-check m-1" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
+						</button-->
+						<span class="form-check m-1 float-left" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
 							<input type="checkbox" class="form-check-input" id="trace">
 							<label class="form-check-label" for="trace">Trace</label>
 						</span>
-						<span id="loader" class="spinner-border spinner-border-sm invisible m-1"></span>
+						<span id="loader" class="spinner-border spinner-border-sm invisible m-1 float-right"></span>
 					</div>
-					<div id="conninfo-pane" class="collapse" style="flex-grow:0">
+					<!--div id="conninfo-pane" class="collapse" style="flex-grow:0">
 						<div id="conninfo" class="col-12 border pl-2 pr-2"></div>
-					</div>
+					</div-->
 					<div id="action" class="mt-2 overflow-auto" style="flex-grow:10;"></div>
 				</div>
 			</div>
@@ -89,104 +88,123 @@
 		<script src="lib/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
 		<script src="main.js"></script>
 		<script>
-			$(
-				()=>{
-					//enable/disable elements
-					let chkCmd=()=>{
-						//get auth info from sessionStorage
-						let authToken=sessionStorage.getItem('authToken');
-						let userName=sessionStorage.getItem('userName');
-						console.info(authToken);
-						console.info(userName);
-						//auth header
-						$('#session-info').html(userName+' ('+authToken+')');
-						$('#logged-in').toggle(authToken!==null);
-						$('#logged-out').toggle(authToken===null);
-						$('#login-form').toggle(false);
-						$('#register-form').toggle(false);
-					};
-					
-					//display page
-					$('#admin a[data-page]').click(
-						e=>{
-							//$('#admin a[data-page]').not(e.target).removeClass('btn-primary').addClass('btn-info');
-							//$(e.target).removeClass('btn-info').addClass('btn-primary');
-							lib.displayPage($(e.target).data('page'));
-						}
+			//enable/disable elements
+			let chkCmd=()=>{
+				//get auth info from sessionStorage
+				let authToken=sessionStorage.getItem('authToken');
+				let userName=sessionStorage.getItem('userName');
+				console.info(authToken);
+				console.info(userName);
+				//auth header
+				$('#session-info').html(userName+' ('+authToken+')');
+				$('#logged-in').toggle(authToken!==null);
+				$('#logged-out').toggle(authToken===null);
+				$('#login-form').toggle(false);
+				$('#register-form').toggle(false);
+			};
+			//display cart info (accepts data returned by getCart)
+			let displayCartInfo=data=>{
+				let cost=0;
+				data.rows.forEach(
+					r=>{
+						cost+=r.qty*r.price;
+					}
+				);
+				$('.cart-total').html(cost);
+			};
+			let refreshCartInfo=()=>{
+				let authToken=sessionStorage.getItem('authToken');
+				if(authToken==null){
+					$('.cart-total').html(0);
+				}
+				else{
+					lib.server(
+						'web/getCart',
+						{auth_token:authToken},
+						displayCartInfo
 					);
-					$('#login').click(
-						e=>{
-							$('#login-form').toggle(true);
-							$('#register-form').toggle(false);
-							$('#logged-out').toggle(false);
-							$('#logged-in').toggle(false);
-							$('#username').focus();
-						}
-					);
-					$('#register').click(
-						e=>{
-							$('#login-form').toggle(false);
-							$('#register-form').toggle(true);
-							$('#logged-out').toggle(false);
-							$('#logged-in').toggle(false);
-							$('#reg-username').focus();
-						}
-					);
-					$('button.revert').click(chkCmd);
-					
-					//tab
-					$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-						switch(e.target.id){
-						case 'tab-shop':
-							lib.displayPage('shop');
-						break;
-						case 'tab-admin':
-							lib.clearPage();
-						break;
-						}
-					})
+				};
+			}
 
-					//login
-					lib.ajaxForm(
-						'#login-form>form',
-						data=>{
-							sessionStorage.setItem('authToken',data.rows[0].login);
-							sessionStorage.setItem('userName',$('#username').val());
-							$('#username').val('');
-							$('#shop').trigger('shop:login-logout');
-							chkCmd();
-						}
-					);
-					//logout
-					$('#logout').click(
-						e=>lib.server(
-							'web/logout',
-							{auth_token:sessionStorage.getItem('authToken')},
-							()=>{
-								sessionStorage.removeItem('authToken');
-								sessionStorage.removeItem('userName');
-								$('#shop').trigger('shop:login-logout');
-								chkCmd();
-							}
-						)
-					);
-					//register
-					lib.ajaxForm(
-						'#register-form>form',
-						data=>{
-							alert('Пользователь '+$('#reg-username').val()+' зарегистрирован.');
-							$('#reg-username').val('');
-							$('#reg-email').val('');
-							chkCmd();
-						}
-					);
-					//cart
-					$('#cart').click(e=>{lib.displayPage('cart');});
+			//display page
+			$('#admin a[data-page]').click(
+				e=>{
+					//$('#admin a[data-page]').not(e.target).removeClass('btn-primary').addClass('btn-info');
+					//$(e.target).removeClass('btn-info').addClass('btn-primary');
+					lib.displayPage($(e.target).data('page'));
+				}
+			);
+			$('#login').click(
+				e=>{
+					$('#login-form').toggle(true);
+					$('#register-form').toggle(false);
+					$('#logged-out').toggle(false);
+					$('#logged-in').toggle(false);
+					$('#username').focus();
+				}
+			);
+			$('#register').click(
+				e=>{
+					$('#login-form').toggle(false);
+					$('#register-form').toggle(true);
+					$('#logged-out').toggle(false);
+					$('#logged-in').toggle(false);
+					$('#reg-username').focus();
+				}
+			);
+			$('button.revert').click(chkCmd);
+			
+			//tab
+			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+				switch(e.target.id){
+				case 'tab-shop':
+					lib.displayPage('shop');
+				break;
+				case 'tab-admin':
+					lib.clearPage();
+				break;
+				}
+			})
 
-					////start
+			//login
+			lib.ajaxForm(
+				'#login-form>form',
+				data=>{
+					sessionStorage.setItem('authToken',data.rows[0].login);
+					sessionStorage.setItem('userName',$('#username').val());
+					$('#username').val('');
+					$('#shop').trigger('shop:login-logout');
 					chkCmd();
 				}
 			);
+			//logout
+			$('#logout').click(
+				e=>lib.server(
+					'web/logout',
+					{auth_token:sessionStorage.getItem('authToken')},
+					()=>{
+						sessionStorage.removeItem('authToken');
+						sessionStorage.removeItem('userName');
+						$('#shop').trigger('shop:login-logout');
+						chkCmd();
+					}
+				)
+			);
+			//register
+			lib.ajaxForm(
+				'#register-form>form',
+				data=>{
+					alert('Пользователь '+$('#reg-username').val()+' зарегистрирован.');
+					$('#reg-username').val('');
+					$('#reg-email').val('');
+					chkCmd();
+				}
+			);
+			//cart
+			$('#cart').click(e=>{lib.displayPage('cart');});
+
+			////start
+			chkCmd();
 		</script>
 	</body>
 </html>

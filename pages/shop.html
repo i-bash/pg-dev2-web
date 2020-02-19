@@ -23,7 +23,7 @@
 								<span class="col-2"></span>
 							</div>
 						</div>
-						<div id="book">
+						<div id="book" class="book">
 							<div id="book-details" class="container">
 								<div class="row">
 									<div class="col-3">
@@ -42,7 +42,15 @@
 											</div>
 											<div class="row">
 												<div class="col-4">Рейтинг</div>
-												<div class="col-8" id="det-rating"></div>
+												<div class="col-1" id="det-rating"></div>
+												<div class="col-1">
+													<button id="vote-up" class="btn btn-sm btn-outline-success vote" data-vote="+1">+</button>
+												</div>
+												<div class="col-2" id="det-votes-up"></div>
+												<div class="col-1">
+													<button class="btn btn-sm btn-outline-danger vote" data-vote="-1">-</button>
+												</div>
+												<div class="col-2" id="det-votes-down"></div>
 											</div>
 											<div class="row">
 												<div class="col-4">Формат</div>
@@ -67,13 +75,13 @@
 		
 		//fill and initially display list of books
 		let initBooks =data=>{
-			lib.alert(data.rows.length==0?'Книги не найдены':'Найдено книг: '+data.rows.length);
 			let list=$('#books');
 			list.children('div:not(:first-child)').remove();
 			data.rows.forEach(
 				r=>{
 					$('<div/>',{class:'row book'})
 						.data('book',r)
+						.data('id',r.book_id)
 						.append(
 							$('<span/>',{class:'col-2'})
 								.append(
@@ -94,21 +102,24 @@
 						.append($('<span/>',{class:'col-2'}).html(r.format))
 						.append($('<span/>',{class:'col-1 text-right'}).html(r.price))
 						.append($('<span/>',{class:'col-2'}).append(
-							$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).data('id',r.book_id).html('В корзину')
+							$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).html('В корзину')
 						))
 						.appendTo(list)
 					;
 				}
 			);
 			showList();
-			$('#shop').trigger('shop:login-logout');
 			$('#books').toggle(data.rows.length>0);
+			lib.alert(data.rows.length==0?'Книги не найдены':'Найдено книг: '+data.rows.length);
 		};
 		//display book details
 		let showDetails=data=>{
+			$('#book').data('id',data.book_id);
 			$('#det-name').html(data.title);
 			$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'));
 			$('#det-rating').html(data.rating);
+			$('#det-votes-up').html(data.votes_up);
+			$('#det-votes-down').html(data.votes_down);
 			$('#det-format').html(data.format);
 			$('#det-other').html(data.additional);
 			$('#det-price').html(data.price).siblings('button').data('id',data.book_id);
@@ -126,7 +137,10 @@
 		$('#shop').on(
 			'shop:login-logout',
 			e=>{
-				$('#books,#book').find('button.to-cart').toggle(sessionStorage.getItem('authToken')!==null);
+				//enable to-cart and vote buttons for logged in user only
+				$('#books,#book').find('button.to-cart,button.vote').toggle(sessionStorage.getItem('authToken')!==null);
+				//display cart info in header
+				refreshCartInfo();
 			}
 		);
 		
@@ -147,7 +161,7 @@
 			'click',
 			'img',
 			e=>{
-				showDetails($(e.target).closest('div.row.book').data('book'));
+				showDetails($(e.target).closest('.book').data('book'));
 			}
 		);
 		$('#books,#book-details').on(
@@ -156,14 +170,24 @@
 			e=>{
 				lib.server(
 					'web/toCart',
-					{book_id:$(e.target).data('id'),auth_token:sessionStorage.getItem('authToken')},
-					()=>{alert('added to cart');}
+					{book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')},
+					refreshCartInfo
+				);
+			}
+		);
+		$('.vote').click(
+			e=>{
+				lib.server(
+					'web/vote',
+					{vote:$(e.target).data('vote'),book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')},
+					()=>{alert('voted');}
 				);
 			}
 		);
 		$('#to-list').click(showList);
 		
 		//init
+		$('#shop').trigger('shop:login-logout');
 		lib.ajaxForm('#search',initBooks);
 	}
 </script>

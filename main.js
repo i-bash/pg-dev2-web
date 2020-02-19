@@ -31,9 +31,12 @@ var lib={
 					success:res=>{
 						$('#conninfo').empty();
 						if(res.conninfo){
+							let conninfoText='';
 							for(let [key, value] of Object.entries(res.conninfo)){
-								$('#conninfo').append('<div class="row"><span class="col-4">'+key+'</span><span class="col-8">'+value+'</span></div>');
+								conninfoText+=(conninfoText===''?'':'<br>')+key+': '+value;
+//								$('#conninfo').append('<div class="row"><span class="col-4">'+key+'</span><span class="col-8">'+value+'</span></div>');
 							}
+							$('<div/>',{class:'sql alert alert-light',role:'alert'}).html(conninfoText).appendTo(actionPane);
 						}
 						if(res.sql.length){
 							let sqlText=res.sql.map(

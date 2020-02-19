@@ -8,47 +8,68 @@
 							</div>
 						</div>
 						<div id="totals">
-							Общая стоимость <span id="total">??</span>
+							Общая стоимость ₽<span class="cart-total"></span>
 							<button id="buy" class="btn btn-primary hide">Купить</button>
 						</div>
 						<div><button id="to-shop" class="btn btn-primary">Вернуться в магазин</button></div>
 <script>
 	{
-		//display books
-		let displayCart=data=>{
-			lib.alert(data.rows.length==0?'Корзина пуста':'В корзине книг: '+data.rows.length);
-			$('#headers,#totals').toggle(data.rows.length>0);
-			let list=$('#books');
-			list.children('div:not(:first-child)').remove();
-			data.rows.forEach(
-				r=>{
-					$('<div/>',{class:'row'})
-						.append(
-							$('<span/>',{class:'col-2'})
-								.append(
-									$('<a/>',{href:'#'}).append($('<img/>',{src:'img/book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
-							)
-						)
-						.append(
-							$('<span/>',{class:'col-6'})
-							.html(
-								r.title+
-								'. '+
-								r.authors_list.map(
-									author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
-								).join(', ')
-							)
-						)
-						.append($('<span/>',{class:'col-1 text-right'}).html(r.old_price+':'+r.new_price))
-						.append($('<span/>',{class:'col-1 text-right'}).html(r.old_qty+':'+r.new_qty))
-						.append($('<span/>',{class:'col-2'}).append(
-							$('<button/>',{type:'button',class:'btn btn-secondary btn-sm from-cart'}).data('id',r.book_id).html('Убрать')
-						))
-						.appendTo(list)
-					;
-				}
-			);
+		let displayCartItem=r=>{
+			let qty=
+				$('<input/>',{class:'col-1 text-right qty',type:'number',min:'1'})
+				.val(r.qty)
+			;
+			if(r.qty>r.onhand_qty){
+				qty
+				.addClass('bg-danger text-white')
+				.prop('title','На складе '+r.onhand_qty+' книг')
+				.attr('data-toggle','tooltip')
+				.attr('data-placement','top')
+			}
+			$('<div/>',{class:'row'})
+			.data(r)
+			.append(
+				$('<span/>',{class:'col-2'})
+				.append(
+					$('<a/>',{href:'#'}).append($('<img/>',{src:'img/book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
+				)
+			)
+			.append(
+				$('<span/>',{class:'col-6'})
+				.html(
+					r.title+
+					'. '+
+					r.authors_list.map(
+						author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
+					).join(', ')
+				)
+			)
+			.append($('<span/>',{class:'col-1 text-right'}).html(r.price))
+			.append(qty)
+			.append(
+				$('<span/>',{class:'col-2'})
+				.append(
+					$('<button/>',{type:'button',class:'btn btn-secondary btn-sm from-cart'}).html('Убрать')
+				)
+			)
+			.appendTo($('#books'))
+			;
 		}
+		//display books in cart
+		let displayCart=data=>{
+			$('#headers,#totals').toggle(data.rows.length>0);
+			$('#books').children('div:not(:first-child)').remove();
+			data.rows.forEach(displayCartItem);
+			$('[data-toggle="tooltip"]').tooltip();
+			displayCartInfo(data); //in header
+			lib.alert(data.rows.length==0?'Корзина пуста':'В корзине книг: '+data.rows.length);
+		}
+		//refresh cart
+		let refreshCart=()=>{
+			lib.server('web/getCart',{auth_token:sessionStorage.getItem('authToken')},displayCart);
+		}
+		
+		//event handlers
 		$('#books').on(
 			'show load ',
 			'img',
@@ -61,22 +82,55 @@
 			'img',
 			e=>{lib.displayPage('book');}
 		);
+		//change item quantity
+		$('#books').on(
+			'change',
+			'input.qty',
+			e=>{
+				let row=$(e.currentTarget).closest('.row');
+				let newValue=$(e.currentTarget).val();
+				let diff=newValue-row.data().qty;
+				row.data.qty=newValue;
+				lib.server(
+					'web/toCart',
+					{auth_token:sessionStorage.getItem('authToken'),book_id:row.data().book_id,qty:diff},
+					()=>{
+						refreshCart();
+						alert('quantity changed');
+					}
+				);
+			}
+		);
+		//remove item from cart
 		$('#books').on(
 			'click',
 			'button.from-cart',
 			e=>{
 				lib.server(
 					'web/fromCart',
-					{book_id:$(e.target).data('id'),auth_token:sessionStorage.getItem('authToken')},
-					()=>{alert('removed from cart');}
+					{auth_token:sessionStorage.getItem('authToken'),book_id:$(e.currentTarget).closest('.row').data().book_id},
+					()=>{
+						refreshCart();
+						alert('removed from cart');
+					}
 				);
 			}
 		);
 		//buttons
-		$('#buy').click(()=>{lib.server('web/checkout',{auth_token:sessionStorage.getItem('authToken')})});
+		$('#buy').click(
+			()=>{
+				lib.server(
+					'web/checkout',
+					{auth_token:sessionStorage.getItem('authToken')},
+					()=>{
+						lib.displayPage('shop');
+					}
+				);
+			}
+		);
 		$('#to-shop').click(()=>{lib.displayPage('shop')});
 		
 		//init
-		lib.server('web/getCart',{auth_token:sessionStorage.getItem('authToken')},displayCart);
+		refreshCart();
 	}
 </script>

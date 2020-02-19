@@ -33,13 +33,6 @@ class Pg{
 				)
 			)
 		);
-		$this->info=(object)[
-			'host'=>pg_host(),
-			'port'=>pg_port(),
-			'user'=>pg_version()['session_authorization'],
-			'dbname'=>pg_dbname(),
-			'pid'=>pg_get_pid($this->connection)
-		];
 	}
 	/** close database connection
 	 */
@@ -48,7 +41,19 @@ class Pg{
 			pg_close($this->connection);
 		}
 	}
-	
+	/** begin transaction
+	 */
+	public function begin(){
+		$this->query('begin');
+		$this->info=(object)[
+			'host'=>pg_host(),
+			'port'=>pg_port(),
+			'user'=>pg_version()['session_authorization'],
+			'dbname'=>pg_dbname(),
+			'pid'=>$this->execFunction('pg_backend_pid',[],false)->rows[0]->pg_backend_pid//pg_get_pid($this->connection)
+		];
+
+	}
 	/** SQL select
 	 * @param sql
 	 * @param params - integer-indexed array of values for parameters
@@ -117,7 +122,7 @@ class Pg{
 	 * @param params - associative array of values for function parameters
 	 * @return function value
 	 */
-	public function execFunction($name, $params=[]){
+	public function execFunction($name, $params=[],$displaySql=true){
 		$sql=
 			'select * from '.$name.' ('.
 				(
@@ -129,7 +134,7 @@ class Pg{
 				).
 			')'
 		;
-		return $this->query($sql,array_values($params),true);
+		return $this->query($sql,array_values($params),$displaySql);
 	}
 	public function execFunctionJson($name, $params=[]){
 		$sql=

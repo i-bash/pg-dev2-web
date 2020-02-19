@@ -36,7 +36,7 @@
 			}
 			$pg->connect($_POST['connect_string']??'',$role);
 			unset($_POST['connect_string']);
-			$pg->query("begin");
+			$pg->begin();
 			if($trace){
 				$pg->execFunction("trace");
 			}
@@ -58,6 +58,9 @@
 			break;
 			case 'getImage':
 				$data = $pg->execFunction("webapi.get_image",$_GET);
+			break;
+			case 'vote':
+				$data = $pg->execFunction("webapi.cast_vote",$_POST);
 			break;
 			case 'toCart':
 				$data = $pg->execFunction("webapi.add_to_cart",$_POST);
