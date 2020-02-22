@@ -1,2 +1,0 @@
-<?php
-const DATA_SOURCE = ['host'=>'localhost','port'=>'5432','dbname'=>'bookstore2'];

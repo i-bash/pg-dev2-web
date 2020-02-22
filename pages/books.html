@@ -20,13 +20,23 @@
 </form>
 <div id="books" class="container">
 	<div id="headers" style="display:none;" class="row">
-		<span class="col-6 font-weight-bold"><strong>Название</strong></span>
-		<span class="col-3 font-weight-bold text-center"><strong>Наличие</strong></span>
-		<span class="col-3 font-weight-bold text-center">Стоимость</span>
+		<span class="col-6 font-weight-bold">Название</span>
+		<span class="col-2 font-weight-bold text-right">Наличие</span>
+		<span class="col-2"></span>
+		<span class="col-2 font-weight-bold text-right">Цена</span>
 	</div>
 </div>
 <script>
 	{
+		//gen pseudo-random based on string hash (-0.5 .. 0.5)
+		String.prototype.hashRandom = function(){return this.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)/2**31};
+		//generate book order price
+		let genPrice=book=>{
+			return book.pages*1.5        //1.5 rub/page
+				*book.title.hashRandom() //-0.5 to +0.5
+				*(0.8+0.4*Math.random()) // +- 20%
+			;
+		}
 		//display books
 		lib.ajaxForm(
 			'#catalog',
@@ -37,21 +47,25 @@
 				list.children('div:not(:first-child)').remove();
 				data.rows.forEach(
 					r=>{
-						$('<div/>',{class:'row'})
+						$('<div/>',{class:'row book'})
 							.append($('<span/>',{class:'col-6 my-auto'}).html(r.title+' '+r.authors_list.length))
 							.append(
-								$('<form/>',{class:'form form-inline col-3 my-auto',action:'emp/orderBook',method:'post'})
-								.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
-								.append($('<input/>',{type:'number',name:'qty',value:r.onhand_qty,min:'1',step:'1',class:'form-control text-right'}))
-								.append($('<input/>',{type:'hidden',name:'price',value:999}))
-								.append($('<button/>',{type:'submit',class:'btn btn-primary btn-sm'}).html('Заказать'))
+								$('<span/>',{class:'col-4 container'})
+								.append(
+									$('<div/>',{class:'row'})
+									.append($('<span/>',{class:'col-6 text-right'}).html(r.onhand_qty))
+									.append($('<button/>',{class:'col-4 btn btn-primary btn-sm order'}).html('Заказать'))
+								)
+								.append(
+									$('<form/>',{class:'order-book row d-none',action:'emp/orderBook'})
+									.append($('<input/>',{name:'qty',type:'number',min:'1',class:'col-6 text-right',required:'required',value:'1'}))
+									.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
+									.append($('<input/>',{name:'price',type:'hidden'}).val(genPrice(r)))
+									.append($('<button/>',{class:'col-4 btn btn-primary btn-sm'}).html('Заказать'))
+									.append($('<button/>',{type:'reset',class:'col-2 btn btn-primary btn-sm cancel'}).html('&times;'))
+								)
 							)
-							.append(
-								$('<form/>',{class:'form form-inline col-3 my-auto',action:'emp/setPrice',method:'post'})
-								.append($('<input/>',{type:'hidden',name:'book_id',value:r.book_id}))
-								.append($('<input/>',{type:'number',name:'price',value:r.price,min:'1',class:'form-control text-right'}))
-								.append($('<button/>',{type:'submit',class:'btn btn-primary btn-sm'}).html('Установить'))
-							)
+							.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
 							.appendTo(list)
 						;
 					}
@@ -59,12 +73,33 @@
 			}
 		);
 		lib.ajaxForm(
-			'#books form[action="emp/orderBook"]',
-			data=>{}
+			'.book form.order-book',
+			(data,form)=>{
+				alert('books have been ordered');
+				$(form).children('button[type="reset"]').trigger('click');
+				$('#catalog').trigger('submit');
+			}
 		);
-		lib.ajaxForm(
-			'#books form[action="emp/setPrice"]',
-			data=>{}
+		
+		//event handlers
+		$('#books').on(
+			'click',
+			'button.order',
+			e=>{
+				let orderButton=$(e.currentTarget);
+				orderButton.parent().addClass('d-none');
+				orderButton.parent().siblings('form.row').removeClass('d-none');
+				orderButton.parent().siblings('form.row').find('input[name="qty"]').focus().select();
+			}
+		);
+		$('#books').on(
+			'click',
+			'button.cancel',
+			e=>{
+				let cancelButton=$(e.currentTarget);
+				cancelButton.parent().addClass('d-none');
+				cancelButton.parent().siblings('div.row').removeClass('d-none');
+			}
 		);
 	}
 </script>

@@ -5,35 +5,12 @@ class Pg{
 	public $info;
 	public $notices=[];
 	
-	public static function getDefaultConnectParams(){
-		return DATA_SOURCE;
-	}
-	public static function getConnectString($connectParams){
-		return implode(
-			' ',
-			array_map(
-				function($key,$value){
-					return $key.'=\''.addslashes($value).'\'';
-				},
-				array_keys($connectParams),
-				$connectParams
-			)
-		);
-	}
-	/** create database connection
-	 *  role is ignored if passing connection string
+	/** open database connection
 	 */
-	public function connect($connectString='',$role='postgres'){
-		$this->connection=pg_connect(
-			$connectString?:
-			static::getConnectString(
-				array_merge(
-					static::getDefaultConnectParams(),
-					['user'=>$role,'password'=>$role] //assume password to be the same as user name
-				)
-			)
-		);
+	public function connect($connectString){
+		$this->connection=pg_connect($connectString);
 	}
+	
 	/** close database connection
 	 */
 	public function close(){
@@ -46,10 +23,10 @@ class Pg{
 	public function begin(){
 		$this->query('begin');
 		$this->info=(object)[
-			'host'=>pg_host(),
-			'port'=>pg_port(),
-			'user'=>pg_version()['session_authorization'],
-			'dbname'=>pg_dbname(),
+			//'host'=>pg_host(),
+			//'port'=>pg_port(),
+			//'user'=>pg_version()['session_authorization'],
+			//'dbname'=>pg_dbname(),
 			'pid'=>$this->execFunction('pg_backend_pid',[],false)->rows[0]->pg_backend_pid//pg_get_pid($this->connection)
 		];
 

@@ -32,16 +32,16 @@
 								<span id="login-form">
 									<form class="form-inline float-right" action="web/login">
 										<input id="username" name="username" required placeholder="Имя пользователя">
-										<button type="submit" class="btn btn-info">Войти</button>
-										<button type="button" class="btn btn-info revert"><img src="img/x.svg"></button>
+										<button type="submit" class="btn btn-info ml-1">Войти</button>
+										<button type="button" class="btn btn-info revert ml-1">&times;</button>
 									</form>
 								</span>
 								<span id="register-form">
 									<form class="form-inline float-right" action="web/register">
 										<input id="reg-username" name="username" required placeholder="Имя пользователя">
-										<input id="reg-email" type="email" name="email" required placeholder="Электронная почта">
-										<button type="submit" class="btn btn-info">Зарегистрироваться</button>
-										<button type="button" class="btn btn-info revert"><img src="img/x.svg"></button>
+										<input id="reg-email" type="email" name="email" required placeholder="Электронная почта" class="ml-1">
+										<button type="submit" class="btn btn-info ml-1">Зарегистрироваться</button>
+										<button type="button" class="btn btn-info revert ml-1">&times;</button>
 									</form>
 								</span>
 								<span id="logged-in">
@@ -65,27 +65,27 @@
 					</div>
 				</div>
 
-				<div id="techinfo" class="col-3 border pt-2 pb-2" style="display:flex;flex-flow:column nowrap;">
-					<div style="flex-grow:0">
-						<!--button id="btn-conninfo" class="col btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#conninfo-pane" aria-expanded="false" aria-controls="conninfo">
-							conninfo
-						</button-->
-						<span class="form-check m-1 float-left" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
+				<div id="techinfo" class="col-3 border pt-2 pb-2 container" style="display:flex;flex-flow:column nowrap;">
+					<div class="row">
+						<div class="col-7">
+							<select id="server" class=""></select>
+						</div>
+						<div class="col-3 form-check" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
 							<input type="checkbox" class="form-check-input" id="trace">
 							<label class="form-check-label" for="trace">Trace</label>
-						</span>
-						<span id="loader" class="spinner-border spinner-border-sm invisible m-1 float-right"></span>
+						</div>
+						<div class="col-2">
+							<span id="loader" class="spinner-border spinner-border-sm invisible"></span>
+						</div>
 					</div>
-					<!--div id="conninfo-pane" class="collapse" style="flex-grow:0">
-						<div id="conninfo" class="col-12 border pl-2 pr-2"></div>
-					</div-->
-					<div id="action" class="mt-2 overflow-auto" style="flex-grow:10;"></div>
+					<div id="action" class="row mt-2 overflow-auto" style="flex-grow:10;"></div>
 				</div>
 			</div>
 		</div>
 		<script src="lib/jquery-3.4.1.min.js"></script>
 		<script src="lib/popper.min.js"></script>
 		<script src="lib/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+		<script src="config.js"></script>
 		<script src="main.js"></script>
 		<script>
 			//enable/disable elements
@@ -93,8 +93,6 @@
 				//get auth info from sessionStorage
 				let authToken=sessionStorage.getItem('authToken');
 				let userName=sessionStorage.getItem('userName');
-				console.info(authToken);
-				console.info(userName);
 				//auth header
 				$('#session-info').html(userName+' ('+authToken+')');
 				$('#logged-in').toggle(authToken!==null);
@@ -129,8 +127,6 @@
 			//display page
 			$('#admin a[data-page]').click(
 				e=>{
-					//$('#admin a[data-page]').not(e.target).removeClass('btn-primary').addClass('btn-info');
-					//$(e.target).removeClass('btn-info').addClass('btn-primary');
 					lib.displayPage($(e.target).data('page'));
 				}
 			);
@@ -204,6 +200,16 @@
 			$('#cart').click(e=>{lib.displayPage('cart');});
 
 			////start
+			lib.populateSelect(
+				'#server',
+				config.servers.map(
+					s=>[
+						Object.entries(s).map(entry=>entry[0]+'='+entry[1]).join(' '),
+						s.host+':'+s.port,
+						s
+					]
+				)
+			);
 			chkCmd();
 		</script>
 	</body>

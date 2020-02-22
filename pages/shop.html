@@ -125,11 +125,13 @@
 			$('#det-price').html(data.price).siblings('button').data('id',data.book_id);
 			$('#book').toggle(true);
 			$('#books').toggle(false);
+			$('#shop').trigger('shop:login-logout');
 		};
 		//display list of books
 		let showList=()=>{
 			$('#book').toggle(false);
 			$('#books').toggle(true);
+			$('#shop').trigger('shop:login-logout');
 		};
 		
 		//event handlers
@@ -187,7 +189,6 @@
 		$('#to-list').click(showList);
 		
 		//init
-		$('#shop').trigger('shop:login-logout');
 		lib.ajaxForm('#search',initBooks);
 	}
 </script>

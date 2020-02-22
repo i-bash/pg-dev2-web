@@ -2,11 +2,11 @@ var lib={
 
 	/**flag
 	 */
-	requestIsRunning:false,
+	//requestIsRunning:false,
 	
 	/**contents of sql panel
 	 */
-	sql:'',
+	//sql:'',
 	
 	/**separator for contents
 	 */
@@ -18,69 +18,79 @@ var lib={
 	 * @param callback - function(data)
 	 * @return promise
 	 */
-	server: (action,params,callback)=>{
-		//if(!lib.requestIsRunning){
-		//	lib.requestIsRunning=true;
-			$('#loader').addClass('visible').removeClass('invisible');
-			let actionPane=$('#action');
-			return actionPane.promise().then(
-				()=>$.ajax({
-					method:'post',
-					url:'server.php?action='+action+($('#trace').prop('checked')?'&trace=yes':''),
-					data:params,
-					success:res=>{
-						$('#conninfo').empty();
-						if(res.conninfo){
-							let conninfoText='';
-							for(let [key, value] of Object.entries(res.conninfo)){
-								conninfoText+=(conninfoText===''?'':'<br>')+key+': '+value;
-//								$('#conninfo').append('<div class="row"><span class="col-4">'+key+'</span><span class="col-8">'+value+'</span></div>');
+	server: (action,params,callback,callbackData)=>{
+		//action
+		let user='postgres';
+		[user,action]=action.split('/');
+		//server
+		let connectData=$("#server option:selected").data();
+		//other connect data
+		connectData.user=user;
+		connectData.password=user;
+		connectData.dbname='bookstore2';
+		$('#loader').addClass('visible').removeClass('invisible');
+		let actionPane=$('#action');
+		return actionPane.promise().then(
+			()=>$.ajax({
+				method:'post',
+				url:'server.php?'+$.param(
+					{
+						connectString:Object.entries(connectData).map(entry=>entry[0]+'='+entry[1]).join(' '),
+						action:action,
+						trace:$('#trace').prop('checked')
+					}
+				),
+				data:params,
+				success:res=>{
+					if(res.conninfo){
+						$('<div/>',{class:'sql alert alert-light w-100',role:'alert'})
+						.html(Object.entries(res.conninfo).map(e=>e[0]+': '+e[1]).join('<br>'))
+						.appendTo(actionPane)
+						;
+					}
+					if(res.sql.length){
+						let sqlText=res.sql.map(
+							s=>{
+								return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,' ');
 							}
-							$('<div/>',{class:'sql alert alert-light',role:'alert'}).html(conninfoText).appendTo(actionPane);
-						}
-						if(res.sql.length){
-							let sqlText=res.sql.map(
-								s=>{
-									return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,' ');
-								}
-							)./*reverse().*/join(lib.separator);
-							$('<div/>',{class:'sql alert alert-info',role:'alert'}).html(sqlText).appendTo(actionPane);
-						}
-						if(res.notices){
-							res.notices.forEach(
-								notice=>{
-									$('<p/>',{class:'alert alert-warning'}).html(notice).appendTo(actionPane);
-								}
-							);
-						}
-						res.info.forEach(
-							info=>{
-								$('<p/>',{class:'alert alert-success'}).html(info).appendTo(actionPane);
+						)./*reverse().*/join(lib.separator);
+						$('<div/>',{class:'sql alert alert-info w-100'}).html(sqlText).appendTo(actionPane);
+					}
+					if(res.notices){
+						res.notices.forEach(
+							notice=>{
+								$('<p/>',{class:'alert alert-warning w-100'}).html(notice).appendTo(actionPane);
 							}
 						);
-						lib.requestIsRunning=false;
-						if(res.err===null){
-							if(callback!==undefined){
-								callback(res.data);
-							}
-						}
-						else{
-							$('<p/>',{class:'alert alert-danger'}).html(res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')).appendTo(actionPane);
-						}
-					},
-					error:e=>{
-//						lib.requestIsRunning=false;
-						alert('Unexpected server error');
-						console.error(e);
-					},
-					complete:()=>{
-						$('#loader').addClass('invisible').removeClass('visible');
-						$(actionPane).animate({scrollTop:$(actionPane)[0].scrollHeight},1000);
-						lib.chkCmd();
 					}
-				})
-			);
-		//}
+					/*
+					res.info.forEach(
+						info=>{
+							$('<p/>',{class:'alert alert-success w-100'}).html(info).appendTo(actionPane);
+						}
+					);
+					lib.requestIsRunning=false;
+					*/
+					if(res.err===null){
+						if(callback!==undefined){
+							callback(res.data,callbackData);
+						}
+					}
+					else{
+						$('<p/>',{class:'alert alert-danger'}).html(res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')).appendTo(actionPane);
+					}
+				},
+				error:e=>{
+					alert('Unexpected server error');
+					console.error(e);
+				},
+				complete:()=>{
+					$('#loader').addClass('invisible').removeClass('visible');
+					$(actionPane).animate({scrollTop:$(actionPane)[0].scrollHeight},1000);
+					lib.chkCmd();
+				}
+			})
+		);
 	},
 
 	//display app page
@@ -124,7 +134,8 @@ var lib={
 					$(form).serialize(),
 					callbackAfter===undefined
 						?()=>{console.info('ajax form ok');}
-						:callbackAfter
+						:callbackAfter,
+					form
 				);
 			}
 		);
@@ -147,10 +158,30 @@ var lib={
 		$('#conninfo').empty();
 	},
 	
-	populateSelect: selector=>{
-		return data=>{
-			let dropdown = $(selector);
-			data.rows.forEach(row=>{dropdown.append($("<option />").val(row[data.columns[0]]).text(row[data.columns[1]]));});
-		}
+	//populate select from array of options
+	populateSelect: (selector,options)=>{
+		let dropdown = $(selector);
+		options.forEach(
+			option=>{
+				let element=$("<option />")
+				.val(Array.isArray(option)?option[0]:option)
+				.text(Array.isArray(option)?option[1]:option)
+				;
+				if(Array.isArray(option)&&option[2]!==undefined){
+					element.data(option[2]);
+				}
+				dropdown.append(element);
+			}
+		);
+	},
+	
+	//populate select from server data - use as callback
+	populateSelectFromData: selector=>{
+		return data=>
+			lib.populateSelect(
+				$(selector),
+				data.rows.map(row=>[row[data.columns[0]],row[data.columns[1]]])
+			)
+		;
 	}
 };

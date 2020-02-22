@@ -13,35 +13,20 @@
 			}
 		);
 		session_start();
-		require 'config.php';
 		require 'Pg.php';
 		require 'PgException.php';
-		require 'PgCheckObject.php';
 
-		$action=$_GET['action']??'';
-		$trace=in_array(($_GET['trace']??''),['y','yes','t','true','1']);
-		$params=$_POST??[];
 		$pg=new Pg();
+		$action=$_GET['action']??'';
+		$params=$_POST??[];
+		$trace=in_array(($_GET['trace']??''),['y','yes','t','true','1']);
 		try{
-			$isSystemAction = false;
+			$pg->connect($_GET['connectString']??'');
 			$objectInfo=null;
-			if($isSystemAction){
-				$role='postgres';
-			}
-			try{
-				list($role,$action)=explode('/',$action);
-			}
-			catch(Exception $e){
-				$role='postgres';
-			}
-			$pg->connect($_POST['connect_string']??'',$role);
-			unset($_POST['connect_string']);
 			$pg->begin();
 			if($trace){
 				$pg->execFunction("trace");
 			}
-			//$check=PgCheckObject::create($pg,$action);
-			//$objectInfo=$check->checkObject();
 			switch($action){
 			// shop
 			case 'register':
@@ -123,21 +108,18 @@
 			default:
 				throw new RuntimeException('Internal error. Unknown server action: '.$action);
 			}
-			$columnInfo=null; //$isSystemAction?'':$check->checkColumn($data??null);
 		}
 		catch(Exception $e){
 			$err=new stdClass();
 			$err->code = $e->getCode();
 			$err->message = $e->getMessage();
-			$columnInfo='';
 		}
 		finally{
-			$info=array_values(array_filter([$objectInfo,$columnInfo]));
 			try{
 				$pg->query("end");
+				$pg->close();
 			}
 			catch(Exception $e){}
-			$pg->close();
 		}
 		header('content-type:application/json');
 		echo json_encode([
@@ -145,7 +127,6 @@
 			'conninfo'=>$pg->info,
 			'sql'=>$pg->sql,
 			'err'=>$err??null,
-			'notices'=>$pg->notices??null,
-			'info'=>$info
+			'notices'=>$pg->notices??null
 		]);
 ?>
