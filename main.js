@@ -43,8 +43,8 @@ var lib={
 				data:params,
 				success:res=>{
 					if(res.conninfo){
-						$('<div/>',{class:'sql alert alert-light w-100',role:'alert'})
-						.html(Object.entries(res.conninfo).map(e=>e[0]+': '+e[1]).join('<br>'))
+						$('<div/>',{class:'alert alert-light w-100 m-0 p-0'})
+						.html(res.conninfo.user+'@'+res.conninfo.host+':'+res.conninfo.port+' ('+res.conninfo.pid+')')
 						.appendTo(actionPane)
 						;
 					}
@@ -54,12 +54,12 @@ var lib={
 								return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,' ');
 							}
 						)./*reverse().*/join(lib.separator);
-						$('<div/>',{class:'sql alert alert-info w-100'}).html(sqlText).appendTo(actionPane);
+						$('<div/>',{class:'sql alert alert-info w-100 m-0 p-2'}).html(sqlText).appendTo(actionPane);
 					}
 					if(res.notices){
 						res.notices.forEach(
 							notice=>{
-								$('<p/>',{class:'alert alert-warning w-100'}).html(notice).appendTo(actionPane);
+								$('<p/>',{class:'alert alert-warning w-100 m-0 p-2'}).html(notice).appendTo(actionPane);
 							}
 						);
 					}
@@ -69,7 +69,6 @@ var lib={
 							$('<p/>',{class:'alert alert-success w-100'}).html(info).appendTo(actionPane);
 						}
 					);
-					lib.requestIsRunning=false;
 					*/
 					if(res.err===null){
 						if(callback!==undefined){
@@ -77,7 +76,7 @@ var lib={
 						}
 					}
 					else{
-						$('<p/>',{class:'alert alert-danger'}).html(res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')).appendTo(actionPane);
+						$('<p/>',{class:'alert alert-danger w-100 m-0 p-2'}).html(res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')).appendTo(actionPane);
 					}
 				},
 				error:e=>{

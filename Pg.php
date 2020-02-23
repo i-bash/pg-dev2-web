@@ -23,10 +23,10 @@ class Pg{
 	public function begin(){
 		$this->query('begin');
 		$this->info=(object)[
-			//'host'=>pg_host(),
-			//'port'=>pg_port(),
-			//'user'=>pg_version()['session_authorization'],
-			//'dbname'=>pg_dbname(),
+			'host'=>pg_host(),
+			'port'=>pg_port(),
+			'user'=>pg_version()['session_authorization'],
+			'dbname'=>pg_dbname(),
 			'pid'=>$this->execFunction('pg_backend_pid',[],false)->rows[0]->pg_backend_pid//pg_get_pid($this->connection)
 		];
 
