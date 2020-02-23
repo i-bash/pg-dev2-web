@@ -10,13 +10,16 @@ class Pg{
 	public function connect($connectString){
 		$this->connection=pg_connect($connectString);
 	}
+	/** is it connected?
+	 */
+	public function isConnected(){
+		return $this->connection!==null;
+	}
 	
 	/** close database connection
 	 */
 	public function close(){
-		if($this->connection){
-			pg_close($this->connection);
-		}
+		pg_close($this->connection);
 	}
 	/** begin transaction
 	 */
@@ -30,6 +33,11 @@ class Pg{
 			'pid'=>$this->execFunction('pg_backend_pid',[],false)->rows[0]->pg_backend_pid//pg_get_pid($this->connection)
 		];
 
+	}
+	/** begin transaction
+	 */
+	public function end(){
+		$this->query('end');
 	}
 	/** SQL select
 	 * @param sql

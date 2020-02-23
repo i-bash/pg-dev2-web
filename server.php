@@ -116,8 +116,10 @@
 		}
 		finally{
 			try{
-				$pg->query("end");
-				$pg->close();
+				if($pg->isConnected()){
+					$pg->end();
+					$pg->close();
+				}
 			}
 			catch(Exception $e){}
 		}
