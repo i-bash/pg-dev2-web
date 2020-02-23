@@ -2,7 +2,13 @@ html{
 }
 
 #techinfo{
+	min-height:100vh;
 	max-height:100vh;
+}
+
+#techinfo>div:last-child{
+	flex-grow:1;
+	overflow-y:auto;
 }
 
 #action>.alert.sql{
@@ -10,11 +16,6 @@ html{
 }
 #action>.alert.sql>hr{
 	margin:0.3rem 0;
-}
-
-#login-form,
-#register-form{
-	display:none;
 }
 
 /* pages */
