@@ -75,7 +75,7 @@
 		lib.ajaxForm(
 			'.book form.order-book',
 			(data,form)=>{
-				alert('books have been ordered');
+				lib.alert('books have been ordered');
 				$(form).children('button[type="reset"]').trigger('click');
 				$('#catalog').trigger('submit');
 			}
@@ -101,5 +101,4 @@
 				cancelButton.parent().siblings('div.row').removeClass('d-none');
 			}
 		);
-	}
 </script>

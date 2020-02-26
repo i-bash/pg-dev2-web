@@ -8,10 +8,10 @@
 		<title>Учебное приложение DEV2</title>
 	</head>
 	<body>
-		<!--div id="alert" class="modal"></div-->
+		<div id="alert" class="position-fixed p-3 bg-white" style="z-index:9999"></div>
 		<div class="container">
 			<div class="row">
-				<div class="col-9 container-fluid">
+					<div class="col-9 container-fluid">
 					<h2>Учебное приложение DEV2</h2>
 					<ul class="nav nav-tabs">
 					  <li class="nav-item active">
@@ -192,7 +192,7 @@
 			lib.ajaxForm(
 				'#register-form>form',
 				data=>{
-					alert('Пользователь '+$('#reg-username').val()+' зарегистрирован.');
+					lib.alert('Пользователь '+$('#reg-username').val()+' зарегистрирован.');
 					$('#reg-username').val('');
 					$('#reg-email').val('');
 					chkCmd();

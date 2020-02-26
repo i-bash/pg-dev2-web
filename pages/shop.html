@@ -173,7 +173,7 @@
 				lib.server(
 					'web/toCart',
 					{book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')},
-					refreshCartInfo
+					data=>{lib.alert('added to cart');refreshCartInfo();}
 				);
 			}
 		);
@@ -182,7 +182,7 @@
 				lib.server(
 					'web/vote',
 					{vote:$(e.target).data('vote'),book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')},
-					()=>{alert('voted');}
+					()=>{lib.alert('voted');}
 				);
 			}
 		);

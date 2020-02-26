@@ -85,7 +85,7 @@ var lib={
 				},
 				complete:()=>{
 					$('#loader').addClass('invisible').removeClass('visible');
-					$(actionPane).animate({scrollTop:$(actionPane)[0].scrollHeight},1000);
+					$(actionPane).parent().animate({scrollTop:$(actionPane)[0].scrollHeight});
 					lib.chkCmd();
 				}
 			})
@@ -142,8 +142,14 @@ var lib={
 
 	//display alert
 	alert: (message,style='info')=>{
-		alert(message);
-		//$('<div/>',{class:'alert alert-'+style+' fade',role:'alert'}).html(message).appendTo('#alert').addClass('in').delay(2000).slideUp('slow',function(){$(this).remove();});
+		//alert(message);
+		$('<div/>',{class:'alert alert-'+style+' alert-dismissible fade show in',role:'alert'})
+			.html(message)
+			.appendTo('#alert')
+			//.addClass('in')
+			.delay(5000)
+			.slideUp('slow',function(){$(this).remove();})
+			;
 	},
 
 	//append contents to pane

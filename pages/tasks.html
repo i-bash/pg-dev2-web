@@ -83,7 +83,7 @@
 			'#run-task',
 			data=>{
 				populateTasks();
-				alert('scheduled task #'+data.rows[0].run_program);
+				lib.alert('scheduled task #'+data.rows[0].run_program);
 			},
 			f=>{
 				let json=$('#params').val();

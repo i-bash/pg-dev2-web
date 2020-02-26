@@ -96,7 +96,7 @@
 					{auth_token:sessionStorage.getItem('authToken'),book_id:row.data().book_id,qty:diff},
 					()=>{
 						refreshCart();
-						alert('quantity changed');
+						lib.alert('quantity changed');
 					}
 				);
 			}
@@ -111,7 +111,7 @@
 					{auth_token:sessionStorage.getItem('authToken'),book_id:$(e.currentTarget).closest('.row').data().book_id},
 					()=>{
 						refreshCart();
-						alert('removed from cart');
+						lib.alert('removed from cart');
 					}
 				);
 			}
