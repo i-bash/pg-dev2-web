@@ -1,14 +1,20 @@
 # pg-dev2-web
 Web application for PostgreSQL DEV2 course
 
-1. Install HTTP server e.g. nginx, Apache etc.
+1. Clone the repo
 
-sudo apt install php-pgsql
+git clone git@github.com:i-bash/pg-dev2app.git
 
+2. Install NodeJS 9 and server packages
 
-2. Install PHP 7.1, enable the following modules:
-3. Create config.php in the code root using config.php.example as a guide.
-4. Setup a URL in HTTP server so that it points to the code root.
-5. Open the URL in a browser.
+curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
+sudo apt install -y nodejs
 
+cd dev2app/server
+npm install
 
+3. Start server in terminal
+
+./wspg-server <port>
+
+4. Open http://localhost:<port> in web browser.

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset ="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="stylesheet" href="lib/bootstrap-4.4.1-dist/css/bootstrap.min.css"/>
+		<link rel="stylesheet" href="main.css"/>
+		<title>Учебное приложение DEV2</title>
+	</head>
+	<body>
+		<!--div id="alert" class="position-fixed p-3 bg-white" style="z-index:9999"></div-->
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-8">
+					<div>
+						<img src="img/isolation.png">
+						<span class="h2 ml-5">Учебное приложение DEV2</span>
+					</div>
+					<ul class="nav nav-tabs">
+					  <li class="nav-item active">
+						<a id="tab-shop" data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
+					  </li>
+					  <li class="nav-item">
+						<a id="tab-admin" data-toggle="tab" class="nav-link" href="#admin">Админка</a>
+					  </li>
+					</ul>
+					<div class="tab-content">
+						<div id="shop" class="tab-pane fade in active">
+							<div id="header1" class="container text-right clearfix pt-2 pb-2 border-bottom">
+								<span id="logged-out">
+									<button id="login" type="button" class="btn btn-info">Вход</button>
+									<button id="register" type="button" class="btn btn-info">Регистрация</button>			
+								</span>
+								<span id="login-form">
+									<form class="form-inline float-right" action="web/login">
+										<input id="username" name="username" required placeholder="Имя пользователя">
+										<button type="submit" class="btn btn-info ml-1">Войти</button>
+										<button type="button" class="btn btn-info revert ml-1">&times;</button>
+									</form>
+								</span>
+								<span id="register-form">
+									<form class="form-inline float-right" action="web/register">
+										<input id="reg-username" name="username" required placeholder="Имя пользователя">
+										<input id="reg-email" type="email" name="email" required placeholder="Электронная почта" class="ml-1">
+										<button type="submit" class="btn btn-info ml-1">Зарегистрироваться</button>
+										<button type="button" class="btn btn-info revert ml-1">&times;</button>
+									</form>
+								</span>
+								<span id="logged-in">
+									<span id="session-info"></span>
+									<button id="logout" class="btn btn-info">Выйти</button>
+									<button id="cart" type="button" class="btn btn-info">Корзина ₽<span class="cart-total"></span></button>
+								</span>
+							</div>
+						</div>
+						<div id="admin" class="tab-pane fade">
+							<ul class="nav nav-pills">
+							  <li class="nav-item">
+								<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>
+							  </li>
+							  <li class="nav-item">
+								<a data-toggle="pill" class="nav-link" href="#" data-page="tasks">Фоновые задания</a>
+							  </li>
+							  <li class="nav-item">
+								<a data-toggle="pill" class="nav-link" href="#" data-page="sql">SQL</a>
+							  </li>
+							</ul>
+						</div>
+						<div id="page" class="mt-1"></div>
+					</div>
+				</div>
+
+				<div id="techinfo" class="col-md-4 border p-2 container-fluid d-flex flex-column">
+					<div class="row pr-1">
+						<div class="col-md-6">
+							<select id="server" class=""></select>
+						</div>
+						<div class="col-sm-4 form-check" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
+							<input type="checkbox" class="form-check-inputttt" id="trace">
+							<label class="form-check-label" for="trace">Trace</label>
+						</div>
+						<div class="col-sm-1 p-0">
+							<span id="loader" class="spinner-border spinner-border-sm invisible"></span>
+						</div>
+						<div class="col-xs-1 p-2">
+							<div id="led"></div>
+						</div>
+					</div>
+					<div class="row p-0">
+						<div id="action" class="col mt-2"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="lib/jquery-3.4.1.min.js"></script>
+		<script src="lib/popper.min.js"></script>
+		<script src="lib/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+		<script type="module" src="js/main.js"></script>
+	</body>
+</html>

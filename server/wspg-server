@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const WsServer=require('./ws-server')
+const PgEngine = require('./pg-engine')
+
+const port=process.argv.slice(2)[0]||8080
+
+new WsServer(
+	{
+		port:port,
+		connect:id=>new Promise((resolve,reject)=>resolve('connected '+id)),
+		disconnect:id=>new Promise((resolve,reject)=>resolve('disconnected '+id)),
+		//error:e=>new Promise((resolve,reject)=>resolve(e)),
+		engine:PgEngine
+	}
+).listen()

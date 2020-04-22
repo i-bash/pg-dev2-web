@@ -1,0 +1,20 @@
+{
+  "name": "dev2app-server",
+  "version": "1.0.0",
+  "description": "dev2app server",
+  "main": "server.js",
+  "dependencies": {
+    "finalhandler": "^1.1.2",
+    "json": "^9.0.6",
+    "pg": "^8.0.0",
+    "serve-static": "^1.14.1",
+    "websocket": "^1.0.31"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

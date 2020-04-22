@@ -1,0 +1,69 @@
+html{
+}
+
+#techinfo{
+	min-height:100vh;
+	max-height:100vh;
+}
+
+#techinfo>div:last-child{
+	flex-grow:1;
+	overflow-y:auto;
+}
+
+#action>.alert{
+	word-wrap:break-word;
+}
+#action>.alert>hr{
+	margin:0.3rem 0;
+}
+
+/* pages */
+#page.books #books input[type="number"]{
+	width:5rem;
+}
+
+#page.shop #books,
+#page.shop #book{
+	display:none;
+}
+
+
+#headers>span{
+	font-weight:bold;
+}
+
+#led{
+	width:0.5em;
+	height:0.5em;
+	border-radius:50%;
+}
+
+/***********************************************/
+
+/*
+#main>div:nth-child(2){
+	background-color:#f8f8f8;
+	padding-top:10px;
+	padding-bottom:5px;
+}
+*/
+/*
+#alert{
+	min-height:60px;
+	margin:10px 0 0 0;
+}
+*/
+
+/* pages */
+#page.books #authors .author{
+	max-width:250px;
+}
+/* icons for accordion button */
+#page.catalog [data-toggle="collapse"]:before {
+    font-family: "Glyphicons Halflings";
+    content: "\e114   ";
+}
+#page.catalog [data-toggle="collapse"].collapsed:before {
+    content: "\e080   ";
+}
