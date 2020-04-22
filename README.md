@@ -10,10 +10,10 @@ git clone git@github.com:i-bash/pg-dev2app.git
 curl -sL https://deb.nodesource.com/setup_9.x | sudo -E bash -
 sudo apt install -y nodejs
 
-cd dev2app/server
+cd pg-dev2app/server
 npm install
 
-3. Start server in terminal
+3. Start server in terminal (you will have to use sudo for port 80)
 
 ./wspg-server <port>
 
