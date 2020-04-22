@@ -10,7 +10,7 @@ export class Dev2App{
 		Dev2App.setHandlers();
 		$('#led').removeClass().addClass('bg-warning')
 		lib.initConnection(
-			window.location.host+':'+window.location.port,
+			window.location.hostname+':'+(window.location.port||80),
 			()=>$('#led').removeClass().addClass('bg-danger')
 		)
 		.then(
