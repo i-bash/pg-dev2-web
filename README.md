@@ -14,8 +14,8 @@ sudo apt install -y nodejs
 cd pg-dev2app/server
 npm install
 ```
-3. Start server in terminal (you will have to use sudo for port 80)
+3. Start server in terminal
 ```
 ./wspg-server <port>
 ```
-4. Open http://localhost:<port> in web browser.
+4. Open http://localhost:&lt;port&gt; in web browser.
