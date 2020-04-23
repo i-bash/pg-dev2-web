@@ -18,4 +18,4 @@ npm install
 ```
 ./wspg-server <port>
 ```
-4. Open http://localhost:&lt;port&gt; in web browser.
+4. Open http://localhost:port in web browser.
