@@ -39,11 +39,12 @@ class PgEngine{
 			return new Promise(
 				(resolve,reject)=>{
 					let connectionId
+					let pgClient
 					//parse incoming message
 					switch(appMessage.type){
 					case 'connect':
-						connectionId=this.connections.push(new PgClient({connectionString:appMessage.data}))-1;
-						this.connections[connectionId]
+						pgClient=new PgClient({connectionString:appMessage.data})
+						pgClient
 							.on('error',this.pgErrorHandler)
 							.on(
 								'notice',
@@ -54,14 +55,9 @@ class PgEngine{
 							)
 							.on('end',this.pgCloseHandler)
 							.connect()
+							.then(()=>resolve(this.connections.push(pgClient)-1))
 							.then(()=>console.log('pg-engine: connected to '+JSON.stringify(appMessage.data)))
-							.then(resolve(connectionId))
-							.catch(
-								err=>{
-									delete this.connections[connectionId]
-									reject({message:err.message})
-								}
-							)
+							.catch(err=>reject({message:err.message}))
 						;
 					break;
 					case 'disconnect':
