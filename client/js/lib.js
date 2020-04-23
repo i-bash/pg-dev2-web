@@ -2,14 +2,10 @@ import WsPg from './wspg-client.js';
 import actions from './actions.js'
 
 export class lib{
-	static pgconn={
-		WEB:'web',
-		EMP:'emp',
-		REMOTE:''
-	}
 	static wspg
 	static pgConnections=[]
 
+	static die=lastWord=>{throw lastWord}
 	static log=(message,type)=>{
 		$('<div/>',{class:'alert alert-light w-100 m-0 p-0'}).html(JSON.stringify(message)).appendTo($('#action'))
 	}

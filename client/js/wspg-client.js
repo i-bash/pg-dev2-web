@@ -27,8 +27,7 @@ export default class WsPgClient{
 	 * saves options in property
 	 */
 	constructor(hostPort,onclose){
-		let die=(word)=>{throw word}
-		hostPort||die('please provide host:port to connect to')
+		hostPort||lib.die('please provide host:port to connect to')
 		this.hostPort=hostPort
 		this.onclose=onclose
 		this.rid=1
