@@ -3,7 +3,7 @@ Web application for PostgreSQL DEV2 course
 
 1. Clone the repo
 ```
-git clone git@github.com:i-bash/pg-dev2app.git
+git clone https://github.com/i-bash/pg-dev2app.git
 ```
 
 2. Install NodeJS 9 and server packages
