@@ -19,3 +19,4 @@ npm install
 ./wspg-server <port>
 ```
 4. Open http://localhost:port in web browser.
+Make sure you don't run an ancient version of the browser. Firefox 75+ will work.
