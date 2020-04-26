@@ -13,6 +13,12 @@ export class Dev2App{
 			window.location.hostname+':'+(window.location.port||80),
 			()=>$('#led').removeClass().addClass('bg-danger')
 		)
+		.catch(
+			e=>{
+				console.log('socket error')
+				$('#led').removeClass().addClass('bg-danger')
+			}
+		)
 		.then(
 			e=>{
 				console.log('connected to ws server')
@@ -20,12 +26,7 @@ export class Dev2App{
 				Dev2App.initUi(config);
 			}
 		)
-		.catch(
-			e=>{
-				console.log('socket error')
-				$('#led').removeClass().addClass('bg-danger')
-			}
-		)
+		.catch(console.error)
 	}
 	
 	/**
