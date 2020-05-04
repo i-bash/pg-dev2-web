@@ -4,6 +4,7 @@ import actions from './actions.js'
 export class lib{
 	static wspg
 	static pgConnections=[]
+	static tracing=false
 
 	static die=lastWord=>{throw lastWord}
 	static log=(message,type)=>{
@@ -38,7 +39,7 @@ export class lib{
 			)
 			.html(text)
 		)
-		.parent().animate({scrollTop:$(actionPane)[0].scrollHeight})
+		//.parent().animate({scrollTop:$(actionPane)[0].scrollHeight},'1')
 	}
 	static reportError(e){
 		let message=
@@ -59,6 +60,12 @@ export class lib{
 	}
 	static reportApp(text){
 		lib.actionMessage('secondary',text);
+	}
+	static reportConninfo(conninfo){
+		lib.actionMessage(
+			'light',
+			conninfo.user+'@'+conninfo.host+':'+conninfo.port+' '+'('+conninfo.pid+')'
+		)
 	}
 
 	/** connect to db
@@ -93,7 +100,10 @@ export class lib{
 
 	/**server action
 	 * @param action - name of server action
-	 * @param params - parameters object
+	 * 		action properties:
+	 * 			type - sql or function
+	 * 			text - sql command or function name
+	 * @param params - parameters, must an object for function and array for sql
 	 * @param callback - function(data)
 	 * @return promise
 	 */
@@ -109,7 +119,7 @@ export class lib{
 		const connectString=pgUser+':'+pgUser+'@'+pgServer+'/'+'bookstore2'
 		let connectionId
 		//$('#loader').removeClass('invisible').addClass('visible');
-		let result=[];
+		let results=[] //array the promise will be resolved with
 		
 		let connectPromise=(
 			//if connected to nothing or other host:port
@@ -134,42 +144,55 @@ export class lib{
 				connectionId=lib.pgConnections[pgConn].id
 			)
 		)
+		//get connection properties and turn on tracing
+		.then(
+			d=>
+			lib.pgExec(
+				connectionId,
+				'select pg_backend_pid() pid, user, inet_server_addr() host, inet_server_port() port, current_database() dbname'
+				+(lib.tracing?', trace()':'')
+			)
+			.then(res=>lib.reportConninfo(res[0]))
+		)
 		
-		let commands=actions[action].commands
+		//commands
+		let commands=
+		actions[action].commands
 		.map(
 			cmd=>{
+				let sql,pars
 				switch(cmd.type){
 				case 'sql':
-					return d=>lib.pgExec(cmd.text)
+					sql=cmd.text
+					pars=params
 				break;
 				case 'function':
-					let sql='select to_json(f.*) from '+cmd.text+' ('+
+					sql='select to_json(f.*) from '+cmd.text+' ('+
 					Object.keys(params).map((key,ind)=>key+'=>$'+(ind+1)).join(',')
 					+') f'
-					return d=>lib
-					.pgExec(connectionId,sql,Object.values(params))
-					.then(res=>Promise.resolve(res.map(r=>r.to_json))
-					)
+					pars=Object.values(params)
 				break;
 				default:
 					return d=>Promise.reject('invalid command type: '+cmd.type)
 				}
+				return d=>lib
+				.pgExec(connectionId,sql,pars)
+				.then(res=>Promise.resolve(res.map(r=>r.to_json)))
 			}
 		)
 		
-		let actionsPromises=commands.reduce(
-			(prev,cur)=>prev.then(cur).then(
-				res=>result.push(res)
+		return commands.reduce(
+			(prev,cur)=>
+			//promise to run command and push its result to results array
+			prev.then(cur).then(
+				res=>
+				res===undefined||results.push(res)
 			),
-			connectPromise
+			connectPromise //promise to connect at the beginning
 		)
-		
-		let finalPromise=d=>Promise.resolve(result)
-		
-		let p=actionsPromises.then(finalPromise)
-		
-		//.finally(()=>{lib.pgDisconnect()})
-		return p;
+		.then(d=>Promise.resolve(results))//finally return a promise resolved with the results
+	}
+
 /*
 			()=>$.ajax({
 				method:'post',
@@ -230,7 +253,6 @@ export class lib{
 			})
 		);
 */
-	}
 	/**
 	 * clear contents of sql, success, error, notice panels
 	 */

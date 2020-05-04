@@ -2,14 +2,22 @@ html{
 }
 
 #techinfo{
-	min-height:100vh;
-	max-height:100vh;
+	min-height:calc(100vh - 20px);
+	max-height:calc(100vh - 20px);
 }
 
 #techinfo>div:last-child{
-	flex-grow:1;
+	margin-top:10px;
+	/*flex-grow:1;*/
 	overflow-y:auto;
+	scroll-behavior: smooth;
+	scroll-snap-type: block proximity;
 }
+
+#action{
+	/*scrollTop:100vh;*/
+	scroll-snap-align: end;
+	scroll-snap-stop: always;}
 
 #action>.alert{
 	word-wrap:break-word;
