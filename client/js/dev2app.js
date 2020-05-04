@@ -162,8 +162,39 @@ export class Dev2App{
 		$('#cart').off().click(e=>{lib.displayPage('cart');});
 	}
 
-	/**
-	
+	/** get cover images for books and display each image in img element with corresponding data-id
+	 * returns promise
+	 */
+	static getCovers(domSelector){
+		//request images in chain
+		return $(domSelector).toArray().reduce(
+			(acc,curElement)=>acc
+				.then(()=>lib.doAction('web/getImage',{book_id:$(curElement).data().id}))
+				.then(
+					d=>{
+						//console.log(d);
+						$(curElement)
+						.attr(
+							'src',
+							'data:image/jpeg;base64,'+
+							btoa(
+								d[0][0]
+								.slice(2)
+								.match(/\w{2}/g)
+								.map(a=>String.fromCharCode(parseInt(a,16)))
+								.join('')
+							)
+						)
+						return Promise.resolve()
+					}
+				)
+				.catch(d=>void(d))
+			,
+			Promise.resolve()
+		)
+	}
+
+	/**	
 	//enable/disable elements in tech pane
 	chkCmd: ()=>{
 		$('#btn-conninfo').toggleClass('disabled',$('#conninfo').html()=='');

@@ -14,8 +14,12 @@ export default function(){
 					.data('id',r.book_id)
 					.append(
 						$('<span/>',{class:'col-2'})
+						.append(
+							$('<a/>',{href:'#'})
 							.append(
-								$('<a/>',{href:'#'}).append($('<img/>',{id:'cover'+r.book_id,src:'img/book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
+								$('<img/>',{src:'img/book.png',class:'cover w-50'})
+								.data('id',r.book_id)
+							)
 						)
 					)
 					.append(
@@ -41,31 +45,7 @@ export default function(){
 		showList()
 		$('#books').toggle(rows.length>0)
 		lib.reportApp(rows.length==0?'Книги не найдены':'Найдено книг: '+rows.length)
-		//request images in chain
-		rows.reduce(
-			(acc,cur)=>acc
-				.then(()=>lib.doAction('web/getImage',{book_id:cur.book_id}))
-				.then(
-					d=>{
-						//console.log(d);
-						$('img#cover'+cur.book_id)
-						.attr(
-							'src',
-							'data:image/jpeg;base64,'+
-							btoa(
-								d[0][0]
-								.slice(2)
-								.match(/\w{2}/g)
-								.map(a=>String.fromCharCode(parseInt(a,16)))
-								.join('')
-							)
-						)
-						return Promise.resolve()
-					}
-				)
-			,
-			Promise.resolve()
-		)
+		Dev2App.getCovers('img.cover');
 	};
 	//display book details
 	let showDetails=row=>{
@@ -125,12 +105,9 @@ export default function(){
 				'web/toCart',
 				{book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')}
 			)
-			.then(
-				data=>{
-					lib.reportApp('added to cart')
-					Dev2App.refreshCartInfo()
-				}
-			)
+			.then(d=>lib.reportApp('added to cart'))
+			.then(Dev2App.refreshCartInfo)
+			.then(d=>Dev2App.chkCmd())
 		}
 	);
 	$('.vote').off().click(

@@ -4,7 +4,7 @@ import {Dev2App} from '../dev2app.js'
 export default function(){
 	let displayCartItem=r=>{
 		let qty=
-			$('<input/>',{class:'col-1 text-right qty',type:'number',min:'1'})
+			$('<input/>',{class:'col-1 text-right qty form-control form-control-sm position-static',type:'number',min:'1'})
 			.val(r.qty)
 		;
 		if(r.qty>r.onhand_qty){
@@ -19,7 +19,7 @@ export default function(){
 		.append(
 			$('<span/>',{class:'col-2'})
 			.append(
-				$('<a/>',{href:'#'}).append($('<img/>',{src:'img/book.png',class:'w-50'})) //'server.php?action=web/getImage&book_id='+r.book_id
+				$('<a/>',{href:'#'}).append($('<img/>',{src:'img/book.png',class:'cover w-50'}).data('id',r.book_id))
 			)
 		)
 		.append(
@@ -52,11 +52,10 @@ export default function(){
 		$('[data-toggle="tooltip"]').tooltip()
 		Dev2App.displayCartInfo(res); //in header
 		lib.reportApp(rows.length==0?'Корзина пуста':'В корзине книг: '+rows.length)
+		Dev2App.getCovers('img.cover')
 	}
 	//refresh cart
-	let refreshCart=()=>{
-		lib.doAction('web/getCart',{auth_token:sessionStorage.getItem('authToken')}).then(displayCart);
-	}
+	let refreshCart=()=>lib.doAction('web/getCart',{auth_token:sessionStorage.getItem('authToken')}).then(displayCart)
 	
 	//event handlers
 	$('#books')
@@ -71,17 +70,14 @@ export default function(){
 			let row=$(e.currentTarget).closest('.row')
 			let newValue=$(e.currentTarget).val()
 			let diff=newValue-row.data().qty
+			console.info(diff)
 			row.data.qty=newValue
 			lib.doAction(
 				'web/toCart',
 				{auth_token:sessionStorage.getItem('authToken'),book_id:row.data().book_id,qty:diff}
 			)
-			.then(
-				()=>{
-					refreshCart()
-					lib.reportApp('Количество книг изменено')
-				}
-			)
+			.then(refreshCart)
+			.then(lib.reportApp('Количество книг изменено'))
 		}
 	)
 	//remove item from cart
@@ -93,12 +89,8 @@ export default function(){
 				'web/fromCart',
 				{auth_token:sessionStorage.getItem('authToken'),book_id:$(e.currentTarget).closest('.row').data().book_id}
 			)
-			.then(
-				()=>{
-					refreshCart()
-					lib.reportApp('Книга удалена из корзины')
-				}
-			)
+			.then(refreshCart)
+			.then(lib.reportApp('Книга удалена из корзины'))
 		}
 	);
 	//buttons
@@ -108,13 +100,9 @@ export default function(){
 				'web/checkout',
 				{auth_token:sessionStorage.getItem('authToken')}
 			)
-			.then(
-				()=>{
-					refreshCart()
-					lib.displayPage('shop')
-					lib.reportApp('Вы купили книги')
-				}
-			)
+			.then(refreshCart)
+			.then(lib.reportApp('Вы купили книги'))
+			//lib.displayPage('shop')
 		}
 	);
 	$('#to-shop').click(()=>{lib.displayPage('shop')});
