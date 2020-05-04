@@ -6,6 +6,22 @@ export class Dev2App{
 	static separator='<hr>'
 	static connected=false
 	
+	/**
+	 * enable/disable elements
+	 */
+	static chkCmd(){
+		//get auth info from sessionStorage
+		let authToken=sessionStorage.getItem('authToken');
+		let userName=sessionStorage.getItem('userName');
+		//auth header
+		$('#session-info').html(userName+' ('+authToken+')');
+		$('#logged-in').toggle(authToken!==null);
+		$('#logged-out').toggle(authToken===null);
+		$('#login-form').toggle(false);
+		$('#register-form').toggle(false);
+		$('#cart').prop('disabled',$('.cart-total').html()=='0')
+	};
+
 	static init(config){
 		Dev2App.setHandlers();
 		$('#led').removeClass().addClass('bg-warning')
@@ -29,33 +45,27 @@ export class Dev2App{
 		.catch(console.error)
 	}
 	
-	/**
-	 * enable/disable elements
-	 */
-	static chkCmd(){
-		//get auth info from sessionStorage
-		let authToken=sessionStorage.getItem('authToken');
-		let userName=sessionStorage.getItem('userName');
-		//auth header
-		$('#session-info').html(userName+' ('+authToken+')');
-		$('#logged-in').toggle(authToken!==null);
-		$('#logged-out').toggle(authToken===null);
-		$('#login-form').toggle(false);
-		$('#register-form').toggle(false);
-	};
-
 	//display cart info
-	static displayCartInfo=res=>$('.cart-total').html(res[0].reduce((prev,cur)=>prev+cur.qty*cur.price,0))
+	static displayCartInfo(res){
+		$('.cart-total').html(
+			res&&res[0]&&res[0].reduce((prev,cur)=>prev+cur.qty*cur.price,0) || '0'
+		)
+		Dev2App.chkCmd()
+	}
+	
 	//refresh cart info
 	static refreshCartInfo(){
 		let authToken=sessionStorage.getItem('authToken');
 		if(authToken==null){
-			$('.cart-total').html(0);
+			$('.cart-total').html(0)
+			return Promise.resolve()
 		}
 		else{
-			lib.doAction('web/getCart',{auth_token:authToken})
+			return lib
+			.doAction('web/getCart',{auth_token:authToken})
+			.catch(e=>Dev2App.displayCartInfo())
 			.then(Dev2App.displayCartInfo)
-		};
+		}
 	}
 
 	static initUi(config){
@@ -69,11 +79,12 @@ export class Dev2App{
 				]
 			)
 		);
-		Dev2App.refreshCartInfo();
-		Dev2App.chkCmd();
+		Dev2App.refreshCartInfo().then(d=>Dev2App.chkCmd())
 	}
 
 	static setHandlers(){
+		//set lib.tracing
+		$('#trace').click(e=>lib.tracing=$(e.target).prop('checked'))
 		//display page
 		$('#admin a[data-page]').off().click(
 			e=>{
