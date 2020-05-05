@@ -79,7 +79,7 @@ export default function(){
 			//enable to-cart and vote buttons for logged in user only
 			$('#books,#book').find('button.to-cart,button.vote').toggle(sessionStorage.getItem('authToken')!==null);
 			//display cart info in header
-			Dev2App.refreshCartInfo();
+			Dev2App.refreshCartInfo().then(d=>Dev2App.chkCmd())
 		}
 	);
 	

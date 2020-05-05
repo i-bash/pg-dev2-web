@@ -5,6 +5,8 @@ export class Dev2App{
 	//separator for contents
 	static separator='<hr>'
 	static connected=false
+	static inited=false
+	static config
 	
 	/**
 	 * enable/disable elements
@@ -23,7 +25,8 @@ export class Dev2App{
 	};
 
 	static init(config){
-		Dev2App.setHandlers();
+		Dev2App.config=config
+		Dev2App.setHandlers()
 		$('#led').removeClass().addClass('bg-warning')
 		lib.initConnection(
 			window.location.hostname+':'+(window.location.port||80),
@@ -39,7 +42,7 @@ export class Dev2App{
 			e=>{
 				console.log('connected to ws server')
 				$("#led").removeClass().addClass('bg-success')
-				Dev2App.initUi(config);
+				Dev2App.initUi();
 			}
 		)
 		.catch(console.error)
@@ -68,23 +71,17 @@ export class Dev2App{
 		}
 	}
 
-	static initUi(config){
+	static initUi(){
 		//init ui
 		lib.populateSelect(
 			'#server',
-			config.pgServers.map(
-				s=>[
-					s.host+':'+s.port,
-					s.host+':'+s.port
-				]
-			)
+			Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
 		);
-		Dev2App.refreshCartInfo().then(d=>Dev2App.chkCmd())
 	}
 
 	static setHandlers(){
 		//set lib.tracing
-		$('#trace').click(e=>lib.tracing=$(e.target).prop('checked'))
+		$('#trace').click(e=>{lib.tracing=$(e.target).prop('checked')})
 		//display page
 		$('#admin a[data-page]').off().click(
 			e=>{
@@ -110,17 +107,25 @@ export class Dev2App{
 			}
 		);
 		$('button.revert').off().click(Dev2App.chkCmd);
-		
+
 		//tab
 		$('a[data-toggle="tab"]')
 		.off()
 		.on('shown.bs.tab', function (e) {
 			switch(e.target.id){
 			case 'tab-shop':
-				lib.displayPage('shop');
+				lib.displayPage('shop')
+				.then(
+					d=>{
+						if(!Dev2App.inited){
+							$('#shop').trigger('shop:login-logout')
+							Dev2App.inited=true
+						}
+					}
+				)
 			break;
 			case 'tab-admin':
-				lib.clearPage();
+				lib.displayPage('books');
 			break;
 			}
 		})
@@ -133,7 +138,6 @@ export class Dev2App{
 				sessionStorage.setItem('userName',$('#username').val());
 				$('#username').val('');
 				$('#shop').trigger('shop:login-logout');
-				Dev2App.chkCmd();
 			}
 		);
 		//logout
@@ -144,7 +148,6 @@ export class Dev2App{
 					sessionStorage.removeItem('authToken');
 					sessionStorage.removeItem('userName');
 					$('#shop').trigger('shop:login-logout');
-					Dev2App.chkCmd();
 				}
 			)
 		);

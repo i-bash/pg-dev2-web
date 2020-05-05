@@ -31,6 +31,13 @@ html{
 	width:5rem;
 }
 
+#page.books .row.book form{
+	border:8px solid gray;
+	border-radius:8px;
+	padding:8px;
+}
+
+
 #page.shop #books,
 #page.shop #book{
 	display:none;

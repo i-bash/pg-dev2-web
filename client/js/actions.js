@@ -10,7 +10,10 @@ export default {
 	'web/fromCart'    :{conn:'web',commands:[{type:'function',text:'webapi.remove_from_cart'}]},
 	'web/checkout'    :{conn:'web',commands:[{type:'function',text:'webapi.checkout'}]},
 	'emp/getBooks'    :{conn:'emp',commands:[{type:'function',text:'empapi.get_catalog'}]},
+	'emp/orderBook'   :{conn:'emp',commands:[{type:'function',text:'empapi.receipt'}]},
+	'emp/setPrice'    :{conn:'emp',commands:[{type:'function',text:'empapi.set_retail_price'}]},
 	'emp/getPrograms' :{conn:'emp',commands:[{type:'function',text:'empapi.get_programs'}]},
 	'emp/getTasks'    :{conn:'emp',commands:[{type:'function',text:'empapi.get_tasks'}]},
+	'emp/runProgram'  :{conn:'emp',commands:[{type:'function',text:'empapi.run_program'}]},
 	'emp/taskResults' :{conn:'emp',commands:[{type:'function',text:'empapi.task_results'}]}
 }

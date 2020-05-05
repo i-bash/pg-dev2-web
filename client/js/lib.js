@@ -45,9 +45,11 @@ export class lib{
 		let message=
 			e&&e.err&&e.err.message&&typeof(e.err.message)=='string'?e.err.message
 			:e&&e.err&&typeof(e.err)=='string'?e.err
-			:typeof(e)=='string'?e:'error'
-		lib.actionMessage('danger',message//.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')
-		)
+			:typeof(e)=='string'?e:'internal application error'
+			lib.actionMessage(
+				'danger',message//.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')
+			)
+			console.error(e)
 	}
 	static reportCommand(text){
 		lib.actionMessage('primary',text);
@@ -111,7 +113,7 @@ export class lib{
 		//check action for existence
 		if(!actions[action]){
 			console.error('Unknown action: '+action);
-			return Promise.reject('internal error');
+			return Promise.reject('internal application error');
 		}
 		const pgConn=actions[action].conn
 		const pgServer=$("#server option:selected").val()
@@ -265,13 +267,13 @@ export class lib{
 	 */
 	static displayPage(page){
 		//lib.clearPanes();
-		$.ajax('pages/'+page+'.html',{dataType:'html'})
+		return	$.ajax('pages/'+page+'.html',{dataType:'html'})
 		.then(
 			html=>{
-				$('#page').hide().html(html).fadeIn().removeClass().addClass(page);
-				(async ()=>{
+				$('#page').hide().html(html).fadeIn().removeClass().addClass(page)
+				return (async ()=>{
 					(await import('./pages/'+page+'.js')).default()
-				})();
+				})()
 			}
 			,
 			()=>{$('#page').html('Page "'+page+'" not found');}
@@ -287,25 +289,27 @@ export class lib{
 	/**populate select from array of options
 	 */
 	static populateSelect(selector,options){
-		let dropdown = $(selector);
+		let dropdown = $(selector)
 		options.forEach(
 			option=>{
 				let element=$("<option />")
 				.val(Array.isArray(option)?option[0]:option)
 				.text(Array.isArray(option)?option[1]:option)
-				;
 				if(Array.isArray(option)&&option[2]!==undefined){
-					element.data(option[2]);
+					element.data(option[2])
 				}
-				dropdown.append(element);
+				dropdown.append(element)
 			}
-		);
+		)
 	}
 	//populate select from data - use as callback
 	static populateSelectFromData(selector){
 		return rows=>lib.populateSelect($(selector),rows.map(Object.values))
 	}
-	//turn form into rpc
+	/** have form(s) perform action on submit
+	 * callbackAfter(payload,form) returns Promise
+	 * callbackBefore returns Promise
+	 */
 	static rpcForm(selector,callbackAfter,callbackBefore){
 		$(document).off('submit',selector);
 		$(document).on(
@@ -319,10 +323,10 @@ export class lib{
 					.serializeArray()
 					.map(nv=>[nv.name,nv.value])
 				)
-				return (callbackBefore??Promise.resolve())
+				return (callbackBefore??Promise.resolve)()
 					.then(()=>lib.doAction($(form).attr('action'),pars))
-					.then(callbackAfter??Promise.resolve)
-					.catch(console.error)
+					.then(callbackAfter?(payload=>callbackAfter(payload,form)):Promise.resolve)
+					.catch(lib.reportError)
 			}
 		)
 		//lib.clearPanes();

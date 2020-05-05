@@ -17,59 +17,160 @@ export default function(){
 		'#catalog',
 		data=>{
 			let rows=data[0]
-			lib.reportApp(rows.length==0?'Книги не найдены':'Найдено книг: '+rows.length);
+			lib.reportApp(rows.length==0?'Книги не найдены':'Найдено книг: '+rows.length)
 			$('#headers').toggle(rows.length>0);
-			let list=$('#books');
-			list.children('div:not(:first-child)').remove();
+			let list=$('#books')
+			let now=new Date().toISOString().substr(0,16) //yyyy-MM-ddThh:mm:ss
+			list.children('div:not(:first-child)').remove()
 			rows.forEach(
 				r=>{
-					let price=genPrice(r);
+					let price=genPrice(r)
+					console.log(r.authors_list)
 					$('<div/>',{class:'row book'})
-						.append($('<span/>',{class:'col-6 my-auto'}).html(r.title+' '+r.authors_list.length))
 						.append(
-							$('<span/>',{class:'col-4 container'})
-							.append(
-								$('<div/>',{class:'row'})
-								.append($('<span/>',{class:'col-6 text-right'}).html(r.onhand_qty))
-								.append($('<button/>',{class:'col-4 btn btn-primary btn-sm order'}).html('Заказать'))
-							)
-							.append(
-								$('<form/>',{class:'order-book row d-none',action:'emp/orderBook'})
-								.append($('<input/>',{name:'qty',type:'number',min:'1',class:'col-3 text-right',required:'required',value:'1'}))
-								.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
-								.append($('<input/>',{name:'price',type:'hidden'}).val(price))
-								.append($('<span/>',{class:'col-3 text-right'}).html(price))
-								.append($('<button/>',{class:'col-4 btn btn-primary btn-sm'}).html('Заказать'))
-								.append($('<button/>',{type:'reset',class:'col-2 btn btn-primary btn-sm cancel'}).html('&times;'))
+							$('<span/>',{class:'col-5 my-auto'})
+							.html(
+								r.title
+								+' '
+								+r.authors_list
+								.map(
+									a=>
+									a.last_name
+									+' '
+									+a.first_name.substr(0,1)+'.'
+									+(a.middle_name?' '+a.middle_name.substr(0,1)+'.':'')
+								)
+								.join(', ')
 							)
 						)
-						.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
+						.append(
+							$('<span/>',{class:'col-7'})
+							.append(
+								$('<div/>',{class:'row'})
+								.append($('<span/>',{class:'col-2 text-right'}).html(r.onhand_qty))
+								.append($('<button/>',{class:'col-4 btn btn-primary btn-sm'}).attr('data-action','order-book').html('Заказать'))
+								.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
+								.append($('<button/>',{class:'col-4 btn btn-primary btn-sm'}).attr('data-action','set-price').html('Установить'))
+							)
+							.append(
+								$('<form/>',{class:'d-none form-inline',action:'emp/orderBook'})
+								.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
+								.append($('<input/>',{name:'price',type:'hidden'}).val(price))
+								.append(
+									$('<ul/>',{class:'container'})
+									.append(
+										$('<li/>',{class:'row form-group'})
+										.append($('<span>',{class:'col-6'}).html('В наличии'))
+										.append($('<span>',{class:'col-6 text-right'}).html(r.onhand_qty))
+									)
+									.append(
+										$('<li/>',{class:'row form-group'})
+										.append($('<span>',{class:'col-6'}).html('Со склада'))
+										.append(
+											$(
+												'<input/>',
+												{
+													name:'qty',
+													type:'number',
+													min:'1',
+													class:'form-control form-control-sm col-6 text-right',
+													required:'required',
+													value:1
+												}
+											)
+										)
+									)
+								)
+								.append(
+									$('<div/>',{class:'w-100'})
+									.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Заказать').attr('data-action','order-book'))
+									.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
+								)
+							)
+							.append(
+								$('<form/>',{class:'d-none form-inline',action:'emp/setPrice'})
+								.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
+								.append(
+									$('<ul/>',{class:'container'})
+									.append(
+										$('<li/>',{class:'row form-group'})
+										.append($('<span>',{class:'col-5'}).html('Текущая цена'))
+										.append($('<span>',{class:'col-7 text-right'}).html(r.price))
+									)
+									.append(
+										$('<li/>',{class:'row form-group'})
+										.append($('<span>',{class:'col-5'}).html('Новая цена'))
+										.append(
+											$(
+												'<input/>',
+												{
+													name:'price',
+													type:'number',
+													min:'0',
+													class:'form-control form-control-sm col-7 text-right',
+													required:'required',
+													value:price
+												}
+											)
+										)
+									)
+									.append(
+										$('<li/>',{class:'row form-group'})
+										.append($('<span>',{class:'col-5'}).html('С'))
+										.append(
+											$(
+												'<input/>',
+												{
+													name:'at',
+													type:'datetime-local',
+													min:now,
+													class:'form-control form-control-sm col-7 text-right',
+													required:'required',
+													value:now
+												}
+											)
+										)
+									)
+								)
+								.append(
+									$('<div/>',{class:'w-100'})
+									.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Установить').attr('data-action','set-price'))
+									.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
+								)
+							)
+						)
 						.appendTo(list)
-					;
 				}
 			);
 		}
 	);
+	//rpc forms
 	lib.rpcForm(
-		'.book form.order-book',
+		'.book form',
 		(data,form)=>{
-			lib.alert('books have been ordered');
-			$(form).children('button[type="reset"]').trigger('click');
+			lib.reportApp(
+				($(form).find('button[data-action]').attr('data-action'))=='order-book'
+				?'Киниги заказаны'
+				:'Отпускная цена установлена'
+			);
+			$(form).find('button[type="reset"]').trigger('click');
 			$('#catalog').trigger('submit');
 		}
 	);
-	
 	//event handlers
 	$('#books')
 	.off()
 	.on(
 		'click',
-		'button.order',
+		'.row.book>span:nth-child(2)>div.row>button',
 		e=>{
-			let orderButton=$(e.currentTarget);
-			orderButton.parent().addClass('d-none');
-			orderButton.parent().siblings('form.row').removeClass('d-none');
-			orderButton.parent().siblings('form.row').find('input[name="qty"]').focus().select();
+			let button=$(e.currentTarget)
+			button.parent().addClass('d-none')
+			button.parent().siblings('form')
+			.find('button[data-action="'+button.data('action')+'"]')
+			.parents('form')
+			.removeClass('d-none')
+			.find('input[name!="book_id"]').focus().select()
 		}
 	)
 	.on(
@@ -77,8 +178,8 @@ export default function(){
 		'button.cancel',
 		e=>{
 			let cancelButton=$(e.currentTarget);
-			cancelButton.parent().addClass('d-none');
-			cancelButton.parent().siblings('div.row').removeClass('d-none');
+			cancelButton.parents('.row.book').find('form').addClass('d-none');
+			cancelButton.parents('form').siblings('div.row').removeClass('d-none');
 		}
 	);
 }

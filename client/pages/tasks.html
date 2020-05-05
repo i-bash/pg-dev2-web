@@ -1,6 +1,6 @@
 <hr>
 <div class="container">
-	<form id="run-task" class="form-inline panel row" action="emp/runTask">
+	<form id="run-task" class="form-inline panel row" action="emp/runProgram">
 		<div class="form-group col-3">
 			<label for="programs" >Программа</label>
 			<select id="programs" class="form-control" name="program_id"></select>
@@ -9,20 +9,13 @@
 			<label for="params">Параметры</label>
 			<textarea id="params" name="params" rows="1">{}</textarea>
 		</div>
-		<!--
 		<div class="form-group col-3">
-			<label for="connectString">Строка соединения</label>
-			<input
-				id="connectString"
-				name="connect_string"
-				placeholder="host=localhost port=5432 dbname=bookstore2 user=emp"
-				title="Leave empty for default"
-				data-toggle="tooltip"
-				data-placement="top"
-				data-html="true"
-			>
+			<input id="host" name="host" type="hidden">
+			<input id="port" name="port" type="hidden">
+			<label for="is_remote">Удалённо</label>
+			<input id="is_remote" type="checkbox">
+			<select id="remote"></select>
 		</div>
-		-->
 		<div class="form-group col-2">
 			<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
 		</div>
