@@ -19,7 +19,7 @@ class WsServer{
 		const serve = serveStatic(this.staticDir, { 'index': ['index.html'] })
 		this.server = http.createServer(
 			function(req, res) {
-				console.log((new Date()) + ' Http request: ' + req.url)
+				console.log(new Date().toISOString() + ' Http request: ' + req.url)
 				serve(req, res, finalhandler(req, res))
 			}
 		);
@@ -39,14 +39,14 @@ class WsServer{
 		this.server.on(
 			'listening',
 			()=>{
-				console.log((new Date()) + ' Server is listening on port '+this.port)
-				console.log((new Date()) + ' Serving directory '+this.staticDir)
+				console.log(new Date().toISOString() + ' Server is listening on port '+this.port)
+				console.log(new Date().toISOString() + ' Serving directory '+this.staticDir)
 			}
 		)
 		this.server.on(
 			'close',
 			()=>{
-				console.log((new Date()) + ' Stopped listener, exiting');
+				console.log(new Date().toISOString() + ' Stopped listener, exiting');
 				process.exit(0)
 			}
 		)
@@ -71,7 +71,7 @@ class WsServer{
 				}
 				//connect
 				this.connectionId++;
-				let logPrefix=(new Date())+' ('+this.connectionId+') '
+				let logPrefix=(new Date()).toISOString()+' ('+this.connectionId+') '
 				this.connectHandler(this.connectionId).then(wsConnection.sendMessage);
 				console.log(logPrefix + ' Accepted WS connection from ' + wsConnection.remoteAddress);
 				//engine
