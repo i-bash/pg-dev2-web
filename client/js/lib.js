@@ -323,7 +323,7 @@ export class lib{
 					.serializeArray()
 					.map(nv=>[nv.name,nv.value])
 				)
-				return (callbackBefore??Promise.resolve)()
+				return (callbackBefore?callbackBefore():Promise.resolve())
 					.then(()=>lib.doAction($(form).attr('action'),pars))
 					.then(callbackAfter?(payload=>callbackAfter(payload,form)):Promise.resolve)
 					.catch(lib.reportError)
