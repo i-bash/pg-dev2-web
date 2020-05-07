@@ -89,7 +89,11 @@ export class lib{
 		.catch(e=>{lib.reportError(e);return Promise.reject(e)})
 	}
 	static pgExec(connectionId,sql,params){
-		return Promise.resolve(lib.reportCommand(sql))
+		return Promise.resolve(
+			lib.reportCommand(
+				sql+(params&&params.length?'<br>'+JSON.stringify(params):'')
+			)
+		)
 		.then(()=>lib.wspg.pgexec(connectionId,sql,params))
 		.then(
 			res=>{
