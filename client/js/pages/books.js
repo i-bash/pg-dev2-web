@@ -60,6 +60,11 @@ export default function(){
 									$('<ul/>',{class:'container'})
 									.append(
 										$('<li/>',{class:'row form-group'})
+										.append($('<span>',{class:'col-6'}).html('Отпускная цена'))
+										.append($('<span>',{class:'col-6 text-right'}).html(price))
+									)
+									.append(
+										$('<li/>',{class:'row form-group'})
 										.append($('<span>',{class:'col-6'}).html('В наличии'))
 										.append($('<span>',{class:'col-6 text-right'}).html(r.onhand_qty))
 									)

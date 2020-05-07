@@ -18,7 +18,7 @@ export default function(){
 							$('<a/>',{href:'#'})
 							.append(
 								$('<img/>',{src:'img/book.png',class:'cover w-50'})
-								.data('id',r.book_id)
+								.attr('data-id',r.book_id)
 							)
 						)
 					)
@@ -51,7 +51,7 @@ export default function(){
 	let showDetails=row=>{
 		let data=row.data('book')
 		$('#book').data('id',data.book_id);
-		$('#det-cover').attr('src',row.find('img#cover'+data.book_id).attr('src'));
+		$('#det-cover').attr('src',row.find('img[data-id="'+data.book_id+'"]').attr('src'));
 		$('#det-name').html(data.title);
 		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'));
 		$('#det-rating').html(data.rating);

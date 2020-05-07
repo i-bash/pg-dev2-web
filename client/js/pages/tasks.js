@@ -8,7 +8,11 @@ export default function(){
 		Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
 	)
 
-	let populatePrograms=()=>lib.doAction('emp/getPrograms').then(res=>lib.populateSelectFromData('#programs')(res[0]))
+	let populatePrograms=()=>
+	lib
+	.doAction('emp/getPrograms')
+	.then(res=>lib.populateSelectFromData('#programs')(res[0]))
+	.then(()=>$('#remote').triggerHandler('change'))
 	let populateTasks=()=>
 	//display tasks
 	lib
@@ -76,7 +80,12 @@ export default function(){
 	)
 	$('[data-toggle="tooltip"]').tooltip()
 	$('#is_remote').click(
-		e=>$('#remote').toggle($(e.target).prop('checked'))
+		e=>{
+			let isRemote=$(e.target).prop('checked')
+			$('#remote').toggle(isRemote)
+			//pass host and port only for remote instance
+			$('#host,#port').each((i,e)=>$(e).attr('name',isRemote?e.id:''))
+		}
 	)
 	$('#remote').change(
 		e=>{
