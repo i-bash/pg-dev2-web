@@ -2,7 +2,7 @@ import {lib} from '../lib.js'
 
 export default function(){
 	//gen pseudo-random based on string hash (-0.5 .. 0.5)
-	String.prototype.hashRandom = function(){return this.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)/2**32};
+	String.prototype.hashRandom = function(){return this.split('').reduce((a,b)=>{a=a*31+b.charCodeAt(0);return a&a},0)/2**32};
 	//generate book order price
 	let genPrice=book=>{
 		let price=Math.round(
