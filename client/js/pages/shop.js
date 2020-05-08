@@ -58,7 +58,13 @@ export default function(){
 		$('#det-votes-up').html(data.votes_up);
 		$('#det-votes-down').html(data.votes_down);
 		$('#det-format').html(data.format);
-		$('#det-other').html(JSON.stringify(data.additional));
+		$('#det-other').html(
+			Object
+			.entries(data.additional)
+			.filter(entry=>entry[1]!==null)
+			.map(entry=>entry[0]+': '+entry[1])
+			.join('<br>')
+		);
 		$('#det-price').html(data.price).siblings('button').data('id',data.book_id);
 		$('#book').toggle(true);
 		$('#books').toggle(false);
