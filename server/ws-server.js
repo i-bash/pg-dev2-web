@@ -27,7 +27,7 @@ class WsServer{
 				console.log(new Date().toISOString() + ' Http request: ' + req.url)
 				serve(req, res, finalhandler(req, res))
 			}
-		);
+		)
 		this.server.on(
 			'error',
 			e=>{
@@ -51,7 +51,7 @@ class WsServer{
 		this.server.on(
 			'close',
 			()=>{
-				console.log(new Date().toISOString() + ' Stopped listener, exiting');
+				console.log(new Date().toISOString() + ' Stopped listener, exiting')
 				process.exit(0)
 			}
 		)
@@ -59,23 +59,23 @@ class WsServer{
 		let wsServer = new WebSocketServer({
 			httpServer: this.server,
 			autoAcceptConnections: false
-		});
+		})
 		//process ws request
 		wsServer.on(
 			'request',
 			wsRequest=>{
-				let wsConnection=wsRequest.accept('pg-sql',wsRequest.origin);
+				let wsConnection=wsRequest.accept('pg-sql',wsRequest.origin)
 				//function to send ws message to client
 				wsConnection.sendMessage=(msg)=>{
 					if(msg!==null){
 						const maxLength=100
 						let text=JSON.stringify(msg)
-						console.log(logPrefix + ' Sending WS message to client: '+(text.length>maxLength?text.slice(0,maxLength-3)+'...':text));
-						wsConnection.send(text);
+						console.log(logPrefix + ' Sending WS message to client: '+(text.length>maxLength?text.slice(0,maxLength-3)+'...':text))
+						wsConnection.send(text)
 					}
 				}
 				//connect
-				this.connectionId++;
+				this.connectionId++
 				let logPrefix=(new Date()).toISOString()+' ('+this.connectionId+') '
 				wsConnection.sendMessage('connected '+this.connectionId)
 				console.log(logPrefix + ' Accepted WS connection from ' + wsConnection.remoteAddress)
@@ -89,22 +89,22 @@ class WsServer{
 					'message',
 					message=>{
 						if (message.type !== 'utf8') {
-							console.log(logPrefix + ' Unknown WS message type '+message.type);
-							return;
+							console.log(logPrefix + ' Unknown WS message type '+message.type)
+							return
 						}
-						console.log(logPrefix + ' Received WS message: ' + message.utf8Data);
-						let body;
+						console.log(logPrefix + ' Received WS message: ' + message.utf8Data)
+						let body
 						try{
-							body=JSON.parse(message.utf8Data);
+							body=JSON.parse(message.utf8Data)
 						}
 						catch(e){
-							console.log(logPrefix + ' Error parsing json message:');
-							console.log(e);
-							return;
+							console.log(logPrefix + ' Error parsing json message:')
+							console.log(e)
+							return
 						}
 						if(body.data==='stop'){
 							wsConnection.sendMessage({rid:body.rid,data:'stopping server'})
-							console.log(logPrefix + ' Received smart shutdown request, new connections disallowed');
+							console.log(logPrefix + ' Received smart shutdown request, new connections disallowed')
 							this.server.close()
 						}
 						else{
@@ -119,7 +119,7 @@ class WsServer{
 							)
 						}
 					}
-				);
+				)
 				//handle ws close
 				wsConnection.on(
 					'close',
@@ -133,13 +133,13 @@ class WsServer{
 							}
 						)
 					}
-				);
+				)
 			}
-		);
+		)
 	}
 	//listen ws port 
 	listen(){
-		this.server.listen(this.port);
+		this.server.listen(this.port)
 	}
 }
 
