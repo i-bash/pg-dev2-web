@@ -13,15 +13,14 @@ export class Dev2App{
 	 */
 	static chkCmd(){
 		//get auth info from sessionStorage
-		let authToken=sessionStorage.getItem('authToken');
-		let userName=sessionStorage.getItem('userName');
+		let authToken=sessionStorage.getItem('authToken')
+		let userName=sessionStorage.getItem('userName')
 		//auth header
-		$('#session-info').html(userName+' ('+authToken+')');
-		$('#logged-in').toggle(authToken!==null);
-		$('#logged-out').toggle(authToken===null);
-		$('#login-form').toggle(false);
-		$('#register-form').toggle(false);
-		$('#cart').prop('disabled',$('.cart-total').html()=='0')
+		$('#session-info').html(userName+' ('+authToken+')')
+		$('#logged-in').toggle(authToken!==null)
+		$('#logged-out').toggle(authToken===null)
+		$('#login-form').toggle(false)
+		$('#register-form').toggle(false)
 	};
 
 	static init(config){
@@ -42,7 +41,11 @@ export class Dev2App{
 			e=>{
 				console.log('connected to ws server')
 				$("#led").removeClass().addClass('bg-success')
-				Dev2App.initUi();
+				lib.populateSelect(
+					'#server',
+					Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
+				)
+				$('#tab-shop').tab('show')
 			}
 		)
 		.catch(console.error)
@@ -53,7 +56,7 @@ export class Dev2App{
 		$('.cart-total').html(
 			res&&res[0]&&res[0].reduce((prev,cur)=>prev+cur.qty*cur.price,0) || '0'
 		)
-		Dev2App.chkCmd()
+		$('#cart').prop('disabled',$('.cart-total').html()=='0')
 	}
 	
 	//refresh cart info
@@ -66,17 +69,14 @@ export class Dev2App{
 		else{
 			return lib
 			.doAction('web/getCart',{auth_token:authToken})
-			.catch(e=>Dev2App.displayCartInfo())
+			.catch(
+				e=>{
+				debugger;
+				Dev2App.displayCartInfo()
+			}
+			)
 			.then(Dev2App.displayCartInfo)
 		}
-	}
-
-	static initUi(){
-		//init ui
-		lib.populateSelect(
-			'#server',
-			Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
-		);
 	}
 
 	static setHandlers(){
@@ -85,28 +85,31 @@ export class Dev2App{
 		//display page
 		$('#admin a[data-page]').off().click(
 			e=>{
-				lib.displayPage($(e.target).data('page'));
+				lib.displayPage($(e.target).data('page'))
 			}
 		);
 		$('#login').off().click(
 			e=>{
-				$('#login-form').toggle(true);
-				$('#register-form').toggle(false);
-				$('#logged-out').toggle(false);
-				$('#logged-in').toggle(false);
-				$('#username').focus();
+				$('#login-form').toggle(true)
+				$('#register-form').toggle(false)
+				$('#logged-out').toggle(false)
+				$('#logged-in').toggle(false)
+				$('#username').focus()
 			}
 		);
 		$('#register').off().click(
 			e=>{
-				$('#login-form').toggle(false);
-				$('#register-form').toggle(true);
-				$('#logged-out').toggle(false);
-				$('#logged-in').toggle(false);
-				$('#reg-username').focus();
+				$('#login-form').toggle(false)
+				$('#register-form').toggle(true)
+				$('#logged-out').toggle(false)
+				$('#logged-in').toggle(false)
+				$('#reg-username').focus()
 			}
-		);
-		$('button.revert').off().click(Dev2App.chkCmd);
+		)
+
+		$('button.revert').off().click(Dev2App.chkCmd)
+
+		$('#shop').off().on('loginlogout',Dev2App.chkCmd)
 
 		//tab
 		$('a[data-toggle="tab"]')
@@ -114,30 +117,28 @@ export class Dev2App{
 		.on('shown.bs.tab', function (e) {
 			switch(e.target.id){
 			case 'tab-shop':
+				if(!Dev2App.inited){
+					Dev2App.chkCmd()
+					$('#header1').trigger('loginlogout')
+					Dev2App.inited=true
+				}
 				lib.displayPage('shop')
-				.then(
-					d=>{
-						if(!Dev2App.inited){
-							$('#shop').trigger('shop:login-logout')
-							Dev2App.inited=true
-						}
-					}
-				)
-			break;
+			break
 			case 'tab-admin':
-				lib.displayPage('books');
-			break;
+				lib.displayPage('books')
+			break
 			}
+			return true
 		})
 
 		//login
 		lib.rpcForm(
 			'#login-form>form',
 			data=>{
-				sessionStorage.setItem('authToken',data[0]);
-				sessionStorage.setItem('userName',$('#username').val());
-				$('#username').val('');
-				$('#shop').trigger('shop:login-logout');
+				sessionStorage.setItem('authToken',data[0])
+				sessionStorage.setItem('userName',$('#username').val())
+				$('#username').val('')
+				$('#header1').trigger('loginlogout')
 			}
 		);
 		//logout
@@ -145,9 +146,9 @@ export class Dev2App{
 			e=>lib.doAction('web/logout',{auth_token:sessionStorage.getItem('authToken')})
 			.then(
 				()=>{
-					sessionStorage.removeItem('authToken');
-					sessionStorage.removeItem('userName');
-					$('#shop').trigger('shop:login-logout');
+					sessionStorage.removeItem('authToken')
+					sessionStorage.removeItem('userName')
+					$('#header1').trigger('loginlogout')
 				}
 			)
 		);
@@ -155,14 +156,14 @@ export class Dev2App{
 		lib.rpcForm(
 			'#register-form>form',
 			data=>{
-				lib.reportApp('Пользователь '+$('#reg-username').val()+' зарегистрирован.');
-				$('#reg-username').val('');
-				$('#reg-email').val('');
-				Dev2App.chkCmd();
+				lib.reportApp('Пользователь '+$('#reg-username').val()+' зарегистрирован.')
+				$('#reg-username').val('')
+				$('#reg-email').val('')
+				Dev2App.chkCmd()
 			}
 		);
 		//cart
-		$('#cart').off().click(e=>{lib.displayPage('cart');});
+		$('#cart').off().click(e=>{lib.displayPage('cart')})
 	}
 
 	/** get cover images for books and display each image in img element with corresponding data-id
@@ -196,31 +197,4 @@ export class Dev2App{
 			Promise.resolve()
 		)
 	}
-
-	/**	
-	//enable/disable elements in tech pane
-	chkCmd: ()=>{
-		$('#btn-conninfo').toggleClass('disabled',$('#conninfo').html()=='');
-		$('#trace').prop('disabled',$('#conninfo').html()=='');
-	},
-
-	//display alert
-	alert: (message,style='info')=>{
-		//alert(message);
-		$('<div/>',{class:'alert alert-'+style+' alert-dismissible fade show in',role:'alert'})
-			.html(message)
-			.appendTo('#alert')
-			//.addClass('in')
-			.delay(5000)
-			.slideUp('slow',function(){$(this).remove();})
-			;
-	},
-
-	//append contents to pane
-	addContents: (oldContents,newContents)=>{
-		return oldContents+(oldContents&&newContents?lib.separator:'')+newContents;
-	},
-
-****/
-
-};
+}

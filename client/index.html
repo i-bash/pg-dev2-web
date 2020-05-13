@@ -17,7 +17,7 @@
 						<span class="h2 d-inline-block align-bottom ml-5 mb-0">Учебное приложение DEV2</span>
 					</div>
 					<ul class="nav nav-tabs">
-					  <li class="nav-item active">
+					  <li class="nav-item">
 						<a id="tab-shop" data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
 					  </li>
 					  <li class="nav-item">
@@ -25,7 +25,7 @@
 					  </li>
 					</ul>
 					<div class="tab-content">
-						<div id="shop" class="tab-pane fade in active">
+						<div id="shop" class="tab-pane">
 							<div id="header1" class="container text-right clearfix pt-2 pb-2 border-bottom">
 								<span id="logged-out">
 									<button id="login" type="button" class="btn btn-info">Вход</button>
@@ -49,11 +49,11 @@
 								<span id="logged-in">
 									<span id="session-info"></span>
 									<button id="logout" class="btn btn-info">Выйти</button>
-									<button id="cart" type="button" class="btn btn-info">Корзина ₽<span class="cart-total"></span></button>
+									<button id="cart" type="button" class="btn btn-info" disabled>Корзина ₽<span class="cart-total"></span></button>
 								</span>
 							</div>
 						</div>
-						<div id="admin" class="tab-pane fade">
+						<div id="admin" class="tab-pane">
 							<ul class="nav nav-pills">
 							  <li class="nav-item">
 								<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>

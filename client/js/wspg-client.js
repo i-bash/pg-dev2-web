@@ -77,8 +77,8 @@ export default class WsPgClient{
 						console.error('received non-json message',e.data)
 						return
 					}
-					this.log('received message')
-					this.log(message);
+					//this.log('received message via websocket')
+					//this.log(message);
 					if(message.rid){
 						//handle response
 						this.log('got response on request #'+message.rid);

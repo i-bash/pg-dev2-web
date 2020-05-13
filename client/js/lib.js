@@ -97,7 +97,7 @@ export class lib{
 		.then(()=>lib.wspg.pgexec(connectionId,sql,params))
 		.then(
 			res=>{
-				lib.reportSuccess(res.command===undefined?'ok':res.command+(res.rowCount===null?'':' '+res.rowCount));
+				lib.reportSuccess(res.command===undefined?'ok':res.command+(res.rowCount===null?'':' '+res.rowCount))
 				return res.rows;
 			}
 		)
@@ -142,7 +142,7 @@ export class lib{
 			)
 			//reuse connection
 			:Promise.resolve(
-				lib.reportSuccess('reusing connection "'+pgConn+'"')
+				//lib.reportSuccess('reusing connection "'+pgConn+'"')
 			)
 		)
 		.then(()=>
@@ -196,69 +196,12 @@ export class lib{
 			),
 			connectPromise //promise to connect at the beginning
 		)
-		.then(d=>Promise.resolve(results))//finally return a promise resolved with the results
+		.then(
+			d=>
+			Promise.resolve(results)
+		)//finally return a promise resolved with the results
 	}
 
-/*
-			()=>$.ajax({
-				method:'post',
-				url:'server.php?'+$.param(
-					{
-						connectString:Object.entries(connectData).map(entry=>entry[0]+'='+entry[1]).join(' '),
-						action:action,
-						trace:$('#trace').prop('checked')
-					}
-				),
-				data:params,
-				success:res=>{
-					if(res.conninfo){
-						$('<div/>',{class:'alert alert-light w-100 m-0 p-0'})
-						.html(res.conninfo.user+'@'+res.conninfo.host+':'+res.conninfo.port+' ('+res.conninfo.pid+')')
-						.appendTo(actionPane)
-						;
-					}
-					if(res.sql&&res.sql.length){
-						let sqlText=res.sql.map(
-							s=>{
-								return s.trimLeft().replace(/\n/g,'<br/>').replace(/\t/g,'&nbsp;&nbsp;&nbsp;').replace(/\s/g,' ');
-							}
-						)//.reverse()
-						.join(lib.separator);
-						$('<div/>',{class:'sql alert alert-info w-100 m-0 p-2'}).html(sqlText).appendTo(actionPane);
-					}
-					if(res.notices){
-						res.notices.forEach(
-							notice=>{
-								$('<p/>',{class:'alert alert-warning w-100 m-0 p-2'}).html(notice).appendTo(actionPane);
-							}
-						);
-					}
-					//res.info.forEach(
-					//	info=>{
-					//		$('<p/>',{class:'alert alert-success w-100'}).html(info).appendTo(actionPane);
-					//	}
-					//);
-					if(res.err===null){
-						if(callback!==undefined){
-							callback(res.data,callbackData);
-						}
-					}
-					else{
-						$('<p/>',{class:'alert alert-danger w-100 m-0 p-2'}).html(res.err.message.replace(/\n\s*\^/,'').replace(/\n/g,'<br/>')).appendTo(actionPane);
-					}
-				},
-				error:e=>{
-					alert('Unexpected server error');
-					console.error(e);
-				},
-				complete:()=>{
-					$('#loader').addClass('invisible').removeClass('visible');
-					$(actionPane).parent().animate({scrollTop:$(actionPane)[0].scrollHeight});
-					Dev2App.chkCmd();
-				}
-			})
-		);
-*/
 	/**
 	 * clear contents of sql, success, error, notice panels
 	 */

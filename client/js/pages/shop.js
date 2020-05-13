@@ -9,37 +9,36 @@ export default function(){
 		list.children('div:not(:first-child)').remove();
 		rows.forEach(
 			r=>{
-				$('<div/>',{class:'row book'})
-					.data('book',r)
-					.data('id',r.book_id)
+				$('<div/>',{class:'row book mt-2'})
+				.data('book',r)
+				.data('id',r.book_id)
+				.append(
+					$('<span/>',{class:'col-2 text-center'})
 					.append(
-						$('<span/>',{class:'col-2'})
+						$('<a/>',{href:'#'})
 						.append(
-							$('<a/>',{href:'#'})
-							.append(
-								$('<img/>',{src:'img/book.png',class:'cover w-50'})
-								.attr('data-id',r.book_id)
-							)
+							$('<img/>',{src:'img/book.png',class:'cover w-50'})
+							.attr('data-id',r.book_id)
 						)
 					)
-					.append(
-						$('<span/>',{class:'col-4'})
-						.html(
-							r.title+
-							'. '+
-							r.authors_list.map(
-								author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
-							).join(', ')
-						)
+				)
+				.append(
+					$('<span/>',{class:'col-4 text-left'})
+					.html(
+						r.title+
+						'. '+
+						r.authors_list.map(
+							author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
+						).join(', ')
 					)
-					.append($('<span/>',{class:'col-1'}).html(r.rating))
-					.append($('<span/>',{class:'col-2'}).html(r.format))
-					.append($('<span/>',{class:'col-1 text-right'}).html(r.price))
-					.append($('<span/>',{class:'col-2'}).append(
-						$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).html('В корзину')
-					))
-					.appendTo(list)
-				;
+				)
+				.append($('<span/>',{class:'col-1 text-center'}).html(r.rating))
+				.append($('<span/>',{class:'col-2 text-center'}).html(r.format))
+				.append($('<span/>',{class:'col-1 text-right'}).html(r.price))
+				.append($('<span/>',{class:'col-2'}).append(
+					$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).html('В корзину')
+				))
+				.appendTo(list)
 			}
 		)
 		showList()
@@ -50,59 +49,58 @@ export default function(){
 	//display book details
 	let showDetails=row=>{
 		let data=row.data('book')
-		$('#book').data('id',data.book_id);
-		$('#det-cover').attr('src',row.find('img[data-id="'+data.book_id+'"]').attr('src'));
-		$('#det-name').html(data.title);
-		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'));
-		$('#det-rating').html(data.rating);
-		$('#det-votes-up').html(data.votes_up);
-		$('#det-votes-down').html(data.votes_down);
-		$('#det-format').html(data.format);
-		$('#det-other').html(
+		$('#book').data('id',data.book_id)
+		$('#det-cover').attr('src',row.find('img[data-id="'+data.book_id+'"]').attr('src'))
+		$('#det-name').html(data.title)
+		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'))
+		$('#det-rating').html(data.rating)
+		$('#det-votes-up').html(data.votes_up)
+		$('#det-votes-down').html(data.votes_down)
+		$('#det-format').html(data.format)
+		if(typeof(data.additional)=='object'){
 			Object
 			.entries(data.additional)
 			.filter(entry=>entry[1]!==null)
-			.map(entry=>entry[0]+': '+entry[1])
-			.join('<br>')
-		);
-		$('#det-price').html(data.price).siblings('button').data('id',data.book_id);
-		$('#book').toggle(true);
-		$('#books').toggle(false);
-//		$('#shop').trigger('shop:login-logout');
+			.forEach(
+				entry=>{
+					$('<div/>',{class:'row'})
+					.append($('<div/>',{class:'col-3'}).html(entry[0]))
+					.append($('<div/>',{class:'col-9'}).html(entry[1]))
+					.appendTo('#book-properties')
+				}
+			)
+		}
+		$('#det-price').html(data.price)
+		$('#to-cart').data('id',data.book_id)
+		$('#book').toggle(true)
+		$('#books').toggle(false)
+		$('#header1').trigger('loginlogout')
 	};
 	//display list of books
 	let showList=()=>{
-		$('#book').toggle(false);
-		$('#books').toggle(true);
-//		$('#shop').trigger('shop:login-logout');
+		$('#book').toggle(false)
+		$('#books').toggle(true)
+		$('#header1').trigger('loginlogout')
 	};
 	
 	//event handlers
+	$('[name="orderby"],[name="direction"]').off().change(()=>{$('#search').submit()})
 	
-	$('#shop').off().on(
-		'shop:login-logout',
+	$('#books,#book-details').off()
+	
+	$('#books')
+	.on('show load ','img',alert)
+	.on('click','img',e=>showDetails($(e.target).closest('.book')))
+	
+	$('#header1')
+	.on(
+		'loginlogout',
 		e=>{
 			//enable to-cart and vote buttons for logged in user only
 			$('#books,#book').find('button.to-cart,button.vote').toggle(sessionStorage.getItem('authToken')!==null);
-			//display cart info in header
-			Dev2App.refreshCartInfo().then(d=>Dev2App.chkCmd())
 		}
-	);
+	)
 	
-	$('#orderby,#direction').off().change(
-		()=>{
-			$('#search').submit();
-		}
-	);
-	
-	$('#books,#book-details').off()
-	$('#books')
-	.on('show load ','img',alert)
-	.on(
-		'click',
-		'img',
-		e=>showDetails($(e.target).closest('.book'))
-	);
 	$('#books,#book-details').on(
 		'click',
 		'button.to-cart',
@@ -113,9 +111,9 @@ export default function(){
 			)
 			.then(d=>lib.reportApp('added to cart'))
 			.then(Dev2App.refreshCartInfo)
-			.then(d=>Dev2App.chkCmd())
 		}
-	);
+	)
+	
 	$('.vote').off().click(
 		e=>{
 			let btn=$(e.target)
@@ -129,11 +127,12 @@ export default function(){
 					counter.html(Number(counter.html())+1)
 					lib.reportApp('voted')
 				}
-			);
+			)
 		}
-	);
-	$('#to-list').off().click(showList);
+	)
+	
+	$('#to-list').off().click(showList)
 	
 	//init
-	lib.rpcForm('#search',initBooks);
+	lib.rpcForm('#search',initBooks)
 }

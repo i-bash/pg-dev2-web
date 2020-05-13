@@ -1,24 +1,35 @@
 						<form id="search" class="form-inline pt-2" action="web/findBooks">
-							<div class="container text-right clearfix">
-								<input id="search_string" class="form-control text-right mb-2" name="search" placeholder="Автор или название">
-								<button type="submit" class="btn btn-primary mb-2">Найти</button>
-								<select id="orderby" name="orderby" class="form-control">
-									<option value="format">Формат</option>
-									<option value="rating">Рейтинг</option>
-									<option value="price">Цена</option>
-								</select>
-								<select id="direction" name="direction" class="form-control">
-									<option value="asc">&uarr;</option>
-									<option value="desc">&darr;</option>
-								</select>
+							<div class="container">
+								<span class="float-left">
+									<input id="search_string" class="form-control text-right mb-2" name="search" placeholder="Автор или название">
+									<button type="submit" class="btn btn-primary mb-2">Найти</button>
+								</span>
+								<span class="float-right">
+									Сортировать по&nbsp;
+									<select id="orderby" name="orderby" class="form-control">
+										<option value="format">формату</option>
+										<option value="rating">рейтингу</option>
+										<option value="price">цене</option>
+									</select>
+									<div class="btn-group btn-group-toggle" data-toggle="buttons">
+										<label class="btn btn-outline-primary btn-sm active">
+											<input type="radio" name="direction" value="asc" autocomplete="off" checked>
+											&uarr;
+										</label>
+										<label class="btn btn-outline-primary btn-sm">
+											<input type="radio" name="direction" value="desc" id="option2" autocomplete="off">
+											&darr;
+										</label>
+									</div>
+								</span>
 							</div>
 						</form>
 						<div id="books" class="container">
 							<div id="headers" class="row">
-								<span class="col-2">Обложка</span>
-								<span class="col-4">Название, авторы</span>
-								<span class="col-1">Рейтинг</span>
-								<span class="col-2">Формат</span>
+								<span class="col-2 text-center">Обложка</span>
+								<span class="col-4 text-left">Название, авторы</span>
+								<span class="col-1 text-center">Рейтинг</span>
+								<span class="col-2 text-center">Формат</span>
 								<span class="col-1 text-right">Цена</span>
 								<span class="col-2"></span>
 							</div>
@@ -26,44 +37,45 @@
 						<div id="book" class="book">
 							<div id="book-details" class="container">
 								<div class="row">
-									<div class="col-3">
+									<div class="col-2">
 										<div>Обложка</div>
 										<div><img id="det-cover" src="img/book.png" class="w-50"></div>
 									</div>
-									<div class="col-6">
-										<div class="container">
+									<div class="col-10">
+										<div id="book-properties" class="container">
 											<div class="row">
-												<div class="col-4">Название</div>
-												<div class="col-8" id="det-name"></div>
+												<div class="col-3">Название</div>
+												<div class="col-9" id="det-name"></div>
 											</div>
 											<div class="row">
-												<div class="col-4">Авторы</div>
-												<div class="col-8" id="det-authors"></div>
+												<div class="col-3">Авторы</div>
+												<div class="col-9" id="det-authors"></div>
 											</div>
 											<div class="row">
-												<div class="col-4">Рейтинг</div>
-												<div class="col-1" id="det-rating"></div>
+												<div class="col-3">Рейтинг</div>
+												<div class="col-4" id="det-rating"></div>
 												<div class="col-1">
 													<button id="vote-up" class="btn btn-sm btn-outline-success vote" data-vote="+1">+</button>
+													<span id="det-votes-up"></span>
 												</div>
-												<div class="col-2" id="det-votes-up"></div>
 												<div class="col-1">
 													<button class="btn btn-sm btn-outline-danger vote" data-vote="-1">-</button>
+													<span id="det-votes-down"></span>
 												</div>
-												<div class="col-2" id="det-votes-down"></div>
+												<div class="col-3 font-weight-bold lead text-center">
+													₽<span id="det-price" class="pl-1"></span>
+												</div>
 											</div>
 											<div class="row">
-												<div class="col-4">Формат</div>
-												<div class="col-8" id="det-format"></div>
-											</div>
-											<div class="row">
-												<div class="col-12" id="det-other"></div>
+												<div class="col-3">Формат</div>
+												<div class="col-6" id="det-format"></div>
+												<div class="col-3 text-center">
+													<button id="to-cart" type="button" class="btn btn-secondary btn-sm to-cart">В корзину</button>
+												</div>
 											</div>
 										</div>
 									</div>
 									<div class="col-3">
-										<div><span class="pr-2">Цена</span><span id="det-price"></span></div>
-										<div><button type="button" class="btn btn-secondary btn-sm to-cart">В корзину</button></div>
 									</div>
 								</div>
 							</div>
