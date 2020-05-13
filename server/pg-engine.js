@@ -98,6 +98,16 @@ class PgEngine{
 				}
 			)
 		}
+		//close all pg connections on ws close
+		this.handleClose=()=>Promise.all(
+			this.connections.map(
+				conn=>conn
+				.end()
+				.catch(
+					e=>console.log('cannot close pg connection '+JSON.stringify(e))
+				)
+			)
+		)
 	}
 };
 

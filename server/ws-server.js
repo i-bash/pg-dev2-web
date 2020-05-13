@@ -1,3 +1,10 @@
+/** WsServer expects engineClass to provide three handlers.
+ * They must be functions returning promises:
+ * handleMessage
+ * handleCommand
+ * handleClose
+ */
+
 const http = require('http')
 const serveStatic = require('serve-static')
 const finalhandler = require('finalhandler')
@@ -9,8 +16,6 @@ class WsServer{
 		//options
 		this.port=/^[1-9][0-9]*$/.test(options.port)?parseInt(options.port):die('Incorrect port ('+options.port+'), must be integer')
 		this.staticDir=require('path').resolve(__dirname,'../client')
-		this.connectHandler=options.connect||gag
-		this.disconnectHandler=options.disconnect||gag
 		this.engineClass=options.engine||{}
 		//init
 		const gag=m=>new Promise((resolve,reject)=>{console.log('called gag');resolve(null)})
@@ -72,8 +77,8 @@ class WsServer{
 				//connect
 				this.connectionId++;
 				let logPrefix=(new Date()).toISOString()+' ('+this.connectionId+') '
-				this.connectHandler(this.connectionId).then(wsConnection.sendMessage);
-				console.log(logPrefix + ' Accepted WS connection from ' + wsConnection.remoteAddress);
+				wsConnection.sendMessage('connected '+this.connectionId)
+				console.log(logPrefix + ' Accepted WS connection from ' + wsConnection.remoteAddress)
 				//engine
 				const engine=new this.engineClass()
 				//get message from engine, send it to client
@@ -119,9 +124,14 @@ class WsServer{
 				wsConnection.on(
 					'close',
 					(reasonCode, description)=>{
-						this
-						.disconnectHandler(this.connectionId)
-						.then(()=>console.log(logPrefix + ' WS client on ' + wsConnection.remoteAddress + ' disconnected.'));
+						engine
+						.handleClose()
+						.then(
+							result=>{
+								wsConnection.sendMessage('disconnected '+this.connectionId)
+								console.log(logPrefix + ' WS client on ' + wsConnection.remoteAddress + ' disconnected.')
+							}
+						)
 					}
 				);
 			}
