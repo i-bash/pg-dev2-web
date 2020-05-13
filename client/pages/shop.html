@@ -1,39 +1,24 @@
-						<form id="search" class="form-inline pt-2" action="web/findBooks">
-							<div class="container">
-								<span class="float-left">
-									<input id="search_string" class="form-control text-right mb-2" name="search" placeholder="Автор или название">
-									<button type="submit" class="btn btn-primary mb-2">Найти</button>
-								</span>
-								<span class="float-right">
-									Сортировать по&nbsp;
-									<select id="orderby" name="orderby" class="form-control">
-										<option value="format">формату</option>
-										<option value="rating">рейтингу</option>
-										<option value="price">цене</option>
-									</select>
-									<div class="btn-group btn-group-toggle" data-toggle="buttons">
-										<label class="btn btn-outline-primary btn-sm active">
-											<input type="radio" name="direction" value="asc" autocomplete="off" checked>
-											&uarr;
-										</label>
-										<label class="btn btn-outline-primary btn-sm">
-											<input type="radio" name="direction" value="desc" id="option2" autocomplete="off">
-											&darr;
-										</label>
-									</div>
-								</span>
-							</div>
+						<form id="search" class="form-inline pt-2 pb-2 w-100" action="web/findBooks">
+							<input id="search_string" class="form-control text-right mr-1" name="search" placeholder="Автор или название">
+							<button type="submit" class="btn btn-primary">Найти</button>
+							<label for="orderby" class="d-inline pl-5 pr-2">Сортировать по</label>
+							<select id="orderby" name="orderby" class="form-control mr-1">
+								<option value="format">формату</option>
+								<option value="rating">рейтингу</option>
+								<option value="price">цене</option>
+							</select>
+							<span class="btn-group btn-group-toggle" data-toggle="buttons">
+								<label class="btn btn-outline-primary btn-sm active">
+									<input type="radio" name="direction" value="asc" autocomplete="off" checked>
+									&uarr;
+								</label>
+								<label class="btn btn-outline-primary btn-sm">
+									<input type="radio" name="direction" value="desc" id="option2" autocomplete="off">
+									&darr;
+								</label>
+							</span>
 						</form>
-						<div id="books" class="container">
-							<div id="headers" class="row">
-								<span class="col-2 text-center">Обложка</span>
-								<span class="col-4 text-left">Название, авторы</span>
-								<span class="col-1 text-center">Рейтинг</span>
-								<span class="col-2 text-center">Формат</span>
-								<span class="col-1 text-right">Цена</span>
-								<span class="col-2"></span>
-							</div>
-						</div>
+						<div id="books" class="container border"></div>
 						<div id="book" class="book">
 							<div id="book-details" class="container">
 								<div class="row">
@@ -75,8 +60,7 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-3">
-									</div>
+									<div class="col-3"></div>
 								</div>
 							</div>
 							<div><button id="to-list" class="btn btn-primary">К списку книг</button></div>

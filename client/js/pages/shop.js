@@ -26,15 +26,15 @@ export default function(){
 					$('<span/>',{class:'col-4 text-left'})
 					.html(
 						r.title+
-						'. '+
+						'<br>'+
 						r.authors_list.map(
-							author=>author.last_name+' '+author.first_name[0]+'.'+(author.last_name?' '+author.last_name[0]+'.':'')
+							author=>author.last_name+' '+author.first_name[0]+'.'+(author.middle_name?' '+author.middle_name[0]+'.':'')
 						).join(', ')
 					)
 				)
 				.append($('<span/>',{class:'col-1 text-center'}).html(r.rating))
 				.append($('<span/>',{class:'col-2 text-center'}).html(r.format))
-				.append($('<span/>',{class:'col-1 text-right'}).html(r.price))
+				.append($('<span/>',{class:'col-1 text-right text-nowrap'}).html(r.price+' ₽'))
 				.append($('<span/>',{class:'col-2'}).append(
 					$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).html('В корзину')
 				))
@@ -57,19 +57,20 @@ export default function(){
 		$('#det-votes-up').html(data.votes_up)
 		$('#det-votes-down').html(data.votes_down)
 		$('#det-format').html(data.format)
-		if(typeof(data.additional)=='object'){
-			Object
+		$('#book-properties>.row:nth-child(n+5)').remove()
+		$('#book-properties').append(
+			(typeof(data.additional)=='object'&&data.additional!=null)
+			?Object
 			.entries(data.additional)
 			.filter(entry=>entry[1]!==null)
-			.forEach(
-				entry=>{
-					$('<div/>',{class:'row'})
-					.append($('<div/>',{class:'col-3'}).html(entry[0]))
-					.append($('<div/>',{class:'col-9'}).html(entry[1]))
-					.appendTo('#book-properties')
-				}
+			.map(
+				entry=>
+				$('<div/>',{class:'row'})
+				.append($('<div/>',{class:'col-3'}).html(entry[0]))
+				.append($('<div/>',{class:'col-9'}).html(entry[1]))
 			)
-		}
+			:[]
+		)
 		$('#det-price').html(data.price)
 		$('#to-cart').data('id',data.book_id)
 		$('#book').toggle(true)

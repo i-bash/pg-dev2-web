@@ -155,7 +155,9 @@ export class lib{
 			d=>
 			lib.pgExec(
 				connectionId,
-				'select pg_backend_pid() pid, user, inet_server_addr() host, inet_server_port() port, current_database() dbname'
+`select pg_backend_pid() pid, user, inet_server_addr() host, inet_server_port() port, 
+current_database() dbname, set_config('application_name','dev2app',true)
+`
 				+(lib.tracing?', trace()':'')
 			)
 			.then(res=>lib.reportConninfo(res[0]))

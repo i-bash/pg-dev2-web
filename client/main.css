@@ -37,6 +37,9 @@ html{
 	padding:8px;
 }
 
+#page.shop #search_string{
+	width:calc(100% - 420px);
+}
 
 #page.shop #books,
 #page.shop #book{

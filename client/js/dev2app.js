@@ -16,7 +16,7 @@ export class Dev2App{
 		let authToken=sessionStorage.getItem('authToken')
 		let userName=sessionStorage.getItem('userName')
 		//auth header
-		$('#session-info').html(userName+' ('+authToken+')')
+		$('#session-info').html(userName)
 		$('#logged-in').toggle(authToken!==null)
 		$('#logged-out').toggle(authToken===null)
 		$('#login-form').toggle(false)
