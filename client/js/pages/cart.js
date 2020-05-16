@@ -74,7 +74,11 @@ export default function(){
 			row.data.qty=newValue
 			lib.doAction(
 				'web/toCart',
-				{auth_token:sessionStorage.getItem('authToken'),book_id:row.data().book_id,qty:diff}
+				{
+					auth_token:sessionStorage.getItem('authToken'),
+					book_id:row.data().book_id,
+					qty:diff
+				}
 			)
 			.then(refreshCart)
 			.then(lib.reportApp('Количество книг изменено'))
