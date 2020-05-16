@@ -17,8 +17,8 @@ export default function(){
 		'#catalog',
 		data=>{
 			let rows=data[0]
+			$('#headers').toggle(rows.length>0)
 			lib.reportApp(rows.length==0?'Книги не найдены':'Найдено книг: '+rows.length)
-			$('#headers').toggle(rows.length>0);
 			let list=$('#books')
 			let now=new Date().toISOString().substr(0,16) //yyyy-MM-ddThh:mm:ss
 			list.children('div:not(:first-child)').remove()
@@ -163,6 +163,8 @@ export default function(){
 		}
 	);
 	//event handlers
+	$('[name="orderby"],[name="direction"]').off().change(()=>{$('#catalog').submit()})
+
 	$('#books')
 	.off()
 	.on(
