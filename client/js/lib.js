@@ -88,8 +88,9 @@ export class lib{
 		.then(d=>lib.reportSuccess('disconnected'))
 		.catch(e=>{lib.reportError(e);return Promise.reject(e)})
 	}
-	static pgExec(connectionId,sql,params){
+	static pgExec(connectionId,sql,params=[],beSilent=false){
 		return Promise.resolve(
+			beSilent||
 			lib.reportCommand(
 				sql+(params&&params.length?'<br>'+JSON.stringify(params):'')
 			)
@@ -97,7 +98,7 @@ export class lib{
 		.then(()=>lib.wspg.pgexec(connectionId,sql,params))
 		.then(
 			res=>{
-				lib.reportSuccess(res.command===undefined?'ok':res.command+(res.rowCount===null?'':' '+res.rowCount))
+				beSilent||lib.reportSuccess(res.command===undefined?'ok':res.command+(res.rowCount===null?'':' '+res.rowCount))
 				return res.rows;
 			}
 		)
@@ -158,7 +159,9 @@ export class lib{
 `select pg_backend_pid() pid, user, inet_server_addr() host, inet_server_port() port, 
 current_database() dbname, set_config('application_name','dev2app',true)
 `
-				+(lib.tracing?', trace()':'')
+				+(lib.tracing?', trace()':''),
+				undefined,
+				true
 			)
 			.then(res=>lib.reportConninfo(res[0]))
 		)
