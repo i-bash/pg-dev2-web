@@ -119,7 +119,11 @@ export default function(){
 		e=>{
 			lib.doAction(
 				'web/toCart',
-				{book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')}
+				{
+					book_id:$(e.target).closest('.book').data('id'),
+					auth_token:sessionStorage.getItem('authToken'),
+					qty:1
+				}
 			)
 			.then(d=>lib.reportApp('added to cart'))
 			.then(Dev2App.refreshCartInfo)
