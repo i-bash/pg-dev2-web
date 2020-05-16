@@ -43,7 +43,6 @@ export default function(){
 						)
 					)
 				)
-				.append($('<span/>',{class:'col-1 text-center'}).html(r.rating))
 				.append($('<span/>',{class:'col-2 text-center'}).html(r.format))
 				.append($('<span/>',{class:'col-1 text-right text-nowrap'}).html(r.price+' ₽'))
 				.append($('<span/>',{class:'col-2'}).append(
@@ -64,7 +63,7 @@ export default function(){
 		$('#det-cover').attr('src',row.find('img[data-id="'+data.book_id+'"]').attr('src'))
 		$('#det-name').html(data.title)
 		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'))
-		$('#det-rating').html(data.rating)
+		$('#det-rating').add(data.rating)
 		$('#det-votes-up').html(data.votes_up)
 		$('#det-votes-down').html(data.votes_down)
 		$('#det-format').html(data.format)
