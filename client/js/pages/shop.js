@@ -24,12 +24,23 @@ export default function(){
 				)
 				.append(
 					$('<span/>',{class:'col-4 text-left'})
-					.html(
-						r.title+
-						'<br>'+
-						r.authors_list.map(
-							author=>author.last_name+' '+author.first_name[0]+'.'+(author.middle_name?' '+author.middle_name[0]+'.':'')
-						).join(', ')
+					.append($('<div/>',{class:'text-truncate'}).html(r.title))
+					.append(
+						$('<div/>',{class:'text-truncate'})
+						.html(
+							r.authors_list.map(
+								author=>author.last_name+' '+author.first_name[0]+'.'+(author.middle_name?' '+author.middle_name[0]+'.':'')
+							).join(', ')
+						)
+					)
+				)
+				.append(
+					$('<div/>',{class:'col-1 p-0'})
+					.append(
+						$('<div/>',{class:'border'})
+						.append(
+							$('<div/>',{class:'bg-warning'}).css({width:r.rating*100+'%',height:'2em'})
+						)
 					)
 				)
 				.append($('<span/>',{class:'col-1 text-center'}).html(r.rating))
