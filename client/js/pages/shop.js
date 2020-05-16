@@ -9,19 +9,21 @@ export default function(){
 		list.children('div:not(:first-child)').remove();
 		rows.forEach(
 			r=>{
-				$('<div/>',{class:'row book mt-2'})
+				$('<div/>',{class:'row book mt-3 mb-3'})
 				.data('book',r)
 				.data('id',r.book_id)
+				//cover
 				.append(
-					$('<span/>',{class:'col-2 text-center'})
+					$('<span/>',{class:'col-2 text-center cover-cell'})
 					.append(
 						$('<a/>',{href:'#'})
 						.append(
-							$('<img/>',{src:'img/book.png',class:'cover w-50'})
+							$('<img/>',{src:'img/book.png',class:'cover mw-100 mh-100'})
 							.attr('data-id',r.book_id)
 						)
 					)
 				)
+				//title and authors
 				.append(
 					$('<span/>',{class:'col-4 text-left'})
 					.append($('<div/>',{class:'text-truncate'}).html(r.title))
@@ -34,17 +36,20 @@ export default function(){
 						)
 					)
 				)
+				//rating
 				.append(
 					$('<div/>',{class:'col-1 p-0'})
 					.append(
 						$('<div/>',{class:'border'})
 						.append(
-							$('<div/>',{class:'bg-warning'}).css({width:r.rating*100+'%',height:'2em'})
+							$('<div/>',{class:'rating bg-warning'}).css({width:r.rating*100+'%'})
 						)
 					)
 				)
+				//format, price
 				.append($('<span/>',{class:'col-2 text-center'}).html(r.format))
 				.append($('<span/>',{class:'col-1 text-right text-nowrap'}).html(r.price+' ₽'))
+				//to cart
 				.append($('<span/>',{class:'col-2'}).append(
 					$('<button/>',{type:'button',class:'btn btn-secondary btn-sm to-cart'}).html('В корзину')
 				))

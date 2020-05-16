@@ -36,7 +36,6 @@ html{
 	border-radius:8px;
 	padding:8px;
 }
-
 #page.shop #search_string{
 	width:calc(100% - 420px);
 }
@@ -46,6 +45,13 @@ html{
 	display:none;
 }
 
+#page.shop .row.book .cover-cell{
+	max-height:3em;
+}
+
+#page.shop .row.book .rating{
+	height:1.5em;
+}
 
 #headers>span{
 	font-weight:bold;
