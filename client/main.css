@@ -33,6 +33,7 @@ html{
 }
 
 /* pages */
+
 #page.shop  #search_string,
 #page.books #search_string{
 	width:calc(100% - 420px);

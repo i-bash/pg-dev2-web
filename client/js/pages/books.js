@@ -27,124 +27,126 @@ export default function(){
 					let price=genPrice(r)
 					console.log(r.authors_list)
 					$('<div/>',{class:'row book'})
+					.append(
+						$('<span/>',{class:'col-6 my-auto'})
+						.append($('<div/>',{class:'text-truncate'}).html(r.title))
 						.append(
-							$('<span/>',{class:'col-5 my-auto'})
+							$('<div/>',{class:'text-truncate'})
 							.html(
-								r.title
-								+' '
-								+r.authors_list
-								.map(
-									a=>
-									a.last_name
-									+' '
-									+a.first_name.substr(0,1)+'.'
-									+(a.middle_name?' '+a.middle_name.substr(0,1)+'.':'')
-								)
-								.join(', ')
+								r.authors_list.map(
+									a=>a.last_name+' '+a.first_name[0]+'.'+(a.middle_name?' '+a.middle_name[0]+'.':'')
+								).join(', ')
+							)
+						)
+					)
+					.append(
+						$('<span/>',{class:'col-6'})
+						.append(
+							$('<div/>',{class:'row'})
+							.append($('<span/>',{class:'col-2 text-right'}).html(r.onhand_qty))
+							.append(
+								$('<span/>',{class:'col-4'})
+								.append($('<button/>',{class:'btn btn-secondary btn-sm'}).attr('data-action','order-book').html('Заказать'))
+							)
+							.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
+							.append(
+								$('<span/>',{class:'col-4'})
+								.append($('<button/>',{class:'btn btn-secondary btn-sm'}).attr('data-action','set-price').html('Установить'))
 							)
 						)
 						.append(
-							$('<span/>',{class:'col-7'})
+							$('<form/>',{class:'d-none form-inline',action:'emp/orderBook'})
+							.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
+							.append($('<input/>',{name:'price',type:'hidden'}).val(price))
 							.append(
-								$('<div/>',{class:'row'})
-								.append($('<span/>',{class:'col-2 text-right'}).html(r.onhand_qty))
-								.append($('<button/>',{class:'col-4 btn btn-primary btn-sm'}).attr('data-action','order-book').html('Заказать'))
-								.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
-								.append($('<button/>',{class:'col-4 btn btn-primary btn-sm'}).attr('data-action','set-price').html('Установить'))
-							)
-							.append(
-								$('<form/>',{class:'d-none form-inline',action:'emp/orderBook'})
-								.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
-								.append($('<input/>',{name:'price',type:'hidden'}).val(price))
+								$('<ul/>',{class:'container'})
 								.append(
-									$('<ul/>',{class:'container'})
-									.append(
-										$('<li/>',{class:'row form-group'})
-										.append($('<span>',{class:'col-6'}).html('Отпускная цена'))
-										.append($('<span>',{class:'col-6 text-right'}).html(price))
-									)
-									.append(
-										$('<li/>',{class:'row form-group'})
-										.append($('<span>',{class:'col-6'}).html('В наличии'))
-										.append($('<span>',{class:'col-6 text-right'}).html(r.onhand_qty))
-									)
-									.append(
-										$('<li/>',{class:'row form-group'})
-										.append($('<span>',{class:'col-6'}).html('Со склада'))
-										.append(
-											$(
-												'<input/>',
-												{
-													name:'qty',
-													type:'number',
-													min:'1',
-													class:'form-control form-control-sm col-6 text-right',
-													required:'required',
-													value:1
-												}
-											)
-										)
-									)
+									$('<li/>',{class:'row form-group'})
+									.append($('<span>',{class:'col-6'}).html('Отпускная цена'))
+									.append($('<span>',{class:'col-6 text-right'}).html(price))
 								)
 								.append(
-									$('<div/>',{class:'w-100'})
-									.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Заказать').attr('data-action','order-book'))
-									.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
+									$('<li/>',{class:'row form-group'})
+									.append($('<span>',{class:'col-6'}).html('В наличии'))
+									.append($('<span>',{class:'col-6 text-right'}).html(r.onhand_qty))
+								)
+								.append(
+									$('<li/>',{class:'row form-group'})
+									.append($('<span>',{class:'col-6'}).html('Со склада'))
+									.append(
+										$(
+											'<input/>',
+											{
+												name:'qty',
+												type:'number',
+												min:'1',
+												class:'form-control form-control-sm col-6 text-right',
+												required:'required',
+												value:1
+											}
+										)
+									)
 								)
 							)
 							.append(
-								$('<form/>',{class:'d-none form-inline',action:'emp/setPrice'})
-								.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
-								.append(
-									$('<ul/>',{class:'container'})
-									.append(
-										$('<li/>',{class:'row form-group'})
-										.append($('<span>',{class:'col-5'}).html('Текущая цена'))
-										.append($('<span>',{class:'col-7 text-right'}).html(r.price))
-									)
-									.append(
-										$('<li/>',{class:'row form-group'})
-										.append($('<span>',{class:'col-5'}).html('Новая цена'))
-										.append(
-											$(
-												'<input/>',
-												{
-													name:'price',
-													type:'number',
-													min:'0',
-													class:'form-control form-control-sm col-7 text-right',
-													required:'required',
-													value:price
-												}
-											)
-										)
-									)
-									.append(
-										$('<li/>',{class:'row form-group'})
-										.append($('<span>',{class:'col-5'}).html('С'))
-										.append(
-											$(
-												'<input/>',
-												{
-													name:'at',
-													type:'datetime-local',
-													min:now,
-													class:'form-control form-control-sm col-7 text-right',
-													required:'required',
-													value:now
-												}
-											)
-										)
-									)
-								)
-								.append(
-									$('<div/>',{class:'w-100'})
-									.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Установить').attr('data-action','set-price'))
-									.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
-								)
+								$('<div/>',{class:'w-100'})
+								.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Заказать').attr('data-action','order-book'))
+								.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
 							)
 						)
-						.appendTo(list)
+						.append(
+							$('<form/>',{class:'d-none form-inline',action:'emp/setPrice'})
+							.append($('<input/>',{name:'book_id',type:'hidden'}).val(r.book_id))
+							.append(
+								$('<ul/>',{class:'container'})
+								.append(
+									$('<li/>',{class:'row form-group'})
+									.append($('<span>',{class:'col-5'}).html('Текущая цена'))
+									.append($('<span>',{class:'col-7 text-right'}).html(r.price))
+								)
+								.append(
+									$('<li/>',{class:'row form-group'})
+									.append($('<span>',{class:'col-5'}).html('Новая цена'))
+									.append(
+										$(
+											'<input/>',
+											{
+												name:'price',
+												type:'number',
+												min:'0',
+												class:'form-control form-control-sm col-7 text-right',
+												required:'required',
+												value:price
+											}
+										)
+									)
+								)
+								.append(
+									$('<li/>',{class:'row form-group'})
+									.append($('<span>',{class:'col-5'}).html('С'))
+									.append(
+										$(
+											'<input/>',
+											{
+												name:'at',
+												type:'datetime-local',
+												min:now,
+												class:'form-control form-control-sm col-7 text-right',
+												required:'required',
+												value:now
+											}
+										)
+									)
+								)
+							)
+							.append(
+								$('<div/>',{class:'w-100'})
+								.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Установить').attr('data-action','set-price'))
+								.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
+							)
+						)
+					)
+					.appendTo(list)
 				}
 			);
 		}
