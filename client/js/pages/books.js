@@ -171,11 +171,11 @@ export default function(){
 	.off()
 	.on(
 		'click',
-		'.row.book>span:nth-child(2)>div.row>button',
+		'.row.book>span:nth-child(2)>div.row button',
 		e=>{
 			let button=$(e.currentTarget)
-			button.parent().addClass('d-none')
-			button.parent().siblings('form')
+			button.parent().parent().addClass('d-none')
+			button.parent().parent().siblings('form')
 			.find('button[data-action="'+button.data('action')+'"]')
 			.parents('form')
 			.removeClass('d-none')

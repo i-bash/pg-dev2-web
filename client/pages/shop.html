@@ -20,38 +20,41 @@
 						</form>
 						<div id="books" class="container border"></div>
 						<div id="book" class="book">
-							<div id="book-details" class="container">
+							<div id="book-details" class="container border pt-3 pb-3">
 								<div class="row">
 									<div class="col-2">
-										<div>Обложка</div>
-										<div><img id="det-cover" src="img/book.png" class="w-50"></div>
+										<div><img id="det-cover" src="img/book.png" class="w-100"></div>
 									</div>
 									<div class="col-10">
 										<div id="book-properties" class="container">
-											<div class="row">
+											<div class="row pb-2">
 												<div class="col-3">Название</div>
 												<div class="col-9" id="det-name"></div>
 											</div>
-											<div class="row">
+											<div class="row pb-2">
 												<div class="col-3">Авторы</div>
 												<div class="col-9" id="det-authors"></div>
 											</div>
-											<div class="row">
+											<div class="row pb-2">
 												<div class="col-3">Рейтинг</div>
-												<div class="col-4" id="det-rating"></div>
-												<div class="col-1">
-													<button id="vote-up" class="btn btn-sm btn-outline-success vote" data-vote="+1">+</button>
-													<span id="det-votes-up"></span>
+												<div class="col-4">
+													<div class="border w-75">
+														<div id="det-rating" class="rating bg-warning"></div>
+													</div>
 												</div>
-												<div class="col-1">
+												<div class="col-1 text-center">
+													<button class="btn btn-sm btn-outline-success vote" data-vote="+1">+</button>
+													<div id="det-votes-up" class="w-100 mt-1 text-center"></div>
+												</div>
+												<div class="col-1 text-center">
 													<button class="btn btn-sm btn-outline-danger vote" data-vote="-1">-</button>
-													<span id="det-votes-down"></span>
+													<div id="det-votes-down" class="w-100 mt-1 text-center"></div>
 												</div>
 												<div class="col-3 font-weight-bold lead text-center">
 													₽<span id="det-price" class="pl-1"></span>
 												</div>
 											</div>
-											<div class="row">
+											<div class="row pb-2">
 												<div class="col-3">Формат</div>
 												<div class="col-6" id="det-format"></div>
 												<div class="col-3 text-center">
@@ -63,5 +66,5 @@
 									<div class="col-3"></div>
 								</div>
 							</div>
-							<div><button id="to-list" class="btn btn-primary">К списку книг</button></div>
+							<div class="mt-4"><button id="to-list" class="btn btn-primary">К списку книг</button></div>
 						</div>

@@ -14,13 +14,10 @@ export default function(){
 				.data('id',r.book_id)
 				//cover
 				.append(
-					$('<span/>',{class:'col-2 text-center cover-cell'})
+					$('<a/>',{class:'col-2 text-center',href:'#'})
 					.append(
-						$('<a/>',{href:'#'})
-						.append(
-							$('<img/>',{src:'img/book.png',class:'cover mw-100 mh-100'})
-							.attr('data-id',r.book_id)
-						)
+						$('<img/>',{src:'img/book.png',class:'cover mw-100'})
+						.attr('data-id',r.book_id)
 					)
 				)
 				//title and authors
@@ -68,7 +65,7 @@ export default function(){
 		$('#det-cover').attr('src',row.find('img[data-id="'+data.book_id+'"]').attr('src'))
 		$('#det-name').html(data.title)
 		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'))
-		$('#det-rating').add(data.rating)
+		$('#det-rating').css('width',data.rating*100+'%')
 		$('#det-votes-up').html(data.votes_up)
 		$('#det-votes-down').html(data.votes_down)
 		$('#det-format').html(data.format)
@@ -80,7 +77,7 @@ export default function(){
 			.filter(entry=>entry[1]!==null)
 			.map(
 				entry=>
-				$('<div/>',{class:'row'})
+				$('<div/>',{class:'row pb-2'})
 				.append($('<div/>',{class:'col-3'}).html(entry[0]))
 				.append($('<div/>',{class:'col-9'}).html(entry[1]))
 			)
@@ -105,7 +102,6 @@ export default function(){
 	$('#books,#book-details').off()
 	
 	$('#books')
-	.on('show load ','img',alert)
 	.on('click','img',e=>showDetails($(e.target).closest('.book')))
 	
 	$('#header1')
@@ -137,7 +133,7 @@ export default function(){
 	$('.vote').off().click(
 		e=>{
 			let btn=$(e.target)
-			let counter=btn.parent().next()
+			let counter=btn.siblings()
 			lib.doAction(
 				'web/vote',
 				{vote:btn.data('vote'),book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')}
@@ -145,7 +141,7 @@ export default function(){
 			.then(
 				res=>{
 					counter.html(Number(counter.html())+1)
-					lib.reportApp('voted')
+					lib.reportApp('Голос принят')
 				}
 			)
 		}

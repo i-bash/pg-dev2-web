@@ -44,11 +44,12 @@ html{
 	display:none;
 }
 
-#page.shop .row.book .cover-cell{
+#page.shop .row.book img.cover{
 	max-height:3em;
 }
 
-#page.shop .row.book .rating{
+#page.shop .row.book .rating,
+#page.shop #book-details .rating{
 	height:1.5em;
 }
 
