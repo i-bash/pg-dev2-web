@@ -26,17 +26,15 @@ html{
 	margin:0.3rem 0;
 }
 
-/* pages */
-#page.books #books input[type="number"]{
-	width:5rem;
+#led{
+	width:0.5em;
+	height:0.5em;
+	border-radius:50%;
 }
 
-#page.books .row.book form{
-	border:8px solid gray;
-	border-radius:8px;
-	padding:8px;
-}
-#page.shop #search_string{
+/* pages */
+#page.shop  #search_string,
+#page.books #search_string{
 	width:calc(100% - 420px);
 }
 
@@ -53,14 +51,19 @@ html{
 	height:1.5em;
 }
 
-#headers>span{
+#page.books #headers>span,
+#page.tasks #headers>span{
 	font-weight:bold;
 }
 
-#led{
-	width:0.5em;
-	height:0.5em;
-	border-radius:50%;
+#page.books #books input[type="number"]{
+	width:5rem;
+}
+
+#page.books .row.book form{
+	border:8px solid gray;
+	border-radius:8px;
+	padding:8px;
 }
 
 /***********************************************/
