@@ -3,10 +3,10 @@ import {Dev2App} from '../dev2app.js'
 
 export default function(){
 	//fill and initially display list of books
-	let initBooks=res=>{
+	let refreshBooks=res=>{
 		let list=$('#books')
 		let rows=res[0]
-		list.children('div:not(:first-child)').remove();
+		list.empty()
 		rows.forEach(
 			r=>{
 				$('<div/>',{class:'row book mt-3 mb-3'})
@@ -154,5 +154,5 @@ export default function(){
 	$('#to-list').off().click(showList)
 	
 	//init
-	lib.rpcForm('#search',initBooks)
+	lib.rpcForm('#search',refreshBooks)
 }
