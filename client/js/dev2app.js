@@ -69,12 +69,7 @@ export class Dev2App{
 		else{
 			return lib
 			.doAction('web/getCart',{auth_token:authToken})
-			.catch(
-				e=>{
-				debugger;
-				Dev2App.displayCartInfo()
-			}
-			)
+			.catch()
 			.then(Dev2App.displayCartInfo)
 		}
 	}
@@ -109,7 +104,10 @@ export class Dev2App{
 
 		$('button.revert').off().click(Dev2App.chkCmd)
 
-		$('#shop').off().on('loginlogout',Dev2App.chkCmd)
+		$('#shop').off().on(
+			'loginlogout',
+			e=>Dev2App.refreshCartInfo().then(Dev2App.chkCmd)
+		)
 
 		//tab
 		$('a[data-toggle="tab"]')
