@@ -46,7 +46,7 @@ export default function(){
 	//display books in cart
 	let displayCart=res=>{
 		let rows=res[0]
-		$('#headers,#totals').toggle(rows.length>0)
+		$('#totals').toggle(rows.length>0)
 		$('#books').children('div:not(:first-child)').remove()
 		rows.forEach(displayCartItem)
 		$('[data-toggle="tooltip"]').tooltip()
