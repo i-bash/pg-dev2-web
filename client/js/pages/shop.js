@@ -17,7 +17,7 @@ export default function(){
 					$('<a/>',{class:'col-2 text-center',href:'#'})
 					.append(
 						$('<img/>',{src:'img/book.png',class:'cover mw-100'})
-						.attr('data-id',r.book_id)
+						.data('id',r.book_id)
 					)
 				)
 				//title and authors
@@ -38,6 +38,10 @@ export default function(){
 					$('<div/>',{class:'col-1 p-0'})
 					.append(
 						$('<div/>',{class:'border'})
+						.append(
+							$('<div/>',{class:'w-100 position-absolute pl-1 pr-1 text-center overflow-hidden'})
+							.html('&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;')
+						)
 						.append(
 							$('<div/>',{class:'rating bg-warning'}).css({width:r.rating*100+'%'})
 						)
@@ -62,7 +66,7 @@ export default function(){
 	let showDetails=row=>{
 		let data=row.data('book')
 		$('#book').data('id',data.book_id)
-		$('#det-cover').attr('src',row.find('img[data-id="'+data.book_id+'"]').attr('src'))
+		$('#det-cover').attr('src',row.find('img.cover').attr('src'))
 		$('#det-name').html(data.title)
 		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'))
 		$('#det-rating').css('width',data.rating*100+'%')
@@ -133,7 +137,7 @@ export default function(){
 	$('.vote').off().click(
 		e=>{
 			let btn=$(e.target)
-			let counter=btn.siblings()
+			let counter=btn.parent().find('[id^="det-votes"]')
 			lib.doAction(
 				'web/vote',
 				{vote:btn.data('vote'),book_id:$(e.target).closest('.book').data('id'),auth_token:sessionStorage.getItem('authToken')}

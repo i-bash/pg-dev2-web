@@ -53,10 +53,9 @@ export class Dev2App{
 	
 	//display cart info
 	static displayCartInfo(res){
-		$('.cart-total').html(
-			res&&res[0]&&res[0].reduce((prev,cur)=>prev+cur.qty*cur.price,0) || '0'
-		)
-		$('#cart').prop('disabled',$('.cart-total').html()=='0')
+		let total=res&&res[0]&&res[0].reduce((prev,cur)=>prev+cur.qty*cur.price,0) || 0
+		$('.cart-total').html(total+' ₽')
+		$('#cart').prop('disabled',total==0)
 	}
 	
 	//refresh cart info

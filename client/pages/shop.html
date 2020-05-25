@@ -37,18 +37,29 @@
 											</div>
 											<div class="row pb-2">
 												<div class="col-3">Рейтинг</div>
-												<div class="col-4">
-													<div class="border w-75">
+												<div class="col-4 p-0">
+													<div class="border">
+														<div class="w-100 position-absolute pl-1 pr-1 text-center overflow-hidden">
+															&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;
+														</div>
 														<div id="det-rating" class="rating bg-warning"></div>
 													</div>
 												</div>
 												<div class="col-1 text-center">
 													<button class="btn btn-sm btn-outline-success vote" data-vote="+1">+</button>
-													<div id="det-votes-up" class="w-100 mt-1 text-center"></div>
+													<div class="text-nowrap w-100 text-center">
+														<span class="align-middle">
+															+<span id="det-votes-up"></span>
+														</span>
+													</div>
 												</div>
 												<div class="col-1 text-center">
-													<button class="btn btn-sm btn-outline-danger vote" data-vote="-1">-</button>
-													<div id="det-votes-down" class="w-100 mt-1 text-center"></div>
+													<button class="btn btn-sm btn-outline-danger vote" data-vote="-1">&ndash;</button>
+													<div class="text-nowrap w-100 text-center">
+														<span class="align-middle">
+															-<span id="det-votes-down"></span>
+														</span>
+													</div>
 												</div>
 												<div class="col-3 font-weight-bold lead text-center">
 													₽<span id="det-price" class="pl-1"></span>

@@ -44,7 +44,8 @@ html{
 	display:none;
 }
 
-#page.shop .row.book img.cover{
+#page.shop .row.book img.cover,
+#page.cart .row.book img.cover{
 	max-height:3em;
 }
 
