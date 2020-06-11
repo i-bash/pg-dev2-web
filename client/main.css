@@ -8,16 +8,8 @@ html{
 
 #techinfo>div:last-child{
 	margin-top:10px;
-	/*flex-grow:1;*/
 	overflow-y:auto;
-	scroll-behavior: smooth;
-	scroll-snap-type: block proximity;
 }
-
-#action{
-	/*scrollTop:100vh;*/
-	scroll-snap-align: end;
-	scroll-snap-stop: always;}
 
 #action>.alert{
 	word-wrap:break-word;

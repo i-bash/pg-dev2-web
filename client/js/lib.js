@@ -31,15 +31,22 @@ export class lib{
 	 */
 	static actionMessage(style,text){
 		let actionPane=$('#action')
+		let scroller=actionPane.parent()
 		actionPane
 		.append(
 			$(
-				'<p/>',
+				'<div/>',
 				{class:'alert alert-'+style+' w-100 m-0 p-1 mb-1'}
 			)
 			.html(text)
 		)
-		//.parent().animate({scrollTop:$(actionPane)[0].scrollHeight},'1')
+		scroller[0].scrollTo(
+			{
+				top:$(actionPane)[0].scrollHeight-scroller[0].clientHeight,
+				behavior:'smooth'
+			}
+		)
+		//.parent().scrollTop($(actionPane).prop('scrollHeight')-$(actionPane).parent().prop('clientHeight'))
 	}
 	static reportError(e){
 		let message=
