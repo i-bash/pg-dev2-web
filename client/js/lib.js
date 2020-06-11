@@ -244,6 +244,8 @@ export class lib{
 		$('#page').empty()
 	}
 	/**populate select from array of options
+	 * each option is an array [value,text,data] (value and text are required)
+	 * or just a plain text
 	 */
 	static populateSelect(selector,options){
 		let dropdown = $(selector)

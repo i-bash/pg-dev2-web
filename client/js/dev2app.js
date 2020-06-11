@@ -43,7 +43,7 @@ export class Dev2App{
 				$("#led").removeClass().addClass('bg-success')
 				lib.populateSelect(
 					'#server',
-					Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
+					Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.description+' ('+s.port+')'])
 				)
 				$('#tab-shop').tab('show')
 			}
