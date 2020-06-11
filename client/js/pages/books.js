@@ -62,17 +62,12 @@ export default function(){
 								$('<ul/>',{class:'container'})
 								.append(
 									$('<li/>',{class:'row form-group'})
-									.append($('<span>',{class:'col-6'}).html('Отпускная цена'))
-									.append($('<span>',{class:'col-6 text-right'}).html(price))
+									.append($('<span>',{class:'col-10'}).html('В наличии на складе'))
+									.append($('<span>',{class:'col-2 text-right'}).html(r.onhand_qty))
 								)
 								.append(
 									$('<li/>',{class:'row form-group'})
-									.append($('<span>',{class:'col-6'}).html('В наличии'))
-									.append($('<span>',{class:'col-6 text-right'}).html(r.onhand_qty))
-								)
-								.append(
-									$('<li/>',{class:'row form-group'})
-									.append($('<span>',{class:'col-6'}).html('Со склада'))
+									.append($('<span>',{class:'col-10'}).html('Заказать у поставщика'))
 									.append(
 										$(
 											'<input/>',
@@ -80,7 +75,7 @@ export default function(){
 												name:'qty',
 												type:'number',
 												min:'1',
-												class:'form-control form-control-sm col-6 text-right',
+												class:'form-control form-control-sm col-2 text-right',
 												required:'required',
 												value:1
 											}
@@ -90,8 +85,15 @@ export default function(){
 							)
 							.append(
 								$('<div/>',{class:'w-100'})
-								.append($('<button/>',{class:'btn btn-primary btn-sm float-left'}).html('Заказать').attr('data-action','order-book'))
-								.append($('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'}).html('&times;'))
+								.append(
+									$('<button/>',{class:'btn btn-primary btn-sm float-left'})
+									.html('Заказать по '+price+' ₽')
+									.attr('data-action','order-book')
+								)
+								.append(
+									$('<button/>',{type:'reset',class:'btn btn-primary btn-sm float-right cancel'})
+									.html('&times;')
+								)
 							)
 						)
 						.append(
