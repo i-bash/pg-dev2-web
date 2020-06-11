@@ -70,10 +70,10 @@ export class lib{
 	static reportApp(text){
 		lib.actionMessage('secondary',text);
 	}
-	static reportConninfo(conninfo){
+	static reportConninfo(server,user,conninfo){
 		lib.actionMessage(
 			'light',
-			conninfo.user+'@'+conninfo.host+':'+conninfo.port+' '+'('+conninfo.pid+')'
+			user+'@'+server+' '+'(pid '+conninfo.pid+')'
 		)
 	}
 
@@ -163,14 +163,12 @@ export class lib{
 			d=>
 			lib.pgExec(
 				connectionId,
-`select pg_backend_pid() pid, user, inet_server_addr() host, inet_server_port() port, 
-current_database() dbname, set_config('application_name','dev2app',true)
-`
+				`select pg_backend_pid() pid, set_config('application_name','dev2app',true)`
 				+(lib.tracing?', trace()':''),
 				undefined,
 				true
 			)
-			.then(res=>lib.reportConninfo(res[0]))
+			.then(res=>lib.reportConninfo(pgServer,pgUser,res[0]))
 		)
 		
 		//commands
