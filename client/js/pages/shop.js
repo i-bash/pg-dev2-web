@@ -113,7 +113,7 @@ export default function(){
 		'loginlogout',
 		e=>{
 			//enable to-cart and vote buttons for logged in user only
-			$('#books,#book').find('button.to-cart,button.vote').toggle(sessionStorage.getItem('authToken')!==null);
+			$('#books,#book').find('button.to-cart,div.votes').toggle(sessionStorage.getItem('authToken')!==null);
 		}
 	)
 	
