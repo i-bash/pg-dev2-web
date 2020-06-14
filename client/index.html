@@ -8,86 +8,76 @@
 		<title>Учебное приложение DEV2</title>
 	</head>
 	<body>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-8">
-					<div class="m-2">
-						<img src="img/isolation.png" data-toggle="tooltip" data-placement="left" title="Isolation" class="d-inline-block align-bottom">
-						<span class="h2 d-inline-block align-bottom ml-5 mb-0">Учебное приложение DEV2</span>
+		<div id="main" class="container-fluid">
+			<div class="m-2">
+				<img src="img/isolation.png" data-toggle="tooltip" data-placement="left" title="Isolation" class="d-inline-block align-bottom">
+				<span class="h2 d-inline-block align-bottom ml-5 mb-0">Учебное приложение DEV2</span>
+			</div>
+			<ul class="nav nav-tabs">
+			  <li class="nav-item">
+				<a id="tab-shop" data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
+			  </li>
+			  <li class="nav-item">
+				<a id="tab-admin" data-toggle="tab" class="nav-link" href="#admin">Админка</a>
+			  </li>
+			</ul>
+			<div class="tab-content pb-2">
+				<div id="shop" class="tab-pane">
+					<div id="header1" class="container text-right clearfix pt-2 pb-2 border-bottom">
+						<span id="logged-out">
+							<button id="login" type="button" class="btn btn-info">Вход</button>
+							<button id="register" type="button" class="btn btn-info">Регистрация</button>			
+						</span>
+						<span id="login-form">
+							<form class="form-inline float-right" action="web/login">
+								<input id="username" name="username" required placeholder="Имя пользователя">
+								<button type="submit" class="btn btn-info ml-1">Войти</button>
+								<button type="button" class="btn btn-info revert ml-1">&times;</button>
+							</form>
+						</span>
+						<span id="register-form">
+							<form class="form-inline float-right" action="web/register">
+								<input id="reg-username" name="username" required placeholder="Имя пользователя">
+								<input id="reg-email" type="email" name="email" required placeholder="Электронная почта" class="ml-1">
+								<button type="submit" class="btn btn-info ml-1">Зарегистрироваться</button>
+								<button type="button" class="btn btn-info revert ml-1">&times;</button>
+							</form>
+						</span>
+						<span id="logged-in">
+							<span id="session-info" class="mr-4"></span>
+							<button id="logout" class="btn btn-info">Выйти</button>
+							<button id="cart" type="button" class="btn btn-info" disabled>Корзина <span class="cart-total"></span></button>
+						</span>
 					</div>
-					<ul class="nav nav-tabs">
+				</div>
+				<div id="admin" class="tab-pane">
+					<ul class="nav nav-pills pt-2 pb-2 border-bottom">
 					  <li class="nav-item">
-						<a id="tab-shop" data-toggle="tab" class="nav-link" href="#shop">Книжный магазин</a>
+						<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>
 					  </li>
 					  <li class="nav-item">
-						<a id="tab-admin" data-toggle="tab" class="nav-link" href="#admin">Админка</a>
+						<a data-toggle="pill" class="nav-link" href="#" data-page="tasks">Фоновые задания</a>
 					  </li>
 					</ul>
-					<div class="tab-content">
-						<div id="shop" class="tab-pane">
-							<div id="header1" class="container text-right clearfix pt-2 pb-2 border-bottom">
-								<span id="logged-out">
-									<button id="login" type="button" class="btn btn-info">Вход</button>
-									<button id="register" type="button" class="btn btn-info">Регистрация</button>			
-								</span>
-								<span id="login-form">
-									<form class="form-inline float-right" action="web/login">
-										<input id="username" name="username" required placeholder="Имя пользователя">
-										<button type="submit" class="btn btn-info ml-1">Войти</button>
-										<button type="button" class="btn btn-info revert ml-1">&times;</button>
-									</form>
-								</span>
-								<span id="register-form">
-									<form class="form-inline float-right" action="web/register">
-										<input id="reg-username" name="username" required placeholder="Имя пользователя">
-										<input id="reg-email" type="email" name="email" required placeholder="Электронная почта" class="ml-1">
-										<button type="submit" class="btn btn-info ml-1">Зарегистрироваться</button>
-										<button type="button" class="btn btn-info revert ml-1">&times;</button>
-									</form>
-								</span>
-								<span id="logged-in">
-									<span id="session-info" class="mr-4"></span>
-									<button id="logout" class="btn btn-info">Выйти</button>
-									<button id="cart" type="button" class="btn btn-info" disabled>Корзина <span class="cart-total"></span></button>
-								</span>
-							</div>
-						</div>
-						<div id="admin" class="tab-pane">
-							<ul class="nav nav-pills">
-							  <li class="nav-item">
-								<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>
-							  </li>
-							  <li class="nav-item">
-								<a data-toggle="pill" class="nav-link" href="#" data-page="tasks">Фоновые задания</a>
-							  </li>
-							</ul>
-						</div>
-						<div id="page" class="mt-1"></div>
-					</div>
 				</div>
+				<div id="page" class="border"></div>
+			</div>
+		</div>
 
-				<div id="techinfo" class="col-md-4 border p-2 container-fluid d-flex flex-column">
-					<div class="row pr-1">
-						<div class="col-md-6">
-							<select id="server" class=""></select>
-						</div>
-						<div class="col-sm-4 form-check" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
-							<input type="checkbox" class="form-check-input" id="trace">
-							<label class="form-check-label" for="trace">Trace</label>
-						</div>
-						<div class="col-sm-1 p-0">
-							<span id="loader" class="spinner-border spinner-border-sm invisible"></span>
-						</div>
-						<div class="col-xs-1 p-2">
-							<div id="led"></div>
-						</div>
-					</div>
-					<div class="p-0">
-						<div id="action">
-							<div id="anchor"></div>
-						</div>
-					</div>
+		<div id="techinfo" class="p-2 border">
+			<div class="row m-0 pb-1 border-bottom">
+				<div class="col-11 pl-0 pr-2 d-flex flex-row flex-wrap align-items-center">
+					<select id="server" class="p-0 mw-100"></select>
+					<span class="ml-2 mr-2 d-inline-flex flex-row flex-nowrap" data-toggle="tooltip" data-placement="left" title="SET log_min_duration_statements = 0">
+						<input type="checkbox" class="mr-1" id="trace">
+						<label class="form-check-label" for="trace">Trace</label>
+					</span>
+					<span id="loader" class="spinner-border spinner-border-sm invisible"></span>
 				</div>
+				<div id="led" class="col-1"></div>
+			</div>
+			<div class="pl-0 pr-1">
+				<div id="action" class="pt-2"></div>
 			</div>
 		</div>
 		<script src="lib/jquery-3.4.1.min.js"></script>
