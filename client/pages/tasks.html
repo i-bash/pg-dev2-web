@@ -1,24 +1,25 @@
-<hr>
-<div class="container">
-	<form id="run-task" class="form-inline panel row" action="emp/runProgram">
-		<div class="form-group col-3">
+<div class="container pt-2">
+	<form id="run-task" class="form-row align-items-top panel" action="emp/runProgram">
+		<span class="form-group col-auto">
 			<label for="programs" >Программа</label>
 			<select id="programs" class="form-control" name="program_id"></select>
-		</div>
-		<div class="form-group col-3">
+		</span>
+		<span class="form-group col-auto">
 			<label for="params">Параметры</label>
-			<textarea id="params" name="params" rows="1">{}</textarea>
-		</div>
-		<div class="form-group col-3">
+			<textarea id="params" name="params" rows="1" class="form-control">{}</textarea>
+		</span>
+		<span class="form-group col-3">
 			<input id="host" name="host" type="hidden">
 			<input id="port" name="port" type="hidden">
-			<label for="is_remote">Удалённо</label>
-			<input id="is_remote" type="checkbox">
+			<div class="form-check mb-2">
+				<input id="is_remote" type="checkbox" class="form-check-input">
+				<label for="is_remote" class="form-check-label">Удалённо</label>
+			</div>
 			<select id="remote"></select>
-		</div>
-		<div class="form-group col-2">
+		</span>
+		<span class="form-group col-auto">
 			<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
-		</div>
+		</span>
 	</form>
 </div>
 <hr>
