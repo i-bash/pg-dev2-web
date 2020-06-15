@@ -20,61 +20,63 @@
 						</form>
 						<div id="books" class="container border"></div>
 						<div id="book" class="book">
-							<div id="book-details" class="container border pt-3 pb-3">
+							<div id="book-details" class="container pt-3 pb-3">
 								<div class="row">
 									<div class="col-2">
 										<div><img id="det-cover" src="img/book.png" class="w-100"></div>
 									</div>
-									<div class="col-10">
-										<div id="book-properties" class="container">
-											<div class="row pb-2">
-												<div class="col-3">Название</div>
-												<div class="col-9" id="det-name"></div>
-											</div>
-											<div class="row pb-2">
-												<div class="col-3">Авторы</div>
-												<div class="col-9" id="det-authors"></div>
-											</div>
-											<div class="row pb-2">
-												<div class="col-3">Рейтинг</div>
-												<div class="col-4 p-0 mr-3">
-													<div class="border">
-														<div class="w-100 position-absolute pl-1 pr-1 text-center overflow-hidden">
-															&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;
-														</div>
-														<div id="det-rating" class="rating bg-warning"></div>
+									<div id="book-properties" class="col-8 container pb-2">
+										<div class="row">
+											<div class="col-3">Название</div>
+											<div class="col-9" id="det-name"></div>
+										</div>
+										<div class="row pb-2">
+											<div class="col-3">Авторы</div>
+											<div class="col-9" id="det-authors"></div>
+										</div>
+										<div class="row pb-2">
+											<div class="col-3">Рейтинг</div>
+											<div class="col mr-0">
+												<div class="border">
+													<div class="w-100 position-absolute pl-1 pr-1 text-center overflow-hidden">
+														&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;
 													</div>
-												</div>
-												<div class="col-1 text-center pl-0 pr-0 votes">
-													<button class="btn btn-sm btn-outline-light vote text-center align-center" data-vote="+1">&#x1F44D;</button>
-													<div class="text-nowrap w-100 text-center">
-														<span class="align-middle">
-															<span id="det-votes-up"></span>
-														</span>
-													</div>
-												</div>
-												<div class="col-1 text-center pl-0 pr-0 votes">
-													<button class="btn btn-sm btn-outline-light vote" data-vote="-1">&#x1F44E;</button>
-													<div class="text-nowrap w-100 text-center">
-														<span class="align-middle">
-															<span id="det-votes-down"></span>
-														</span>
-													</div>
-												</div>
-												<div class="col-3 font-weight-bold lead text-center">
-													₽<span id="det-price" class="pl-1"></span>
+													<div id="det-rating" class="rating bg-warning"></div>
 												</div>
 											</div>
-											<div class="row pb-2">
-												<div class="col-3">Формат</div>
-												<div class="col-6" id="det-format"></div>
-												<div class="col-3 text-center">
-													<button id="to-cart" type="button" class="btn btn-secondary btn-sm to-cart">В корзину</button>
+											<div class="col text-center pl-0 pr-0 votes">
+												<button class="btn btn-sm btn-outline-light vote text-center align-center" data-vote="+1">&#x1F44D;</button>
+												<div class="text-nowrap w-100 text-center">
+													<span class="align-middle">
+														<span id="det-votes-up"></span>
+													</span>
 												</div>
+											</div>
+											<div class="col text-center pl-0 pr-0 votes">
+												<button class="btn btn-sm btn-outline-light vote" data-vote="-1">&#x1F44E;</button>
+												<div class="text-nowrap w-100 text-center">
+													<span class="align-middle">
+														<span id="det-votes-down"></span>
+													</span>
+												</div>
+											</div>
+											<div class="col"></div>
+										</div>
+										<div class="row pb-2">
+											<div class="col-3">Формат</div>
+											<div class="col-9" id="det-format"></div>
+										</div>
+									</div>
+									<div class="col-2">
+										<div class="p-3 border">
+											<div class="font-weight-bold lead text-center mb-2">
+												<span id="det-price" class="pr-1"></span>₽
+											</div>
+											<div class="text-center">
+												<button id="to-cart" type="button" class="btn btn-secondary btn-sm to-cart">В корзину</button>
 											</div>
 										</div>
 									</div>
-									<div class="col-3"></div>
 								</div>
 							</div>
 							<div class="mt-4"><button id="to-list" class="btn btn-primary">К списку книг</button></div>
