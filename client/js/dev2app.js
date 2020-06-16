@@ -8,17 +8,16 @@ export class Dev2App{
 	static inited=false
 	static config
 	
-	/**
-	 * enable/disable elements
-	 */
+	/** enable/disable elements */
 	static chkCmd(){
-		//get auth info from sessionStorage
-		let authToken=sessionStorage.getItem('authToken')
-		let userName=sessionStorage.getItem('userName')
+		//set lib.tracing
+		lib.tracing=$('#trace').prop('checked')
+		//get session info
+		let sessionInfo=lib.getSessionInfo()
 		//auth header
-		$('#session-info').html(userName)
-		$('#logged-in').toggle(authToken!==null)
-		$('#logged-out').toggle(authToken===null)
+		$('#session-info').html(sessionInfo.userName)
+		$('#logged-in').toggle(sessionInfo.authToken!==null)
+		$('#logged-out').toggle(sessionInfo.authToken===null)
 		$('#login-form').toggle(false)
 		$('#register-form').toggle(false)
 	};
@@ -60,7 +59,7 @@ export class Dev2App{
 	
 	//refresh cart info
 	static refreshCartInfo(){
-		let authToken=sessionStorage.getItem('authToken');
+		let authToken=lib.getSessionInfo().authToken;
 		if(authToken==null){
 			$('.cart-total').html(0)
 			return Promise.resolve()
@@ -74,8 +73,8 @@ export class Dev2App{
 	}
 
 	static setHandlers(){
-		//set lib.tracing
-		$('#trace').click(e=>{lib.tracing=$(e.target).prop('checked')})
+		
+		$('#trace').click(Dev2App.chkCmd)
 		//display page
 		$('#admin a[data-page]').off().click(
 			e=>{
@@ -132,19 +131,17 @@ export class Dev2App{
 		lib.rpcForm(
 			'#login-form>form',
 			data=>{
-				sessionStorage.setItem('authToken',data[0])
-				sessionStorage.setItem('userName',$('#username').val())
+				lib.setSessionInfo(data[0],$('#username').val())
 				$('#username').val('')
 				$('#header1').trigger('loginlogout')
 			}
 		);
 		//logout
 		$('#logout').off().click(
-			e=>lib.doAction('web/logout',{auth_token:sessionStorage.getItem('authToken')})
+			e=>lib.doAction('web/logout',{auth_token:lib.getSessionInfo().authToken})
 			.then(
 				()=>{
-					sessionStorage.removeItem('authToken')
-					sessionStorage.removeItem('userName')
+					lib.resetSessionInfo()
 					$('#header1').trigger('loginlogout')
 				}
 			)

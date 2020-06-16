@@ -24,6 +24,8 @@ html{
 
 #action>.alert{
 	word-wrap:break-word;
+	white-space: pre;
+	white-space: pre-line;
 }
 #action>.alert>hr{
 	margin:0.3rem 0;

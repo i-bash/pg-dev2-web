@@ -24,6 +24,24 @@ export class lib{
 	 */
 	static isConnected(){return lib.wspg.wsconnected()}
 	
+	/** get session info */
+	static getSessionInfo(){
+		return {
+			authToken:sessionStorage.getItem('authToken'),
+			userName:sessionStorage.getItem('userName')
+		}
+	}
+	/** set session info */
+	static setSessionInfo(authToken,userName){
+		sessionStorage.setItem('authToken',authToken)
+		sessionStorage.setItem('userName',userName)
+	}
+	/** remove session info */
+	static resetSessionInfo(){
+		sessionStorage.removeItem('authToken')
+		sessionStorage.removeItem('userName')
+	}
+
 	/** messages in action pane
 	 * - style - one of bootstrap alert styles
 	 * - text - message text
@@ -38,7 +56,7 @@ export class lib{
 				'<div/>',
 				{class:'alert alert-'+style+' w-100 m-0 p-1 mb-1'}
 			)
-			.html(text)
+			.text(text)
 		)
 		scroller[0].scrollTo(
 			{
@@ -99,7 +117,7 @@ export class lib{
 		return Promise.resolve(
 			beSilent||
 			lib.reportCommand(
-				sql+(params&&params.length?'<br>'+JSON.stringify(params):'')
+				sql+(params&&params.length?'\n'+JSON.stringify(params):'')
 			)
 		)
 		.then(()=>lib.wspg.pgexec(connectionId,sql,params))
@@ -157,18 +175,37 @@ export class lib{
 				connectionId=lib.pgConnections[pgConn].id
 			)
 		)
-		//get connection properties and turn on tracing
+		//get connection properties
 		.then(
 			d=>
 			lib.pgExec(
 				connectionId,
-				`select pg_backend_pid() pid, set_config('application_name','dev2app',true)`
-				+(lib.tracing?', trace()':''),
+				`select pg_backend_pid() pid, set_config('application_name','dev2app',true)`,
 				undefined,
 				true
 			)
 			.then(res=>lib.reportConninfo(pgServer,pgUser,res[0]))
 		)
+		//tracing
+		if(lib.tracing){
+			connectPromise=connectPromise.then(
+				d=>{
+					switch(pgUser){
+						case 'web':
+							return lib.pgExec(
+								connectionId,
+								`select webapi.trace($1)`,
+								[lib.getSessionInfo().authToken??null]
+							)
+						case 'emp':
+							return lib.pgExec(
+								connectionId,
+								`select empapi.trace()`
+							)
+					}
+				}
+			)
+		}
 		
 		//commands
 		let commands=
