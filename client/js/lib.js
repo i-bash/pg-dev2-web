@@ -109,7 +109,6 @@ export class lib{
 				return res.rows;
 			}
 		)
-		.catch(e=>{lib.reportError(e);return Promise.reject(e)})
 	}
 
 	/**server action
@@ -121,7 +120,7 @@ export class lib{
 	 * @param callback - function(data)
 	 * @return promise
 	 */
-	static doAction(action,params={}){
+	static doAction(action,params={},reportErrors=true){
 		//check action for existence
 		if(!actions[action]){
 			console.error('Unknown action: '+action);
@@ -207,9 +206,15 @@ export class lib{
 			connectPromise //promise to connect at the beginning
 		)
 		.then(
-			d=>
-			Promise.resolve(results)
-		)//finally return a promise resolved with the results
+			//finally return a promise resolved with the results
+			d=>Promise.resolve(results),
+			//or return rejected promise
+			e=>{
+				reportErrors&&lib.reportError(e)
+				return Promise.reject(e)
+			}
+		)
+		
 	}
 
 	/**
@@ -283,7 +288,7 @@ export class lib{
 					.map(nv=>[nv.name,nv.value])
 				)
 				return (callbackBefore?callbackBefore():Promise.resolve())
-					.then(()=>lib.doAction($(form).attr('action'),pars))
+					.then(()=>lib.doAction($(form).attr('action'),pars,false))
 					.then(callbackAfter?(payload=>callbackAfter(payload,form)):Promise.resolve)
 					.catch(lib.reportError)
 			}

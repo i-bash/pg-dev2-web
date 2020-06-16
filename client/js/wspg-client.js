@@ -186,6 +186,6 @@ export default class WsPgClient{
 	 */
 	pgrun(commands){
 		let cmd=commands.shift()
-		return pgexec(cmd).then(pgrun(commands))
+		return this.pgexec(cmd).then(this.pgrun(commands))
 	}
 }
