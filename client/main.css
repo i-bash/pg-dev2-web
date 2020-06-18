@@ -55,10 +55,31 @@ html{
 	max-height:3em;
 }
 
-#page.shop .row.book .rating,
-#page.shop #book-details .rating{
-	height:1.5em;
+#page.shop #book #det-rating-container,
+#page.shop #books .rating-container{
+	height:1.5rem;
+	width:7.5rem;
+	background-color:lightgray;
+	z-index:1;
 }
+
+#page.shop #book #det-rating,
+#page.shop #books .rating{
+	padding:0;margin:0;height:1.5rem;position:absolute;top:0;z-index:2;
+}
+
+#page.shop #book #det-rating-stars,
+#page.shop #books .rating-stars{
+	position:absolute;
+	display:flex;
+	z-index:3;
+}
+
+#page.shop #book #det-rating-stars>img,
+#page.shop #books .rating-stars>img{
+	height:1.5rem;
+}
+
 
 #page.books #headers>span,
 #page.tasks #headers>span{

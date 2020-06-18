@@ -14,7 +14,7 @@ export default function(){
 				.data('id',r.book_id)
 				//cover
 				.append(
-					$('<a/>',{class:'col-2 text-center',href:'#'})
+					$('<a/>',{class:'col-1 text-center',href:'#'})
 					.append(
 						$('<img/>',{src:'img/book.png',class:'cover mw-100'})
 						.data('id',r.book_id)
@@ -35,15 +35,16 @@ export default function(){
 				)
 				//rating
 				.append(
-					$('<div/>',{class:'col-1 p-0'})
+					$('<div/>',{class:'col-2 p-0'})
 					.append(
-						$('<div/>',{class:'border'})
+						$('<div/>',{class:'rating-container'})
 						.append(
-							$('<div/>',{class:'w-100 position-absolute pl-1 pr-1 text-center overflow-hidden'})
-							.html('&#x2606;&#x2606;&#x2606;&#x2606;&#x2606;')
+							$('<div/>',{class:'rating bg-warning position-absolute'})
+							.css({width:r.rating*7.5+'rem'})
 						)
 						.append(
-							$('<div/>',{class:'rating bg-warning'}).css({width:r.rating*100+'%'})
+							$('<div/>',{class:'rating-stars'})
+							.append($('<img src="img/star.png">'.repeat(5)))
 						)
 					)
 				)
@@ -69,7 +70,7 @@ export default function(){
 		$('#det-cover').attr('src',row.find('img.cover').attr('src'))
 		$('#det-name').html(data.title)
 		$('#det-authors').html(data.authors_list.map(r=>r.last_name+' '+r.first_name+' '+r.middle_name).join(',<br>'))
-		$('#det-rating').css('width',data.rating*100+'%')
+		$('#det-rating').css('width',data.rating*7.5+'rem').attr('title',data.rating)
 		$('#det-votes-up').html(data.votes_up)
 		$('#det-votes-down').html(data.votes_down)
 		$('#det-format').html(data.format)
