@@ -144,6 +144,7 @@ export default class WsPgClient{
 					else{
 						this.requestPromises[rid]={resolve,reject}
 					}
+					this.log('sending request #'+rid);
 					this.socket.send(JSON.stringify({rid,data}))
 				}
 				else{

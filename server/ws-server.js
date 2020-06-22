@@ -70,15 +70,15 @@ class WsServer{
 					if(msg!==null){
 						const maxLength=100
 						let text=JSON.stringify(msg)
-						console.log(logPrefix + ' Sending WS message to client: '+(text.length>maxLength?text.slice(0,maxLength-3)+'...':text))
+						console.log(logPrefix() + ' Sending WS message to client: '+(text.length>maxLength?text.slice(0,maxLength-3)+'...':text))
 						wsConnection.send(text)
 					}
 				}
 				//connect
 				this.connectionId++
-				let logPrefix=(new Date()).toISOString()+' ('+this.connectionId+') '
+				let logPrefix=()=>(new Date()).toISOString()+' ('+this.connectionId+') '
 				wsConnection.sendMessage('connected '+this.connectionId)
-				console.log(logPrefix + ' Accepted WS connection from ' + wsConnection.remoteAddress)
+				console.log(logPrefix() + ' Accepted WS connection from ' + wsConnection.remoteAddress)
 				//engine
 				const engine=new this.engineClass()
 				//get message from engine, send it to client
@@ -89,22 +89,22 @@ class WsServer{
 					'message',
 					message=>{
 						if (message.type !== 'utf8') {
-							console.log(logPrefix + ' Unknown WS message type '+message.type)
+							console.log(logPrefix() + ' Unknown WS message type '+message.type)
 							return
 						}
-						console.log(logPrefix + ' Received WS message: ' + message.utf8Data)
+						console.log(logPrefix() + ' Received WS message: ' + message.utf8Data)
 						let body
 						try{
 							body=JSON.parse(message.utf8Data)
 						}
 						catch(e){
-							console.log(logPrefix + ' Error parsing json message:')
+							console.log(logPrefix() + ' Error parsing json message:')
 							console.log(e)
 							return
 						}
 						if(body.data==='stop'){
 							wsConnection.sendMessage({rid:body.rid,data:'stopping server'})
-							console.log(logPrefix + ' Received smart shutdown request, new connections disallowed')
+							console.log(logPrefix() + ' Received smart shutdown request, new connections disallowed')
 							this.server.close()
 						}
 						else{
@@ -129,7 +129,7 @@ class WsServer{
 						.then(
 							result=>{
 								wsConnection.sendMessage('disconnected '+this.connectionId)
-								console.log(logPrefix + ' WS client on ' + wsConnection.remoteAddress + ' disconnected.')
+								console.log(logPrefix() + ' WS client on ' + wsConnection.remoteAddress + ' disconnected.')
 							}
 						)
 					}
