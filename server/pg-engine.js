@@ -76,10 +76,18 @@ class PgEngine{
 						if(appMessage.data&&appMessage.data.connection!==undefined){
 							connectionId=appMessage.data.connection
 							let sql=appMessage.data.sql
+							let time=new Date()
 							console.log('pg-engine: connection '+connectionId+', execing '+JSON.stringify(sql));
 							if(this.connections[connectionId]){
 								this.connections[connectionId]
 								.query(appMessage.data.sql,appMessage.data.params)
+								.then(
+									result=>{
+										result.time=Date.now()-time
+										console.log('pg-engine: '+(Date.now()-time)+'ms');
+										return result
+									}
+								)
 								.then(resolve)
 								.catch(err=>reject({message:err.message}))
 							}

@@ -123,7 +123,12 @@ export class lib{
 		.then(()=>lib.wspg.pgexec(connectionId,sql,params))
 		.then(
 			res=>{
-				beSilent||lib.reportSuccess(res.command===undefined?'ok':res.command+(res.rowCount===null?'':' '+res.rowCount))
+				beSilent||
+				lib.reportSuccess(
+					res.command===undefined
+					?'ok'
+					:res.command+(res.rowCount===null?'':' '+res.rowCount)+' ('+res.time+'ms)'
+				)
 				return res.rows;
 			}
 		)
