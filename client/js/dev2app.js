@@ -170,18 +170,21 @@ export class Dev2App{
 				.then(()=>lib.doAction('web/getImage',{book_id:$(curElement).data().id}))
 				.then(
 					d=>{
-						let cover16=d[0][0]
-						let byteArray = new Uint8Array(cover16.length/2-1)
-						for (let x = 0; x < cover16.length-2; x++){
-							byteArray[x] = parseInt(cover16.substr(x*2+2,2), 16)
-						}
-						let blob = new Blob([byteArray],{type:"image/jpeg"})
-						let reader = new FileReader()
-						reader.onload=()=>{
-							$(curElement).attr('src',reader.result)
-						}
-						reader.readAsDataURL(blob)
-						return Promise.resolve()
+						return setTimeout(
+							()=>{
+								let cover16=d[0][0]
+								let byteArray = new Uint8Array(cover16.length/2-1)
+								for (let x = 0; x < cover16.length-2; x++){
+									byteArray[x] = parseInt(cover16.substr(x*2+2,2), 16)
+								}
+								let blob = new Blob([byteArray],{type:"image/jpeg"})
+								let reader = new FileReader()
+								reader.onload=()=>{
+									$(curElement).attr('src',reader.result)
+								}
+								reader.readAsDataURL(blob)
+							}
+						)
 					}
 				)
 				.catch(d=>void(d))
