@@ -61,7 +61,8 @@ class WsServer{
 		//ws server
 		let wsServer = new WebSocketServer({
 			httpServer: this.server,
-			autoAcceptConnections: false
+			autoAcceptConnections: false,
+			fragmentOutgoingMessages: false
 		})
 		//process ws request
 		wsServer.on(
