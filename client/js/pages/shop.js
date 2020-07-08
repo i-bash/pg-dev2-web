@@ -98,9 +98,13 @@ export default function(){
 	let showList=()=>{
 		$('#book').toggle(false)
 		$('#books').toggle(true)
-		$('#header1').trigger('loginlogout')
+		chkCmd()
 	};
-	
+	//enable to-cart and vote buttons for logged in user only
+	let chkCmd=()=>{
+		$('#books,#book').find('button.to-cart,div.votes').toggle(sessionStorage.getItem('authToken')!==null)
+	}
+
 	//event handlers
 	$('[name="orderby"],[name="direction"]').off().change(()=>{$('#search').submit()})
 	
@@ -110,13 +114,7 @@ export default function(){
 	.on('click','img',e=>showDetails($(e.target).closest('.book')))
 	
 	$('#header1')
-	.on(
-		'loginlogout',
-		e=>{
-			//enable to-cart and vote buttons for logged in user only
-			$('#books,#book').find('button.to-cart,div.votes').toggle(sessionStorage.getItem('authToken')!==null);
-		}
-	)
+	.on('loginlogout',chkCmd)
 	
 	$('#books,#book-details').on(
 		'click',
