@@ -20,6 +20,9 @@ class WsServer{
 		//init
 		const gag=m=>new Promise((resolve,reject)=>{console.log('called gag');resolve(null)})
 		this.connectionId=0
+		//logging
+		const loggedLength=80
+		let loggedText=text=>text.length>loggedLength?text.slice(0,loggedLength-3)+'...':text
 		//http server
 		const serve = serveStatic(this.staticDir, { 'index': ['index.html'] })
 		this.server = http.createServer(
@@ -68,17 +71,17 @@ class WsServer{
 				//function to send ws message to client
 				wsConnection.sendMessage=(msg)=>{
 					if(msg!==null){
-						const maxLength=100
 						let text=JSON.stringify(msg)
-						console.log(logPrefix() + ' Sending WS message to client: '+(text.length>maxLength?text.slice(0,maxLength-3)+'...':text))
 						wsConnection.send(text)
+						console.log(logPrefix() + 'Sent '+text.length+' bytes to client: '+loggedText(text))
+						console.log('socket buffer: '+wsConnection.socket.bufferSize)
 					}
 				}
 				//connect
 				this.connectionId++
 				let logPrefix=()=>(new Date()).toISOString()+' ('+this.connectionId+') '
 				wsConnection.sendMessage('connected '+this.connectionId)
-				console.log(logPrefix() + ' Accepted WS connection from ' + wsConnection.remoteAddress)
+				console.log(logPrefix() + 'Accepted WS connection from ' + wsConnection.remoteAddress)
 				//engine
 				const engine=new this.engineClass()
 				//get message from engine, send it to client
@@ -89,22 +92,22 @@ class WsServer{
 					'message',
 					message=>{
 						if (message.type !== 'utf8') {
-							console.log(logPrefix() + ' Unknown WS message type '+message.type)
+							console.log(logPrefix() + 'Unknown WS message type '+message.type)
 							return
 						}
-						console.log(logPrefix() + ' Received WS message: ' + message.utf8Data)
+						console.log(logPrefix()+'Received '+message.utf8Data.length+' bytes from client: ' + loggedText(message.utf8Data))
 						let body
 						try{
 							body=JSON.parse(message.utf8Data)
 						}
 						catch(e){
-							console.log(logPrefix() + ' Error parsing json message:')
+							console.log(logPrefix() + 'Error parsing json message:')
 							console.log(e)
 							return
 						}
 						if(body.data==='stop'){
 							wsConnection.sendMessage({rid:body.rid,data:'stopping server'})
-							console.log(logPrefix() + ' Received smart shutdown request, new connections disallowed')
+							console.log(logPrefix() + 'Received smart shutdown request, new connections disallowed')
 							this.server.close()
 						}
 						else{
@@ -129,7 +132,7 @@ class WsServer{
 						.then(
 							result=>{
 								wsConnection.sendMessage('disconnected '+this.connectionId)
-								console.log(logPrefix() + ' WS client on ' + wsConnection.remoteAddress + ' disconnected.')
+								console.log(logPrefix() + 'WS client on ' + wsConnection.remoteAddress + ' disconnected.')
 							}
 						)
 					}
