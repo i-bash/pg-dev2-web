@@ -7,7 +7,11 @@ export default function(){
 		'#remote',
 		Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
 	)
-
+	let displayDateTime=ts=>{
+		if(ts===null) return ''
+		let d=new Date(ts)
+		return (Date.now()-d)<86400000?d.toLocaleTimeString():d.toLocaleDateString()
+	}
 	let populatePrograms=()=>
 	lib
 	.doAction('emp/getPrograms')
@@ -29,11 +33,11 @@ export default function(){
 					$('<div/>',{class:'row pt-1 pb-1'})
 					.append($('<span/>',{class:'col-1 my-auto'}).html(r.task_id))
 					.append($('<span/>',{class:'col-3 my-auto'}).html(r.name))
-					.append($('<span/>',{class:'col-2 my-auto'}).html(r.started?r.started.substr(0,19):''))
-					.append($('<span/>',{class:'col-2 my-auto'}).html(r.finished?r.finished.substr(0,19):''))
+					.append($('<span/>',{class:'col-2 my-auto'}).html(displayDateTime(r.started)))
+					.append($('<span/>',{class:'col-2 my-auto'}).html(displayDateTime(r.finished)))
 					.append($('<span/>',{class:'col-2 my-auto'}).html(r.status))
 					.append(
-						$('<span/>',{class:'col-1 my-auto'}).html(
+						$('<span/>',{class:'col-2 text-right pr-0 my-auto'}).html(
 							$(
 								'<button/>',
 								{

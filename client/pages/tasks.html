@@ -1,4 +1,4 @@
-<div class="container pt-2">
+<div class="container-fluid pt-2">
 	<form id="run-task" class="form-row align-items-top panel" action="emp/runProgram">
 		<span class="form-group col-auto">
 			<label for="programs" >Программа</label>
@@ -23,21 +23,23 @@
 	</form>
 </div>
 <hr>
-<div id="tasks" class="container">
-	<div id="headers" style="display:none;" class="row">
+<div id="tasks" class="container-fluid">
+	<div id="headers" style="display:none;" class="row border-bottom pb-1">
 		<span class="col-1 font-weight-bold">#</span>
 		<span class="col-3 font-weight-bold">Название</span>
 		<span class="col-2 font-weight-bold">Запущено</span>
 		<span class="col-2 font-weight-bold">Завершено</span>
 		<span class="col-2 font-weight-bold">Статус</span>
-		<span class="col-1 font-weight-bold text-center"><button id="refresh" class="btn btn-primary text-center"><img src="img/refresh-ccw.svg"></button></span>
+		<span class="col-2 font-weight-bold text-right pr-0">
+			<button id="refresh" class="btn btn-primary btn-sm">&#x21ba;</button>
+		</span>
 	</div>
 </div>
 <div class="modal fade" id="results" role="dialog">
 	<div class="modal-dialog modal-sm modal-dialog-scrollable modal-dialog-centered">
 	  <div class="modal-content">
 		<div class="modal-header">
-			<h4 class="modal-title">Результаты задания </h4>
+			<h4 class="modal-title">Результаты задания</h4>
 			<button type="button" class="close" data-dismiss="modal">&times;</button>
 		</div>
 		<div class="modal-body text-monospace">
