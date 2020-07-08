@@ -114,6 +114,7 @@ export class lib{
 		.catch(e=>{lib.reportError(e);return Promise.reject(e)})
 	}
 	static pgExec(connectionId,sql,params=[],beSilent=false){
+		let started=Date.now()
 		return Promise.resolve(
 			beSilent||
 			lib.reportCommand(
@@ -127,7 +128,9 @@ export class lib{
 				lib.reportSuccess(
 					res.command===undefined
 					?'ok'
-					:res.command+(res.rowCount===null?'':' '+res.rowCount)+' ('+res.time+'ms)'
+					:res.command
+						+(res.rowCount===null?'':' '+res.rowCount)
+						+' '+res.time+'ms/'+(Date.now()-started)+'ms'
 				)
 				return res.rows;
 			}
@@ -144,6 +147,8 @@ export class lib{
 	 * @return promise
 	 */
 	static doAction(action,params={},reportErrors=true){
+		let time=Date.now()
+		console.log('starting action '+action)
 		//check action for existence
 		if(!actions[action]){
 			console.error('Unknown action: '+action);
@@ -249,7 +254,10 @@ export class lib{
 		)
 		.then(
 			//finally return a promise resolved with the results
-			d=>Promise.resolve(results),
+			d=>{
+				console.log('completed action '+action+' in '+(Date.now()-time)+'ms');
+				return Promise.resolve(results)
+			},
 			//or return rejected promise
 			e=>{
 				reportErrors&&lib.reportError(e)
