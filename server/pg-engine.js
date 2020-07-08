@@ -83,9 +83,15 @@ class PgEngine{
 								.query(appMessage.data.sql,appMessage.data.params)
 								.then(
 									result=>{
-										result.time=Date.now()-time
-										console.log('pg-engine: '+(Date.now()-time)+'ms');
-										return result
+										return {
+											time:Date.now()-time,
+											command:result.command,
+											fields:result.fields.map(
+												r=>{name:r.name}
+											),
+											rowCount:result.rowCount,
+											rows:result.rows
+										}
 									}
 								)
 								.then(resolve)
