@@ -38,7 +38,7 @@ export default class WsPgClient{
 	 */
 	log(message,type='log'){
 		let f=eval('console.'+type)
-		f(message);
+		f(message)
 	}
 	/** public methods
 	 */
@@ -49,52 +49,56 @@ export default class WsPgClient{
 				this.connectResolver=resolve
 				this.socket = new WebSocket('ws://'+this.hostPort+'/','pg-sql')
 				this.socket.onopen=e=>{
-					this.log('websocket opened');
+					this.log('websocket opened')
 					if(this.connectResolver instanceof Function){
 						this.connectResolver(e)
 					}
 				}
 				this.socket.onclose=e=>{
-					this.log('websocket closed');
+					this.log('websocket closed')
 					if(this.disconnectResolver instanceof Function){
-						this.disconnectResolver(e);
+						this.disconnectResolver(e)
 					}
 					if(this.onclose instanceof Function){
-						this.onclose();
+						this.onclose()
 					}
 				}
 				this.socket.onerror=e=>{
 					this.log('websocket client error')
-					let p=this.wserror;
+					let p=this.wserror
 					if(p instanceof Function){p(e)}
 				}
 				this.socket.onmessage=e=>{
-					let message;
+					this.log('got a response')
+					let message
 					try{
-						message=JSON.parse(e.data);
+						message=JSON.parse(e.data)
 					}
 					catch(e){
 						console.error('received non-json message',e.data)
 						return
 					}
-					//this.log('received message via websocket')
-					//this.log(message);
 					if(message.rid){
 						//handle response
-						this.log('got response on request #'+message.rid);
+						this.log('response on request #'+message.rid)
 						if(this.requestPromises[message.rid]!==undefined){
 							if(message.data.err){
-								this.requestPromises[message.rid].reject(message.data);
+								this.requestPromises[message.rid].reject(message.data)
 							}
 							else{
-								this.requestPromises[message.rid].resolve(message.data);
+								this.requestPromises[message.rid].resolve(message.data)
 							}
-							delete this.requestPromises[message.rid];
+							delete this.requestPromises[message.rid]
 						}
 					}
 					else{
 						if(message.data&&message.data.type==='notice'&&this.pgnotice){
+							this.log('notice')
 							this.pgnotice(message.data.message)
+						}
+						else{
+							this.log('plain response: ')
+							this.log(message)
 						}
 					}
 				}
@@ -122,7 +126,7 @@ export default class WsPgClient{
 	 * is client still connected?
 	 */
 	wsconnected(){
-		return this.socket!==undefined&&this.socket.readyState==WebSocket.OPEN;
+		return this.socket!==undefined&&this.socket.readyState==WebSocket.OPEN
 	}
 	/**
 	 * stop the server
@@ -144,7 +148,7 @@ export default class WsPgClient{
 					else{
 						this.requestPromises[rid]={resolve,reject}
 					}
-					this.log('sending request #'+rid);
+					this.log('sending request #'+rid)
 					this.socket.send(JSON.stringify({rid,data}))
 				}
 				else{
@@ -178,8 +182,7 @@ export default class WsPgClient{
 			'select * from '+fname+' ('+
 				(fpars.length?fpars.keys().map((parName,parNum)=>parName+'=>$'+(parNum+1)).join(','):'')+
 			')'
-		;
-		return this.pgexec(sql,fpars.values());
+		return this.pgexec(sql,fpars.values())
 	}
 	/** execute commands synchronously
 	 * commands - array
