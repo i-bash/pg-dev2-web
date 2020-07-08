@@ -49,7 +49,7 @@
 
 #page.shop  #search_string,
 #page.books #search_string{
-	width:calc(100% - 413px);
+	width:calc(100% - 26.1rem);
 }
 
 #page.shop #books,
