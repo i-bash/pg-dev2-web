@@ -55,7 +55,7 @@ export default function(){
 							)
 							.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
 							.append(
-								$('<span/>',{class:'col-4'})
+								$('<span/>',{class:'col-4 pr-0'})
 								.append($('<button/>',{class:'btn btn-secondary btn-sm'}).attr('data-action','set-price').html('Установить'))
 							)
 						)

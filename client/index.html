@@ -23,7 +23,7 @@
 			</ul>
 			<div class="tab-content pb-2">
 				<div id="shop" class="tab-pane">
-					<div id="header1" class="container text-right clearfix pt-2 pb-2 border-bottom">
+					<div id="header1" class="container text-right clearfix pt-2 pb-2 pl-0 pr-0 border-bottom">
 						<span id="logged-out">
 							<button id="login" type="button" class="btn btn-info">Вход</button>
 							<button id="register" type="button" class="btn btn-info">Регистрация</button>			
@@ -51,7 +51,7 @@
 					</div>
 				</div>
 				<div id="admin" class="tab-pane">
-					<ul class="nav nav-pills pt-2 pb-2 border-bottom">
+					<ul class="nav nav-pills pt-2 pb-2">
 					  <li class="nav-item">
 						<a data-toggle="pill" class="nav-link active" href="#" data-page="books">Книги</a>
 					  </li>
@@ -60,7 +60,9 @@
 					  </li>
 					</ul>
 				</div>
-				<div id="page" class="border"></div>
+				<div id="page-container" class="container-fluid border pt-3 pb-3">
+					<div id="page"></div>
+				</div>
 			</div>
 		</div>
 

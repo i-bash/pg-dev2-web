@@ -1,4 +1,4 @@
-<form id="catalog" class="form-inline mt-4 mb-4 w-100" action="emp/getBooks">
+<form id="catalog" class="form-inline w-100" action="emp/getBooks">
 	<input id="search_string" class="form-control text-right mr-1" name="search" placeholder="Автор или название">
 	<button type="submit" class="btn btn-primary">Найти</button>
 	<label for="orderby" class="d-inline pl-5 pr-2">Сортировать по</label>
@@ -18,10 +18,4 @@
 		</label>
 	</span>
 </form>
-<div id="books" class="container border">
-	<div id="headers" style="display:none" class="row pt-3 pb-3">
-		<span class="col-6 font-weight-bold">Название</span>
-		<span class="col-3 font-weight-bold">Наличие, шт.</span>
-		<span class="col-3 font-weight-bold">Розничная цена, ₽</span>
-	</div>
-</div>
+<div id="books" class="container-fluid border mt-3 pt-2 pb-2"></div>
