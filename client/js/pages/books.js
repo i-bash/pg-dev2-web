@@ -31,7 +31,7 @@ export default function(){
 			rows.forEach(
 				r=>{
 					let price=genPrice(r)
-					$('<div/>',{class:'row book'})
+					$('<div/>',{class:'row book border pt-2 pb-2'})
 					.append(
 						$('<span/>',{class:'col-6 my-auto'})
 						.append($('<div/>',{class:'text-truncate'}).html(r.title))
@@ -48,15 +48,15 @@ export default function(){
 						$('<span/>',{class:'col-6'})
 						.append(
 							$('<div/>',{class:'row'})
-							.append($('<span/>',{class:'col-2 text-right'}).html(r.onhand_qty))
 							.append(
-								$('<span/>',{class:'col-4'})
-								.append($('<button/>',{class:'btn btn-secondary btn-sm'}).attr('data-action','order-book').html('Заказать'))
+								$('<span/>',{class:'col-6 text-right'})
+								.append($('<span/>',{class:'text-nowrap'}).html(r.onhand_qty+' шт.'))
+								.append($('<button/>',{class:'btn btn-secondary btn-sm ml-3'}).attr('data-action','order-book').html('Заказать'))
 							)
-							.append($('<span/>',{class:'col-2 text-right'}).html(r.price))
 							.append(
-								$('<span/>',{class:'col-4 pr-0'})
-								.append($('<button/>',{class:'btn btn-secondary btn-sm'}).attr('data-action','set-price').html('Установить'))
+								$('<span/>',{class:'col-6 text-right'})
+								.append($('<span/>',{class:'text-nowrap'}).html(r.price+' ₽'))
+								.append($('<button/>',{class:'btn btn-secondary btn-sm ml-3'}).attr('data-action','set-price').html('Установить'))
 							)
 						)
 						.append(
