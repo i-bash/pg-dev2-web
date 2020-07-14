@@ -27,7 +27,7 @@ export default function(){
 			$('#headers').toggle(rows.length>0)
 			lib.reportApp(rows.length==0?'Книги не найдены':'Найдено книг: '+rows.length)
 			let list=$('#books')
-			list.children('div:not(:first-child)').remove()
+			list.children().remove()
 			rows.forEach(
 				r=>{
 					let price=genPrice(r)
