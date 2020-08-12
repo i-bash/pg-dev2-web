@@ -10,7 +10,8 @@ export default function(){
 	let displayDateTime=ts=>{
 		if(ts===null) return ''
 		let d=new Date(ts)
-		return (Date.now()-d)<86400000?d.toLocaleTimeString():d.toLocaleDateString()
+		return d.toLocaleString(window.navigator.language)
+		//return (Date.now()-d)<86400000?d.toLocaleTimeString(window.navigator.language):d.toLocaleDateString(window.navigator.language)
 	}
 	let populatePrograms=()=>
 	lib
