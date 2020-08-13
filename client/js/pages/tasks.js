@@ -5,7 +5,7 @@ export default function(){
 	//populate programs drop-down
 	let populateServers=()=>lib.populateSelect(
 		'#remote',
-		Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.host+':'+s.port])
+		Dev2App.config.pgServers.map(s=>[s.host+':'+s.port,s.description+' ('+s.port+')'])
 	)
 	let displayDateTime=ts=>{
 		if(ts===null) return ''
@@ -57,21 +57,42 @@ export default function(){
 			)
 		}
 	)
-	lib.rpcForm(
-		'#run-task',
-		data=>{
-			populateTasks();
-			lib.reportApp('scheduled task #'+data[0][0])
-		},
-		f=>{
+	$('#run-task').submit(
+		e=>{
+			e.preventDefault()
+			//parse json
 			let json=$('#params').val()
 			try{
-				return Promise.resolve(JSON.parse(json))
+				json=json===''?null:JSON.parse(json)
 			}
-			catch(e){
-				lib.reportError('error parsing parameters:\n'+e.message)
-				return Promise.reject(e)
+			catch(err){
+				lib.reportError('error parsing parameters:\n'+err.message)
+				return Promise.reject(err)
 			}
+			//host&port
+			let hpArray
+			if($('#remote').prop('disabled')){
+				hpArray=[null,null]
+			}
+			else{
+				hpArray=$('#remote').val().split(':')
+			}
+			//function parameters
+			const pars={
+				program_id:Number($('#programs').val()),
+				params:json,
+				host:hpArray[0],
+				port:Number(hpArray[1])
+			}
+			//call action
+			return lib.doAction($(e.target).attr('action'),pars,false)
+			.then(
+				data=>{
+					populateTasks()
+					lib.reportApp('scheduled task #'+data[0][0])
+				}
+			)
+			.catch(lib.reportError)
 		}
 	)
 	$('#refresh').off().click(populateTasks)
@@ -84,15 +105,13 @@ export default function(){
 		}
 	)
 	$('[data-toggle="tooltip"]').tooltip()
-	$('#is_remote').click(
+	$('[name="local-remote"]').click(
 		e=>{
-			let isRemote=$(e.target).prop('checked')
-			$('#remote').toggle(isRemote)
-			//pass host and port only for remote instance
-			$('#host,#port').each((i,e)=>$(e).attr('name',isRemote?e.id:''))
+			let isRemote=$('#is_remote').prop('checked')
+			$('#remote').prop('disabled',!isRemote)
 		}
 	)
-	$('#remote').change(
+	$('[name="local-remote"]').change(
 		e=>{
 			let hpArray=$('#remote').val().split(':')
 			$('#host').val(hpArray[0])

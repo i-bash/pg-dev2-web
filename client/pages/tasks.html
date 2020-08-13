@@ -1,25 +1,27 @@
 <div class="container-fluid pt-2">
 	<form id="run-task" class="form-row align-items-top panel" action="emp/runProgram">
-		<span class="form-group col-auto">
-			<label for="programs" >Программа</label>
-			<select id="programs" class="form-control" name="program_id"></select>
-		</span>
-		<span class="form-group col-auto">
-			<label for="params">Параметры</label>
-			<textarea id="params" name="params" rows="1" class="form-control">{}</textarea>
-		</span>
-		<span class="form-group col-3">
-			<input id="host" name="host" type="hidden">
-			<input id="port" name="port" type="hidden">
-			<div class="form-check mb-2">
-				<input id="is_remote" type="checkbox" class="form-check-input">
-				<label for="is_remote" class="form-check-label">Удалённо</label>
-			</div>
-			<select id="remote"></select>
-		</span>
-		<span class="form-group col-auto">
-			<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
-		</span>
+		<div class="row">
+			<span class="form-group col-auto">
+				<select id="programs" class="form-control-lg" name="program_id"></select>
+			</span>
+			<span class="form-group col-auto">
+				<div class="form-check">
+					<input id="is_local" type="radio" class="form-check-input" name="local-remote" checked>
+					<label for="is_local" class="form-check-label">Локально</label>
+				</div>
+				<div class="form-check text-nowrap">
+					<input id="is_remote" type="radio" class="form-check-input" name="local-remote">
+					<label for="is_remote" class="form-check-label">Удалённо</label>
+					<select id="remote"></select>
+				</div>
+			</span>
+			<span class="form-group col-auto">
+				<textarea id="params" name="params" class="form-control-sm h-100" placeholder="параметры (json)"></textarea>
+			</span>
+			<span class="form-group col-auto">
+				<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
+			</span>
+		</div>
 	</form>
 </div>
 <hr>
@@ -31,7 +33,7 @@
 		<span class="col-2 font-weight-bold">Завершено</span>
 		<span class="col-2 font-weight-bold">Статус</span>
 		<span class="col-2 font-weight-bold text-right pr-0">
-			<button id="refresh" class="btn btn-primary btn-sm">&#x21ba;</button>
+			<button id="refresh" class="btn btn-primary">Обновить <strong>&#x21ba;</strong></button>
 		</span>
 	</div>
 </div>
