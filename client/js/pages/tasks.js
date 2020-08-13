@@ -95,7 +95,9 @@ export default function(){
 			.catch(lib.reportError)
 		}
 	)
+	//refresh
 	$('#refresh').off().click(populateTasks)
+	//show task results
 	$('#tasks').off().on(
 		'click',
 		'.show-results',
@@ -104,26 +106,16 @@ export default function(){
 			.then(res=>$('#results-text').html(res[0]))
 		}
 	)
-	$('[data-toggle="tooltip"]').tooltip()
+	//local/remote switch
 	$('[name="local-remote"]').click(
 		e=>{
 			let isRemote=$('#is_remote').prop('checked')
 			$('#remote').prop('disabled',!isRemote)
 		}
 	)
-	$('[name="local-remote"]').change(
-		e=>{
-			let hpArray=$('#remote').val().split(':')
-			$('#host').val(hpArray[0])
-			$('#port').val(hpArray[1])
-		}
-	)
+	//populate lists
 	populateServers()
 	populatePrograms()
 	.then(populateTasks)
-	.then(
-		()=>{
-			$('#is_remote').triggerHandler('click');
-		}
-	)
+	.then(()=>$('[name="local-remote"]').triggerHandler('click'))
 }
