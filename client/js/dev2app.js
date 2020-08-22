@@ -23,9 +23,14 @@ export class Dev2App{
 	};
 
 	static init(config){
+		let ledClickCounter=0;
 		Dev2App.config=config
 		Dev2App.setHandlers()
-		$('#led').removeClass().addClass('bg-warning')
+		$('#led')
+		.removeClass().addClass('bg-warning')
+		.click(
+			e=>e.detail==3 && $('#isolatedElephant').toggleClass(['d-none','d-inline-block'])
+		)
 		lib.initConnection(
 			window.location.hostname+':'+(window.location.port||80),
 			()=>$('#led').removeClass().addClass('bg-danger')
