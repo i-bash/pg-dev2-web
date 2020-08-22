@@ -22,7 +22,7 @@ export default function(){
 				)
 				//title and authors
 				.append(
-					$('<span/>',{class:'col-4 text-left'})
+					$('<span/>',{class:'col-3 text-left'})
 					.append($('<div/>',{class:'text-truncate'}).html(r.title))
 					.append(
 						$('<div/>',{class:'text-truncate'})
@@ -49,6 +49,7 @@ export default function(){
 					)
 				)
 				//format, price
+				.append($('<span/>',{class:'col-1 text-right text-nowrap'}).html(r.pages+' с.'))
 				.append($('<span/>',{class:'col-2 text-center'}).html(r.format))
 				.append($('<span/>',{class:'col-1 text-right text-nowrap'}).html(r.price+' ₽'))
 				//to cart
