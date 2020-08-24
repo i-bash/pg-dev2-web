@@ -82,7 +82,7 @@ export default function(){
 				program_id:Number($('#programs').val()),
 				params:json,
 				host:hpArray[0],
-				port:Number(hpArray[1])
+				port:hpArray[1]
 			}
 			//call action
 			return lib.doAction($(e.target).attr('action'),pars,false)

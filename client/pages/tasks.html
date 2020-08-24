@@ -1,10 +1,15 @@
 <div class="container-fluid pt-2">
-	<form id="run-task" class="form-row align-items-top panel" action="emp/runProgram">
-		<div class="row">
-			<span class="form-group col-auto">
-				<select id="programs" class="form-control-lg" name="program_id"></select>
+	<form id="run-task" class="container panel" action="emp/runProgram">
+		<div class="row form-row align-items-top">
+			<span class="form-group col">
+				<select id="programs" class="form-control" name="program_id"></select>
 			</span>
-			<span class="form-group col-auto">
+			<span class="form-group col">
+				<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
+			</span>
+		</div>
+		<div class="row form-row align-items-top">
+			<span class="form-group">
 				<div class="form-check">
 					<input id="is_local" type="radio" class="form-check-input" name="local-remote" checked>
 					<label for="is_local" class="form-check-label">Локально</label>
@@ -15,11 +20,8 @@
 					<select id="remote"></select>
 				</div>
 			</span>
-			<span class="form-group col-auto">
-				<textarea id="params" name="params" class="form-control-sm h-100" placeholder="параметры (json)"></textarea>
-			</span>
-			<span class="form-group col-auto">
-				<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
+			<span class="form-group ml-5">
+				<textarea id="params" name="params" class="form-control h-75" placeholder="параметры (json)"></textarea>
 			</span>
 		</div>
 	</form>
