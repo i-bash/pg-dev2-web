@@ -1,27 +1,31 @@
-<div class="container-fluid pt-2">
-	<form id="run-task" class="container panel" action="emp/runProgram">
-		<div class="row form-row align-items-top">
-			<span class="form-group col">
-				<select id="programs" class="form-control" name="program_id"></select>
-			</span>
-			<span class="form-group col">
-				<button type="submit" class="btn btn-primary ml-2">Выполнить</button>
-			</span>
-		</div>
-		<div class="row form-row align-items-top">
-			<span class="form-group">
-				<div class="form-check">
-					<input id="is_local" type="radio" class="form-check-input" name="local-remote" checked>
-					<label for="is_local" class="form-check-label">Локально</label>
+<div class=" pt-2">
+	<form id="run-task" action="emp/runProgram">
+		<div class="row">
+			<div class="col container">
+				<div class="row form-row align-items-top">
+					<span class="col form-group">
+						<select id="programs" class="form-control" name="program_id"></select>
+					</span>
 				</div>
-				<div class="form-check text-nowrap">
-					<input id="is_remote" type="radio" class="form-check-input" name="local-remote">
-					<label for="is_remote" class="form-check-label">Удалённо</label>
-					<select id="remote"></select>
+				<div class="row form-row align-items-top">
+					<span class="form-group col">
+						<div class="form-check">
+							<input id="is_local" type="radio" class="form-check-input" name="local-remote" checked>
+							<label for="is_local" class="form-check-label">Локально</label>
+						</div>
+						<div class="form-check">
+							<input id="is_remote" type="radio" class="form-check-input" name="local-remote">
+							<label for="is_remote" class="form-check-label">Удалённо</label>
+							<select id="remote"></select>
+						</div>
+					</span>
+					<span class="col">
+						<textarea id="params" name="params" class="form-control h-100" placeholder="параметры (json)"></textarea>
+					</span>
 				</div>
-			</span>
-			<span class="form-group ml-5">
-				<textarea id="params" name="params" class="form-control h-75" placeholder="параметры (json)"></textarea>
+			</div>
+			<span class="form-group col">
+				<button type="submit" class="btn btn-primary">Выполнить</button>
 			</span>
 		</div>
 	</form>
