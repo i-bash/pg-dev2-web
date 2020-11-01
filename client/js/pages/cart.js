@@ -47,6 +47,7 @@ export default function(){
 				$('<button/>',{class:'change-qty btn btn-sm btn-outline-dark mr-1'})
 				.data('change',-1)
 				.html('&ndash;')
+				.prop('disabled',r.qty<=1)
 			)
 			.append(
 				$('<button/>',{class:'change-qty btn btn-sm btn-outline-dark'})
